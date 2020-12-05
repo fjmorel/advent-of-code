@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-var lines = System.IO.File.ReadAllLines("input.txt");
+var lines = System.IO.File.ReadLines("input.txt");
 var nums = lines.Select(x => new int[] { int.Parse(x) }).ToList();
 
 Console.WriteLine(FindProduct(2));
