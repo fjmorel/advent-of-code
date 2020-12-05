@@ -1,22 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 var lines = File.ReadAllLines("input.txt");
-var nums = lines.Select(x => int.Parse(x)).ToList();
+var nums = lines.Select(x => new int[] { int.Parse(x) }).ToList();
 
-var two = nums
-.SelectMany(x => nums.Where(y => y != x).Select(y => new[] { x, y }))
-.Where(list => list.Sum() == 2020 && list.Distinct().Count() == list.Count())
-.Select(list => list.Aggregate(1, (acc, x) => acc * x))
-.First();
+Console.WriteLine(FindProduct(2));
+Console.WriteLine(FindProduct(3));
 
-var three = nums
-.SelectMany(x => nums.Where(y => y != x).Select(y => new[] { x, y }))
-.SelectMany(list => nums.Where(z => !list.Contains(z)).Select(z => new[] { list[0], list[1], z }))
-.Where(list => list.Sum() == 2020 && list.Distinct().Count() == list.Count())
-.Select(list => list.Aggregate(1, (acc, x) => acc * x))
-.First();
+long FindProduct(int numValues)
+{
+	IEnumerable<IEnumerable<int>> combinations = nums;
+	for (var i = 2; i <= numValues; i++)
+		combinations = combinations.SelectMany(list => nums.Where(z => !list.Contains(z[0])).Select(z => list.Concat(z)));
 
-Console.WriteLine(two);
-Console.WriteLine(three);
+	return combinations
+	.Where(list => list.Sum() == 2020)
+	.Select(list => list.Aggregate(1, (acc, x) => acc * x))
+	.First();
+}
