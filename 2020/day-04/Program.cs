@@ -47,18 +47,14 @@ void CheckPassport(Dictionary<string, string> info)
 	var byr = int.Parse(info["byr"]);
 	var iyr = int.Parse(info["iyr"]);
 	var eyr = int.Parse(info["eyr"]);
-	var hgt = info["hgt"];
-	var hcl = info["hcl"];
-	var ecl = info["ecl"];
-	var pid = info["pid"];
 
 	var strict = byr >= 1920 && byr <= 2002 &&
 		iyr >= 2010 && iyr <= 2020 &&
 		eyr >= 2020 && eyr <= 2030 &&
-		ValidHeight(hgt) &&
-		Regex.IsMatch(hcl, "^#([0-9a-f]{6,6})$") &&
-		validEyes.Contains(ecl) &&
-		Regex.IsMatch(pid, "^[0-9]{9,9}$");
+		ValidHeight(info["hgt"]) &&
+		Regex.IsMatch(info["hcl"], "^#([0-9a-f]{6,6})$") &&
+		validEyes.Contains(info["ecl"]) &&
+		Regex.IsMatch(info["pid"], "^[0-9]{9,9}$");
 	if (strict)
 		validStrict++;
 }
