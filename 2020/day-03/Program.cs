@@ -15,11 +15,10 @@ Console.WriteLine(new[]
 
 long HowManyHits(int right, int down)
 {
-	long treesHit = 0;
+	var treesHit = 0;
 	for (var i = 0; (i * down) < lines.Length; i++)
 	{
-		var symbol = lines[i * down][(i * right) % width];
-		if (symbol == '#')
+		if (lines[i * down][(i * right) % width] == '#')
 			treesHit++;
 	}
 	Console.WriteLine(treesHit);
