@@ -65,10 +65,8 @@ void CheckPassport(Dictionary<string, string> info)
 
 bool ValidHeight(string value)
 {
-	if (value.Length < 3)
-		return false;
-	var unit = value.Substring(value.Length - 2);
-	var num = int.Parse(value.Substring(0, value.Length - 2));
+	var unit = value[^2..];
+	var num = int.Parse(value[..^2]);
 	return (unit, num) switch
 	{
 		("cm", >= 150 and <= 193) => true,
