@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-
-var part1 = 0;
-var part2 = 0;
 
 var seats = System.IO.File.ReadLines("input.txt").Select(line =>
 {
 	Seat seat = new(0, 127, 0, 7);
 	foreach (var letter in line)
 	{
-		// Front = 0, Left = 0
 		seat = letter switch
 		{
 			'B' => seat with { rowMin = seat.rowMin + (seat.rowMax - seat.rowMin + 1) / 2 },
@@ -21,25 +15,12 @@ var seats = System.IO.File.ReadLines("input.txt").Select(line =>
 			_ => throw new NotSupportedException(),
 		};
 	}
-	return seat;
+	return seat.Id;
 }).ToList();
 
-Console.WriteLine(seats.Max(x => x.Id));
+Console.WriteLine(seats.Max());
 
-var grid = new bool[128, 8];
-foreach (var seat in seats)
-	grid[seat.rowMax, seat.colMax] = true;
-
-var missing = new HashSet<int>();
-for (var i = 0; i < 128; i++)
-{
-	for (var j = 0; j < 8; j++)
-	{
-		if (!grid[i, j])
-			missing.Add(new Seat(i, i, j, j).Id);
-	}
-}
-
+var missing = Enumerable.Range(0, 127 * 8 + 7).Except(seats);
 foreach (var seat in missing)
 {
 	if (!missing.Contains(seat + 1) && !missing.Contains(seat - 1))
