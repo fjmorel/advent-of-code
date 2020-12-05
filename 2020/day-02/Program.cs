@@ -1,43 +1,28 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 
+var lines = System.IO.File.ReadLines("input.txt");
+var oldValid = 0;
+var reallyValid = 0;
 
-var lines = File.ReadAllLines("input.txt");
-var entries = lines.Select(x =>
+foreach (var line in lines)
 {
-	var pieces = x.Split(' ');
+	var pieces = line.Split(' ');
 	var nums = pieces[0].Split('-');
-	return new Password(int.Parse(nums[0]), int.Parse(nums[1]), pieces[1][0], pieces[2]);
-});
+	var a = int.Parse(nums[0]);
+	var b = int.Parse(nums[1]);
+	var letter = pieces[1][0];
+	var password = pieces[2];
 
-#region Part 1
+	var count = password.Count(x => x == letter);
+	if (count <= b && count >= a)
+		oldValid++;
 
-var validCount = 0;
-foreach (var entry in entries)
-{
-	var count = entry.password.Where(x => x == entry.letter).Count();
-	if (count <= entry.second && count >= entry.first)
-		validCount++;
+	var first = password[a - 1];
+	var second = password[b - 1];
+	if (first != second && (first == letter || second == letter))
+		reallyValid++;
 }
 
-Console.WriteLine(validCount);
-
-#endregion
-
-#region Part 2
-
-var validCount2 = 0;
-foreach (var entry in entries)
-{
-	var first = entry.password.Skip(entry.first - 1).FirstOrDefault();
-	var second = entry.password.Skip(entry.second - 1).FirstOrDefault();
-	if (first != second && (first == entry.letter || second == entry.letter))
-		validCount2++;
-}
-
-Console.WriteLine(validCount2);
-
-#endregion
-
-record Password(int first, int second, char letter, string password);
+Console.WriteLine(oldValid);
+Console.WriteLine(reallyValid);
