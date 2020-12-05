@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
-var lines = File.ReadAllLines("input.txt");
+var lines = System.IO.File.ReadAllLines("input.txt");
 var nums = lines.Select(x => new int[] { int.Parse(x) }).ToList();
 
 Console.WriteLine(FindProduct(2));
