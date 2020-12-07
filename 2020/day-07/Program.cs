@@ -1,48 +1,37 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-ConcurrentDictionary<string, Bag> rules = new();
+Dictionary<string, Dictionary<string, int>> rules = new();
 var data = System.IO.File.ReadAllLines("input.txt").Select(x => x.Split(" bags contain "));
-Parallel.ForEach(data, pieces =>
-{
-	rules[pieces[0]] = new Bag(pieces[0], ParseContents(pieces[1]));
-});
+foreach (var pieces in data)
+	rules[pieces[0]] = ParseContents(pieces[1]);
 
 Console.WriteLine(FindColorsContainingColor("shiny gold", new()).Count());
-Console.WriteLine(CountContents("shiny gold", true));
+Console.WriteLine(CountContents("shiny gold") - 1);
 
 HashSet<string> FindColorsContainingColor(string color, HashSet<string> matches)
 {
-	foreach (var result in rules.Where(x => x.Value.contents.Any(x => x.color == color)).Select(x => x.Key).Except(matches))
-	{
-		matches.Add(result);
-		matches = FindColorsContainingColor(result, matches);
-	}
+	var newMatches = rules.Where(x => x.Value.Any(x => x.Key == color)).Select(x => x.Key).Except(matches).ToHashSet();
+	matches.UnionWith(newMatches);
+	foreach (var match in newMatches)
+		FindColorsContainingColor(match, matches);
+
 	return matches;
 }
 
-int CountContents(string color, bool initial)
-{
-	return (initial ? 0 : 1) + rules[color].contents.Sum(sub => sub.count * CountContents(sub.color, false));
-}
+int CountContents(string color) => 1 + rules[color].Sum(sub => sub.Value * CountContents(sub.Key));
 
-List<Content> ParseContents(string contents)
+Dictionary<string, int> ParseContents(string rule)
 {
-	var list = new List<Content>();
-	if (contents != "no other bags.")
+	Dictionary<string, int> contents = new();
+	if (rule != "no other bags.")
 	{
-		foreach (var piece in contents.Split(", "))
+		foreach (var piece in rule.Split(", "))
 		{
-			var num = int.Parse(piece.Substring(0, piece.IndexOf(' ')));
 			var color = piece.Replace(" bags", "").Replace(" bag", "").Replace(".", "").Substring(piece.IndexOf(' ') + 1);
-			list.Add(new Content(color, num));
+			contents[color] = int.Parse(piece.Substring(0, piece.IndexOf(' ')));
 		}
 	}
-	return list;
+	return contents;
 }
-
-record Bag(string color, List<Content> contents);
-record Content(string color, int count);
