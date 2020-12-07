@@ -1,68 +1,48 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-Dictionary<string, BagColor> rules = new();
-
-var data = System.IO.File.ReadAllLines("input.txt").Select(x => x.Split(" contain "));
-foreach (var group in data)
+ConcurrentDictionary<string, Bag> rules = new();
+var data = System.IO.File.ReadAllLines("input.txt").Select(x => x.Split(" bags contain "));
+Parallel.ForEach(data, pieces =>
 {
-	var primary = group[0].Substring(0, group[0].IndexOf(" bags"));
-	Console.WriteLine(primary);
-	var contents = group[1] switch
-	{
-		"no other bags." => new List<BagColor>(),
-		string s => ParseContents(s),
-	};
-	rules[primary] = new BagColor(primary, 0, contents);
-	Console.WriteLine(rules[primary]);
-}
+	rules[pieces[0]] = new Bag(pieces[0], ParseContents(pieces[1]));
+});
 
-var searched = new HashSet<string>();
-var matches = new HashSet<string>();
+Console.WriteLine(FindColorsContainingColor("shiny gold", new()).Count());
+Console.WriteLine(CountContents("shiny gold", true));
 
-FindColorsContainingColor("shiny gold");
-Console.WriteLine(matches.Count());
-Console.WriteLine(CalculateContents("shiny gold") - 1);
-
-void FindColorsContainingColor(string color)
+HashSet<string> FindColorsContainingColor(string color, HashSet<string> matches)
 {
-	foreach (var result in rules.Where(x => x.Value.contents.Any(x => x.color == color)).Select(x => x.Key))
+	foreach (var result in rules.Where(x => x.Value.contents.Any(x => x.color == color)).Select(x => x.Key).Except(matches))
 	{
 		matches.Add(result);
-		if (!searched.Contains(result))
+		matches = FindColorsContainingColor(result, matches);
+	}
+	return matches;
+}
+
+int CountContents(string color, bool initial)
+{
+	return (initial ? 0 : 1) + rules[color].contents.Sum(sub => sub.count * CountContents(sub.color, false));
+}
+
+List<Content> ParseContents(string contents)
+{
+	var list = new List<Content>();
+	if (contents != "no other bags.")
+	{
+		foreach (var piece in contents.Split(", "))
 		{
-			FindColorsContainingColor(result);
+			var num = int.Parse(piece.Substring(0, piece.IndexOf(' ')));
+			var color = piece.Replace(" bags", "").Replace(" bag", "").Replace(".", "").Substring(piece.IndexOf(' ') + 1);
+			list.Add(new Content(color, num));
 		}
 	}
-}
-
-int CalculateContents(string color)
-{
-	var rule = rules[color];
-	var sum = 1;
-	foreach (var sub in rule.contents)
-	{
-		sum += sub.count * CalculateContents(sub.color);
-	}
-	return sum;
-}
-
-List<BagColor> ParseContents(string contents)
-{
-	var list = new List<BagColor>();
-	var pieces = contents.Split(", ");
-	foreach (var bag in pieces)
-	{
-		var color = bag.Replace(" bags", "").Replace(" bag", "").Replace(".", "");
-		var num = int.Parse(color.Substring(0, color.IndexOf(' ')));
-		color = color.Substring(color.IndexOf(' ') + 1);
-		var subrule = new BagColor(color, num, new List<BagColor>());
-		Console.WriteLine(subrule);
-		list.Add(subrule);
-	}
-
 	return list;
 }
 
-record BagColor(string color, int count, List<BagColor> contents);
+record Bag(string color, List<Content> contents);
+record Content(string color, int count);
