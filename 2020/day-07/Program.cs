@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-#nullable enable
-
-var part1 = 0;
-var part2 = 0;
-
 Dictionary<string, BagColor> rules = new();
 
 var data = System.IO.File.ReadAllLines("input.txt").Select(x => x.Split(" contain "));
@@ -28,7 +23,7 @@ var matches = new HashSet<string>();
 
 FindColorsContainingColor("shiny gold");
 Console.WriteLine(matches.Count());
-Console.WriteLine(part2);
+Console.WriteLine(CalculateContents("shiny gold") - 1);
 
 void FindColorsContainingColor(string color)
 {
@@ -40,6 +35,17 @@ void FindColorsContainingColor(string color)
 			FindColorsContainingColor(result);
 		}
 	}
+}
+
+int CalculateContents(string color)
+{
+	var rule = rules[color];
+	var sum = 1;
+	foreach (var sub in rule.contents)
+	{
+		sum += sub.count * CalculateContents(sub.color);
+	}
+	return sum;
 }
 
 List<BagColor> ParseContents(string contents)
