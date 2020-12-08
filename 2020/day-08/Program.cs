@@ -1,70 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Action;
 
 var instructions = System.IO.File.ReadAllLines("input.txt")
 	.Select(x => x.Split(' '))
-	.Select(x => new Instruction(x[0], int.Parse(x[1])))
+	.Select(x => new Instruction(Enum.Parse<Action>(x[0]), int.Parse(x[1])))
 	.ToList();
 
-var toTrySwitch = new Queue<int>(instructions.Select((rule, i) => (rule, i)).Where(x => x.rule.act == "nop" || x.rule.act == "jmp").Select(x => x.i));
+Console.WriteLine(Run().sum);
 
-var ran = new HashSet<int>();
-var accumulator = 0;
-var index = 0;
-
-Run(true);
-Console.WriteLine(accumulator);
-
-while (toTrySwitch.Any())
+var indexesToSwitch = new Queue<int>(instructions.Select((rule, i) => (rule, i)).Where(x => x.rule.act == nop || x.rule.act == jmp).Select(x => x.i));
+while (indexesToSwitch.Any())
 {
-	var toSwitch = toTrySwitch.Dequeue();
-	accumulator = 0;
-	index = 0;
-	ran.Clear();
+	var toSwitch = indexesToSwitch.Dequeue();
 	SwitchInstruction(toSwitch);
-	var result = Run(false);
-	if (result)
+	var (finished, sum) = Run();
+	if (finished)
 	{
-		Console.WriteLine(accumulator);
-		return;
+		Console.WriteLine(sum);
+		break;
 	}
-	else
-	{
-		Console.WriteLine($"Resetting {toSwitch}");
-		SwitchInstruction(toSwitch);
-	}
+	SwitchInstruction(toSwitch);
 }
 
-bool Run(bool breakOnRepeat)
+(bool finished, int sum) Run()
 {
+	var ran = new HashSet<int>();
+	var sum = 0;
+	var index = 0;
 	while (index < instructions.Count)
 	{
 		if (ran.Contains(index))
-			return false;
+			return (false, sum);
 
-		var value = instructions[index].value;
-		Func<int> action = instructions[index].act switch
+		var (jump, add) = instructions[index].act switch
 		{
-			"acc" => () =>
-			{
-				accumulator += value;
-				return 1;
-			}
-			,
-			"jmp" => () => value,
-			"nop" => () => 1,
+			acc => (1, instructions[index].value),
+			jmp => (instructions[index].value, 0),
+			nop => (1, 0),
 			_ => throw new NotImplementedException(),
 		};
 		ran.Add(index);
-		index += action();
+		index += jump;
+		sum += add;
 	}
-	return true;
+	return (true, sum);
 }
 
 void SwitchInstruction(int i)
 {
-	instructions[i] = instructions[i] with { act = instructions[i].act == "nop" ? "jmp" : "nop" };
+	instructions[i] = instructions[i] with { act = instructions[i].act == nop ? jmp : nop };
 }
 
-record Instruction(string act, int value);
+record Instruction(Action act, int value);
+
+enum Action
+{
+	nop,
+	jmp,
+	acc,
+}
