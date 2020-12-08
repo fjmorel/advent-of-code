@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
-Dictionary<string, Dictionary<string, int>> rules = new();
-var data = System.IO.File.ReadAllLines("input.txt").Select(x => x.Split(" bags contain "));
-foreach (var pieces in data)
-	rules[pieces[0]] = ParseContents(pieces[1]);
+var rules = System.IO.File.ReadAllLines("input.txt").Select(ParseLine).ToDictionary(x => x.color, x => x.contents);
 
 Console.WriteLine(FindColorsContainingColor("shiny gold", new()).Count());
 Console.WriteLine(CountContents("shiny gold") - 1);
@@ -21,6 +19,13 @@ HashSet<string> FindColorsContainingColor(string color, HashSet<string> matches)
 }
 
 int CountContents(string color) => 1 + rules[color].Sum(sub => sub.Value * CountContents(sub.Key));
+
+(string color, Dictionary<string, int> contents) ParseLine(string line){
+	var match = new Regex(@"(\w+ \w+) bags contain (.+)").Match(line);
+	var color = match.Groups[1].Value;
+	var contents = ParseContents(match.Groups[2].Value);
+	return (color, contents);
+}
 
 Dictionary<string, int> ParseContents(string rule)
 {
