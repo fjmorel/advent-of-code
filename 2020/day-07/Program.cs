@@ -20,23 +20,22 @@ HashSet<string> FindColorsContainingColor(string color, HashSet<string> matches)
 
 int CountContents(string color) => 1 + rules[color].Sum(sub => sub.Value * CountContents(sub.Key));
 
-(string color, Dictionary<string, int> contents) ParseLine(string line){
-	var match = new Regex(@"(\w+ \w+) bags contain (.+)").Match(line);
-	var color = match.Groups[1].Value;
-	var contents = ParseContents(match.Groups[2].Value);
-	return (color, contents);
-}
-
-Dictionary<string, int> ParseContents(string rule)
+(string color, Dictionary<string, int> contents) ParseLine(string line)
 {
-	Dictionary<string, int> contents = new();
-	if (rule != "no other bags.")
+	var firstMatch = Regex.Match(line, @"(\w+ \w+) bags contain (.+)");
+	var color = firstMatch.Groups[1].Value;
+
+	var contents = firstMatch.Groups[2].Value;
+	var extract = Regex.Matches(contents, @"(?<none>no other bags)|((?<num>[0-9]+) (?<color>\w+ \w+)) bag");
+	var rules = new Dictionary<string, int>();
+	if (!extract.Any(x => x.Groups["none"].Success))
 	{
-		foreach (var piece in rule.Split(", "))
+		foreach (Match match in extract)
 		{
-			var color = piece.Replace(" bags", "").Replace(" bag", "").Replace(".", "").Substring(piece.IndexOf(' ') + 1);
-			contents[color] = int.Parse(piece.Substring(0, piece.IndexOf(' ')));
+			var color2 = match.Groups["color"].Value;
+			var num = match.Groups["num"].Value;
+			rules[color2] = int.Parse(num);
 		}
 	}
-	return contents;
+	return (color, rules);
 }
