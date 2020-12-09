@@ -22,20 +22,11 @@ int CountContents(string color) => 1 + rules[color].Sum(sub => sub.Value * Count
 
 (string color, Dictionary<string, int> contents) ParseLine(string line)
 {
-	var firstMatch = Regex.Match(line, @"(\w+ \w+) bags contain (.+)");
-	var color = firstMatch.Groups[1].Value;
+	var main = Regex.Match(line, @"(?<main>\w+ \w+) bags contain (?<contents>.+)");
+	var primary = main.Groups["main"].Value;
 
-	var contents = firstMatch.Groups[2].Value;
-	var extract = Regex.Matches(contents, @"(?<none>no other bags)|((?<num>[0-9]+) (?<color>\w+ \w+)) bag");
-	var rules = new Dictionary<string, int>();
-	if (!extract.Any(x => x.Groups["none"].Success))
-	{
-		foreach (Match match in extract)
-		{
-			var color2 = match.Groups["color"].Value;
-			var num = match.Groups["num"].Value;
-			rules[color2] = int.Parse(num);
-		}
-	}
-	return (color, rules);
+	var contents = Regex.Matches(main.Groups["contents"].Value, @"(?<num>[0-9]+) (?<color>\w+ \w+)");
+	var nums = contents.Select(x => int.Parse(x.Groups["num"].Value));
+	var colors = contents.Select(x => x.Groups["color"].Value);
+	return (primary, colors.Zip(nums).ToDictionary(x => x.First, x => x.Second));
 }
