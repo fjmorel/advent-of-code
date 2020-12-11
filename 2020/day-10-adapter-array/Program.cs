@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using static System.Console;
 
 var nums = System.IO.File.ReadLines("input.txt").Select(x => int.Parse(x)).OrderBy(x => x).ToArray();
-var device = nums.Max() + 3;
+var device = nums.Last() + 3;
 
 WriteLine(Part1(nums, device));
+WriteLine(GetCombinationTotal(nums));
 
-var groups = GroupBy3(nums);
+static long GetCombinationTotal(IEnumerable<int> nums) => GroupBy3(nums)
+		.Select(GetValidCombosForGroup)
+		.Aggregate((long)1, (acc, value) => acc * value);
 
-var countPerGroup = new List<int>();
-foreach (var group in groups)
+static int GetValidCombosForGroup(List<int> group)
 {
-	WriteLine(string.Join(',', group.Select(x => x.ToString())));
 	var max = group.Last();
 	var min = group.First();
 	var middle = group.Skip(1).SkipLast(1).ToArray();
@@ -24,19 +23,10 @@ foreach (var group in groups)
 		var checks = middle.Select(x => false).ToArray();
 		CheckCombos(ref middle, select, 0, 0, ref checks, min, max, ref numValid);
 	}
-	WriteLine(numValid);
-	countPerGroup.Add(numValid);
+	return numValid;
 }
 
-var total = countPerGroup.Aggregate((long)1, (acc, value) => acc * value);
-// foreach (var set in combs)
-// {
-// 	if (IsValid(set, device))
-// 		numValid++;
-// }
-WriteLine(total);
-
-void CheckCombos(ref int[] list, int request, int s, int currLen, ref bool[] check, int min, int max, ref int numValid)
+static void CheckCombos(ref int[] list, int request, int s, int currLen, ref bool[] check, int min, int max, ref int numValid)
 {
 	if (currLen > request)
 		return;
@@ -82,22 +72,22 @@ static int Part1(IEnumerable<int> items, int device)
 	return dict[1] * dict[3];
 }
 
-static List<List<int>> GroupBy3(IList<int> list)
+static List<List<int>> GroupBy3(IEnumerable<int> items)
 {
-	var items = list.Prepend(0).ToArray();
-	var all = new List<List<int>>();
+	var list = items.Prepend(0).ToList();// Make sure to include 0 in first group
+	var groups = new List<List<int>>();
 
-	var cur = new List<int>() { items.First() };
-	for (var i = 1; i < items.Count(); i++)
+	var cur = new List<int>() { list.First() };
+	for (var i = 1; i < list.Count(); i++)
 	{
-		if (items[i] - items[i - 1] == 3)
+		if (list[i] - list[i - 1] == 3)
 		{
-			all.Add(cur);
+			groups.Add(cur);
 			cur = new List<int>();
 		}
-		cur.Add(items[i]);
+		cur.Add(list[i]);
 	}
-	all.Add(cur);
+	groups.Add(cur);
 
-	return all;
+	return groups;
 }
