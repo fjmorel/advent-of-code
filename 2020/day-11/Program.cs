@@ -5,28 +5,33 @@ using static System.Console;
 
 var prev = System.IO.File.ReadLines("input.txt").Select(x => x.Select(ParseChar).ToArray()).ToArray();
 var size = new Seat(prev.Length, prev[0].Length);
-var cur = Iterate(prev, size);
-while (!Equal(prev, cur))
+
+WriteLine(FindSteadyState(prev, size, 4, false));
+WriteLine(FindSteadyState(prev, size, 5, true));
+
+static int FindSteadyState(State[][] prev, Seat size, int threshold, bool lineOfSight)
 {
-	prev = cur;
-	cur = Iterate(prev, size);
+	var cur = Iterate(prev, size, threshold, lineOfSight);
+	while (!Equal(prev, cur))
+	{
+		prev = cur;
+		cur = Iterate(prev, size, threshold, lineOfSight);
+	}
+	return cur.SelectMany(x => x.Where(y => y == State.Filled)).Count();
 }
 
-WriteLine(cur.SelectMany(x => x.Where(y => y == State.Filled)).Count());
-
-static State[][] Iterate(State[][] prev, Seat size)
+static State[][] Iterate(State[][] prev, Seat size, int threshold, bool lineOfSight)
 {
 	var cur = CloneArray(prev);
 	for (var i = 0; i < size.i; i++)
 	{
 		for (var j = 0; j < size.j; j++)
 		{
-			var value = prev[i][j];
-			cur[i][j] = value switch
+			cur[i][j] = prev[i][j] switch
 			{
 				State.Floor => State.Floor,
-				State.Empty => MaybeFill(value, new Seat(i, j), size, prev),
-				State.Filled => MaybeClear(value, new Seat(i, j), size, prev),
+				State.Empty => MaybeFill(new Seat(i, j), size, prev, lineOfSight),
+				State.Filled => MaybeClear(new Seat(i, j), size, prev, threshold, lineOfSight),
 				_ => throw new NotSupportedException(),
 			};
 		}
@@ -35,24 +40,23 @@ static State[][] Iterate(State[][] prev, Seat size)
 	return cur;
 }
 
-static State MaybeClear(State value, Seat coord, Seat size, State[][] prev)
-	=> GetSurroundingPositions2(coord, size, prev)
+static State MaybeClear(Seat coord, Seat size, State[][] prev, int threshold, bool lineOfSight)
+	=> GetSurroundingPositions(coord, size, prev, lineOfSight)
 		.Where(adj => prev[adj.i][adj.j] == State.Filled)
-		//.Count() >= 4 ? State.Empty : value;// part 1
-		.Count() >= 5 ? State.Empty : value;// part 2
+		.Count() >= threshold ? State.Empty : State.Filled;
 
-static State MaybeFill(State value, Seat coord, Seat size, State[][] prev)
-	=> GetSurroundingPositions2(coord, size, prev)
+static State MaybeFill(Seat coord, Seat size, State[][] prev, bool lineOfSight)
+	=> GetSurroundingPositions(coord, size, prev, lineOfSight)
 		.Any(adj => prev[adj.i][adj.j] == State.Filled)
 		? State.Empty : State.Filled;
 
-static IEnumerable<Seat> GetSurroundingPositions1(Seat coord, Seat size)
-	=> GetIncrements()
-		.Select(x => coord + x)
-		.Where(x => x.IsWithin(size));
-
-static IEnumerable<Seat> GetSurroundingPositions2(Seat coord, Seat size, State[][] prev)
+static IEnumerable<Seat> GetSurroundingPositions(Seat coord, Seat size, State[][] prev, bool lineOfSight)
 {
+	if (!lineOfSight)
+		return GetIncrements()
+			.Select(x => coord + x)
+			.Where(x => x.IsWithin(size));
+
 	var seats = new List<Seat>();
 	foreach (var inc in GetIncrements())
 	{
