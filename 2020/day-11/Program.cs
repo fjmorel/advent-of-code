@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using static System.Console;
 
 var prev = System.IO.File.ReadLines("input.txt").Select(x => x.Select(ParseChar).ToArray()).ToArray();
-var size = new Point(prev.Length, prev[0].Length);
+var size = new Seat(prev.Length, prev[0].Length);
 var cur = Iterate(prev, size);
 while (!Equal(prev, cur))
 {
@@ -15,7 +14,7 @@ while (!Equal(prev, cur))
 
 WriteLine(cur.SelectMany(x => x.Where(y => y == State.Filled)).Count());
 
-static State[][] Iterate(State[][] prev, Point size)
+static State[][] Iterate(State[][] prev, Seat size)
 {
 	var cur = CloneArray(prev);
 	for (var i = 0; i < size.i; i++)
@@ -26,8 +25,8 @@ static State[][] Iterate(State[][] prev, Point size)
 			cur[i][j] = value switch
 			{
 				State.Floor => State.Floor,
-				State.Empty => MaybeFill(value, new Point(i, j), size, prev),
-				State.Filled => MaybeClear(value, new Point(i, j), size, prev),
+				State.Empty => MaybeFill(value, new Seat(i, j), size, prev),
+				State.Filled => MaybeClear(value, new Seat(i, j), size, prev),
 				_ => throw new NotSupportedException(),
 			};
 		}
@@ -36,33 +35,48 @@ static State[][] Iterate(State[][] prev, Point size)
 	return cur;
 }
 
-static State MaybeClear(State value, Point coord, Point size, State[][] prev)
-	=> GetSurroundingPositions(coord, size)
+static State MaybeClear(State value, Seat coord, Seat size, State[][] prev)
+	=> GetSurroundingPositions2(coord, size, prev)
 		.Where(adj => prev[adj.i][adj.j] == State.Filled)
-		.Count() >= 4 ? State.Empty : value;
+		//.Count() >= 4 ? State.Empty : value;// part 1
+		.Count() >= 5 ? State.Empty : value;// part 2
 
-static State MaybeFill(State value, Point coord, Point size, State[][] prev)
-	=> GetSurroundingPositions(coord, size)
+static State MaybeFill(State value, Seat coord, Seat size, State[][] prev)
+	=> GetSurroundingPositions2(coord, size, prev)
 		.Any(adj => prev[adj.i][adj.j] == State.Filled)
 		? State.Empty : State.Filled;
 
-static IEnumerable<Point> GetSurroundingPositions(Point coord, Point size)
+static IEnumerable<Seat> GetSurroundingPositions1(Seat coord, Seat size)
+	=> GetIncrements()
+		.Select(x => coord + x)
+		.Where(x => x.IsWithin(size));
+
+static IEnumerable<Seat> GetSurroundingPositions2(Seat coord, Seat size, State[][] prev)
 {
-	var points = new List<Point>()
+	var seats = new List<Seat>();
+	foreach (var inc in GetIncrements())
 	{
-		coord with { i = coord.i - 1, j = coord.j - 1 },
-		coord with { i = coord.i, j = coord.j - 1 },
-		coord with { i = coord.i + 1, j = coord.j - 1 },
+		var adj = coord + inc;
+		while (adj.IsWithin(size) && prev[adj.i][adj.j] == State.Floor)
+			adj = adj + inc;
 
-		coord with { i = coord.i + -1 },
-		coord with { i = coord.i + 1 },
-
-		coord with { i = coord.i - 1, j = coord.j + 1 },
-		coord with { i = coord.i, j = coord.j + 1 },
-		coord with { i = coord.i + 1, j = coord.j + 1 },
-	};
-	return points.Where(x => x.i >= 0 && x.i < size.i && x.j >= 0 && x.j < size.j);
+		if (adj.IsWithin(size))
+			seats.Add(adj);
+	}
+	return seats;
 }
+
+static List<Seat> GetIncrements() => new List<Seat>()
+{
+	new Seat(-1, -1),
+	new Seat(-1, 0),
+	new Seat(-1, 1),
+	new Seat(0, -1),
+	new Seat(0, 1),
+	new Seat(1, -1),
+	new Seat(1, 0),
+	new Seat(1, 1),
+};
 
 static bool Equal(State[][] prev, State[][] cur)
 {
@@ -96,4 +110,9 @@ enum State
 	Filled,
 }
 
-record Point(int i, int j);
+record Seat(int i, int j)
+{
+	public static Seat operator +(Seat a, Seat b) => new Seat(a.i + b.i, a.j + b.j);
+
+	public bool IsWithin(Seat size) => this.i >= 0 && this.i < size.i && this.j >= 0 && this.j < size.j;
+}
