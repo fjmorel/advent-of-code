@@ -11,38 +11,29 @@ WriteLine(FindSteadyState(read, size, 5, true));
 
 static int FindSteadyState(State[][] read, Position size, int threshold, bool lineOfSight)
 {
-	var write = Iterate(read, size, threshold, lineOfSight);
+	var positions = read.Select((x, i) => x.Select((y, j) => GetSurroundingPositions(new Position(i, j), size, read, lineOfSight)).ToArray()).ToArray();
+	var write = Iterate(read, size, threshold, positions);
 	while (!read.SelectMany(x => x).SequenceEqual(write.SelectMany(x => x)))
 	{
 		read = write;
-		write = Iterate(read, size, threshold, lineOfSight);
+		write = Iterate(read, size, threshold, positions);
 	}
 	return write.Sum(x => x.Count(y => y == State.Occupied));
 }
 
-static State[][] Iterate(State[][] read, Position size, int threshold, bool lineOfSight)
-	=> read.Select((row, i) => row.Select((State, j) => FindNewState(new Position(i, j), read, size, threshold, lineOfSight)).ToArray()).ToArray();
+static State[][] Iterate(State[][] read, Position size, int threshold, List<Position>[][] positions)
+	=> read.Select((row, i) => row.Select((State, j) => FindNewState(new Position(i, j), read, size, threshold, positions)).ToArray()).ToArray();
 
-static State FindNewState(Position seat, State[][] read, Position size, int threshold, bool lineOfSight)
+static State FindNewState(Position seat, State[][] read, Position size, int threshold, List<Position>[][] positions)
 	=> read[seat.i][seat.j] switch
 	{
 		State.Floor => State.Floor,
-		State.Empty => MaybeFill(seat, size, read, lineOfSight),
-		State.Occupied => MaybeClear(seat, size, read, threshold, lineOfSight),
+		State.Empty => positions[seat.i][seat.j].Any(adj => read[adj.i][adj.j] == State.Occupied) ? State.Empty : State.Occupied,
+		State.Occupied => positions[seat.i][seat.j].Where(adj => read[adj.i][adj.j] == State.Occupied).Count() >= threshold ? State.Empty : State.Occupied,
 		_ => throw new NotSupportedException(),
 	};
 
-static State MaybeClear(Position seat, Position size, State[][] read, int threshold, bool lineOfSight)
-	=> GetSurroundingPositions(seat, size, read, lineOfSight)
-		.Where(adj => read[adj.i][adj.j] == State.Occupied)
-		.Count() >= threshold ? State.Empty : State.Occupied;
-
-static State MaybeFill(Position seat, Position size, State[][] read, bool lineOfSight)
-	=> GetSurroundingPositions(seat, size, read, lineOfSight)
-		.Any(adj => read[adj.i][adj.j] == State.Occupied)
-		? State.Empty : State.Occupied;
-
-static IEnumerable<Position> GetSurroundingPositions(Position coord, Position size, State[][] prev, bool lineOfSight)
+static List<Position> GetSurroundingPositions(Position coord, Position size, State[][] prev, bool lineOfSight)
 {
 	IEnumerable<Position> seats = new List<Position>()
 	{
@@ -54,7 +45,7 @@ static IEnumerable<Position> GetSurroundingPositions(Position coord, Position si
 		seats = seats.Select(x => coord + x);
 	else
 		seats = seats.Select(inc => FindLineOfSight(coord, size, prev, inc));
-	return seats.Where(x => x.IsWithin(size));
+	return seats.Where(x => x.IsWithin(size)).ToList();
 }
 
 static Position FindLineOfSight(Position coord, Position size, State[][] prev, Position inc)
