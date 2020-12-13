@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using static System.Console;
 
 
@@ -15,15 +16,42 @@ foreach (var bus in buses)
 var kv = times.OrderBy(x => x.Value).First();
 WriteLine($"Bus {kv.Key}. Wait {kv.Value - earliest}. Solution: {kv.Key * (kv.Value - earliest)}");
 
-var found = false;
-var biggest = indexedBuses.OrderByDescending(x => x.id).First();
-var interval = biggest.id;
-var offset = biggest.i;
-for (long timestamp = interval - offset; !found; timestamp += interval)
+var desc = indexedBuses.OrderByDescending(x => x.id);
+var biggest = desc.First();
+// var interval = biggest.id;
+// var offset = biggest.i;
+// Parallel.ForEach(YieldTime(interval - offset, interval), (timestamp, state, index) =>
+// {
+// 	foreach (var x in desc)
+// 	{
+// 		if ((timestamp + x.i) % x.id != 0)
+// 			return;
+// 	}
+// 	WriteLine(timestamp);
+// 	state.Break();
+// });
+
+// IEnumerable<long> YieldTime(long start, long interval)
+// {
+// 	var value = start;
+// 	while (value > 0)
+// 	{
+// 		value += interval;
+// 		yield return value;
+// 	}
+// }
+
+long ts = biggest.id - biggest.i;
+long factor = 1;
+foreach (var x in desc)
 {
-	if (indexedBuses.All(x => (timestamp + x.i) % x.id == 0))
-	{
-		WriteLine(timestamp);
-		found = true;
-	}
+	long mod = x.id;
+	long value = mod - x.i;
+	if (value == mod)
+		value = 0;
+	while (ts % mod != value)
+		ts += factor;
+	factor *= mod;
+	WriteLine(ts);
 }
+WriteLine(ts);
