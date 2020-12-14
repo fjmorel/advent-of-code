@@ -59,9 +59,8 @@ long Part2(string[] read)
 		else
 		{
 			var baseAddress = long.Parse(pieces[0][4..^1]);
-			var val = long.Parse(pieces[1]);
 			foreach (var address in masks.Select(x => (baseAddress & x.andMask) | x.orMask))
-				memory[address] = val;
+				memory[address] = long.Parse(pieces[1]);
 		}
 	}
 
@@ -70,35 +69,30 @@ long Part2(string[] read)
 
 static List<(long andMask, long orMask)> GeneratePlainMasks(string baseMask)
 {
-	var floatingBits = baseMask.Select((ch, i) => (ch, i)).Where(x => x.ch == 'X').Select(x => x.i).ToArray();
-	var floatingCount = floatingBits.Count();
-	return Enumerable.Range(0, (int)Math.Pow(2, floatingCount)).Select(entryIndex =>
+	return Enumerable.Range(1, 1 << baseMask.Count(x => x == 'X')).Select(entryIndex =>
 	{
-		var newMask = baseMask.ToCharArray();
-		for (var i = 0; i < floatingCount; i++)
+		long andMask = 0, orMask = 0, currentBit = 1;
+		long xFactor = 1;
+		foreach (var bit in baseMask.Reverse())
 		{
-			var floatingBit = floatingBits[i];
-			var pow = (int)Math.Pow(2, i + 1);
-			var mod = entryIndex % pow;
-			newMask[floatingBit] = mod >= pow / 2 ? '1' : '2';
+			// If X, set based on current iteration of float
+			if (bit == 'X')
+			{
+				xFactor *= 2;
+				// half the time, set it to 1, half the time leave it as 0
+				if ((entryIndex - 1) % xFactor >= xFactor / 2)
+				{
+					orMask |= currentBit;
+				}
+			}
+			// If 1, set OR mask to 1 to make sure we put in 1
+			else if (bit == '1')
+				orMask |= currentBit;
+			// If 0, always set AND mask to keep original value
+			else if (bit == '0')
+				andMask |= currentBit;
+			currentBit <<= 1;
 		}
-		return AsMasks(newMask);
+		return (andMask, orMask);
 	}).ToList();
-}
-
-static (long andMask, long orMask) AsMasks(char[] mask)
-{
-	long andMask = 0, orMask = 0, currentBit = 1;
-	foreach (var bit in mask.Reverse())
-	{
-		// If 0, set AND mask to 1 in order to get the 0/1 from value
-		if (bit == '0')
-			andMask |= currentBit;
-		// If 1, set OR mask to 1 to make sure we put in 1
-		else if (bit == '1')
-			orMask |= currentBit;
-		// If 2, always set 0 (AND mask applied first covers this)
-		currentBit <<= 1;
-	}
-	return (andMask, orMask);
 }
