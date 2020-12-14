@@ -18,13 +18,12 @@ long Part1(string[] read)
 	var memory = new Dictionary<long, long>();
 	foreach (var line in read)
 	{
-		var pieces = line.Split(" = ");
-		if (pieces[0] == "mask")
+		if (line.StartsWith("mask", StringComparison.Ordinal))
 		{
 			orMask = 0;
 			andMask = 0;
 			var currentBit = 1L;
-			foreach (var bit in pieces[1].Reverse())
+			foreach (var bit in line[7..].Reverse())
 			{
 				// If X, set AND mask to 1 in order to get the 0/1 from value
 				if (bit == 'X')
@@ -38,6 +37,7 @@ long Part1(string[] read)
 		}
 		else
 		{
+			var pieces = line.Split(" = ");
 			memory[long.Parse(pieces[0][4..^1])] = (long.Parse(pieces[1]) & andMask) | orMask;
 		}
 	}
@@ -59,8 +59,9 @@ long Part2(string[] read)
 		else
 		{
 			var baseAddress = long.Parse(pieces[0][4..^1]);
+			var value = long.Parse(pieces[1]);
 			foreach (var address in masks.Select(x => (baseAddress & x.andMask) | x.orMask))
-				memory[address] = long.Parse(pieces[1]);
+				memory[address] = value;
 		}
 	}
 
