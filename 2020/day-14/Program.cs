@@ -35,14 +35,9 @@ long Part1(string[] read)
 				// If 0, always set 0 (AND mask applied first covers this)
 				currentBit <<= 1;
 			}
-			WriteLine($"AND: {ToBinary(andMask)}");
-			WriteLine($"OR:  {ToBinary(orMask)}");
 		}
 		else
 		{
-			var val = long.Parse(pieces[1]);
-			WriteLine($"VAL: {ToBinary(val)}");
-			WriteLine($"ADJ: {ToBinary((val & andMask) | orMask)}");
 			memory[long.Parse(pieces[0][4..^1])] = (long.Parse(pieces[1]) & andMask) | orMask;
 		}
 	}
@@ -52,7 +47,7 @@ long Part1(string[] read)
 
 long Part2(string[] read)
 {
-	var masks = new List<char[]>();
+	var masks = new List<(long andMask, long orMask)>();
 	var memory = new Dictionary<long, long>();
 	foreach (var line in read)
 	{
@@ -63,41 +58,47 @@ long Part2(string[] read)
 		}
 		else
 		{
-			var baseAddress = ToBinary(int.Parse(pieces[0][4..^1]));
-			foreach (var address in masks.Select(x => ApplyMaskToAddress(baseAddress, x)))
-				memory[address] = int.Parse(pieces[1]);
+			var baseAddress = long.Parse(pieces[0][4..^1]);
+			var val = long.Parse(pieces[1]);
+			foreach (var address in masks.Select(x => (baseAddress & x.andMask) | x.orMask))
+				memory[address] = val;
 		}
 	}
 
 	return memory.Sum(x => x.Value);
 }
 
-static long ApplyMaskToAddress(string baseAddress, char[] mask)
-	=> FromBinary(baseAddress.Zip(mask).Select(x => x.Second switch
-	{
-		'0' => x.First,
-		'1' => '1',
-		'2' => '0',
-		_ => throw new NotSupportedException(),
-	}).ToArray().AsSpan().ToString());
-
-static List<char[]> GeneratePlainMasks(string mask)
+static List<(long andMask, long orMask)> GeneratePlainMasks(string baseMask)
 {
-	var floating = mask.Select((ch, i) => (ch, i)).Where(x => x.ch == 'X').Select(x => x.i).ToArray();
-	var count = floating.Count();
-	return Enumerable.Range(0, (int)Math.Pow(2, count)).Select(entryIndex =>
+	var floatingBits = baseMask.Select((ch, i) => (ch, i)).Where(x => x.ch == 'X').Select(x => x.i).ToArray();
+	var floatingCount = floatingBits.Count();
+	return Enumerable.Range(0, (int)Math.Pow(2, floatingCount)).Select(entryIndex =>
 	{
-		var newMask = mask.ToCharArray();
-		for (var i = 0; i < count; i++)
+		var newMask = baseMask.ToCharArray();
+		for (var i = 0; i < floatingCount; i++)
 		{
-			var floatVal = floating[i];
+			var floatingBit = floatingBits[i];
 			var pow = (int)Math.Pow(2, i + 1);
 			var mod = entryIndex % pow;
-			newMask[floatVal] = mod >= pow / 2 ? '1' : '2';
+			newMask[floatingBit] = mod >= pow / 2 ? '1' : '2';
 		}
-		return newMask;
+		return AsMasks(newMask);
 	}).ToList();
 }
 
-static long FromBinary(string value) => Convert.ToInt64(value, 2);
-static string ToBinary(long value) => Convert.ToString(value, 2).PadLeft(36, '0');
+static (long andMask, long orMask) AsMasks(char[] mask)
+{
+	long andMask = 0, orMask = 0, currentBit = 1;
+	foreach (var bit in mask.Reverse())
+	{
+		// If 0, set AND mask to 1 in order to get the 0/1 from value
+		if (bit == '0')
+			andMask |= currentBit;
+		// If 1, set OR mask to 1 to make sure we put in 1
+		else if (bit == '1')
+			orMask |= currentBit;
+		// If 2, always set 0 (AND mask applied first covers this)
+		currentBit <<= 1;
+	}
+	return (andMask, orMask);
+}
