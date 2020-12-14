@@ -1,33 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using static System.Console;
 
 var read = System.IO.File.ReadAllLines("input.txt");
-
-WriteLine(Part1(read));
-WriteLine(Part2(read));
+var timer = Stopwatch.StartNew();
+WriteLine($"{Part1(read)} :: {timer.Elapsed}");
+timer.Restart();
+WriteLine($"{Part2(read)} :: {timer.Elapsed}");
+timer.Stop();
 
 long Part1(string[] read)
 {
-	var memory = new Dictionary<long, char[]>();
-	var mask = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+	long orMask = 0L, andMask = 0L;
+	var memory = new Dictionary<long, long>();
 	foreach (var line in read)
 	{
 		var pieces = line.Split(" = ");
 		if (pieces[0] == "mask")
 		{
-			mask = pieces[1];
+			orMask = 0;
+			andMask = 0;
+			var currentBit = 1L;
+			foreach (var bit in pieces[1].Reverse())
+			{
+				// If X, set AND mask to 1 in order to get the 0/1 from value
+				if (bit == 'X')
+					andMask |= currentBit;
+				// If 1, set OR mask to 1 to make sure we put in 1
+				else if (bit == '1')
+					orMask |= currentBit;
+				// If 0, always set 0 (AND mask applied first covers this)
+				currentBit <<= 1;
+			}
+			WriteLine($"AND: {ToBinary(andMask)}");
+			WriteLine($"OR:  {ToBinary(orMask)}");
 		}
 		else
 		{
-			var valueStr = ToBinary(int.Parse(pieces[1]));
-			memory[int.Parse(pieces[0][4..^1])] = valueStr.Zip(mask).Select(x => x.Second != 'X' ? x.Second : x.First).ToArray();
+			var val = long.Parse(pieces[1]);
+			WriteLine($"VAL: {ToBinary(val)}");
+			WriteLine($"ADJ: {ToBinary((val & andMask) | orMask)}");
+			memory[long.Parse(pieces[0][4..^1])] = (long.Parse(pieces[1]) & andMask) | orMask;
 		}
 	}
 
-	return memory.Sum(x => FromBinary(new string(x.Value)));
+	return memory.Sum(x => x.Value);
 }
 
 long Part2(string[] read)
