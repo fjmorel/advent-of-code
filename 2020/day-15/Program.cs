@@ -5,38 +5,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using static System.Console;
 
-var read = System.IO.File.ReadAllLines("input.txt")[0].Split(',').Select(x => int.Parse(x)).ToList();
+var list = System.IO.File
+	.ReadAllLines("input.txt")[0]
+	.Split(',')
+	.Select((x, i) => (num: int.Parse(x), i))
+	.ToList();
 
 var timer = Stopwatch.StartNew();
-
-var i = read.Count;
-//var limit = 2_020;
-var limit = 30_000_000;
-while (i < limit)
-{
-	var last = read.Last();
-	read.RemoveAt(read.Count - 1);
-	var pos = read.LastIndexOf(last);
-	read.Add(last);
-	if (pos > -1)
-		read.Add(read.Count - pos - 1);
-	else
-		read.Add(0);
-	i++;
-}
-// foreach (var num in read)
-// 	WriteLine(num);
-WriteLine($"{read.Last()} :: {timer.Elapsed}");
+WriteLine($"{FindNth(2020)} :: {timer.Elapsed}");
 timer.Restart();
-// WriteLine($"{Part2(read)} :: {timer.Elapsed}");
-// timer.Stop();
+WriteLine($"{FindNth(30_000_000)} :: {timer.Elapsed}");
+timer.Stop();
 
-// static long Part1(string[] read)
-// {
-// 	return 0;
-// }
+int FindNth(int limit)
+{
+	var dict = list.SkipLast(1).ToDictionary(x => x.num, x => x.i + 1);
 
-// static long Part2(string[] read)
-// {
-// 	return 0;
-// }
+	var i = list.Count() + 1;
+	var last = list.Last().num;
+	while (i <= limit)
+	{
+		var pos = dict.GetValueOrDefault(last, -1);
+		dict[last] = i - 1;
+		last = pos > -1 ? i - pos - 1 : 0;
+		i++;
+	}
+	return last;
+}
