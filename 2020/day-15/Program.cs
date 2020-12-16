@@ -20,15 +20,12 @@ timer.Stop();
 int FindNth(int limit)
 {
 	var dict = list.SkipLast(1).ToDictionary(x => x.num, x => x.i + 1);
-
-	var i = list.Count() + 1;
 	var last = list.Last().num;
-	while (i <= limit)
+	for (var i = list.Count(); i < limit; i++)
 	{
-		var pos = dict.GetValueOrDefault(last, -1);
-		dict[last] = i - 1;
-		last = pos > -1 ? i - pos - 1 : 0;
-		i++;
+		var pos = dict.GetValueOrDefault(last, i);
+		dict[last] = i;
+		last = i - pos;
 	}
 	return last;
 }
