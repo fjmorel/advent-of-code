@@ -1,14 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using static System.Console;
 
-var part1 = 0;
-var part2 = 0;
+var list = System.IO.File.ReadAllLines("input.txt");
 
-foreach (var line in System.IO.File.ReadLines("input.txt"))
+var timer = Stopwatch.StartNew();
+WriteLine($"{Part1()} :: {timer.Elapsed}");
+timer.Restart();
+WriteLine($"{Part2()} :: {timer.Elapsed}");
+timer.Stop();
+
+long Part1()
 {
+	return 0;
 }
 
-Console.WriteLine(part1);
-Console.WriteLine(part2);
+long Part2()
+{
+	return 0;
+}
