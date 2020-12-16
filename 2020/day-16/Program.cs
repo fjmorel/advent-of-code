@@ -16,21 +16,21 @@ while (!string.IsNullOrEmpty(list[i]))
 {
 	var pieces = list[i].Split(": ");
 	var nums = new HashSet<int>();
-	var ranges = pieces[1].Split(" or ").Select(x => x.Split('-').Select(y => int.Parse(y)).ToList());
+	var ranges = pieces[1].Split(" or ").Select(x => x.Split('-').Select(int.Parse).ToList());
 	foreach (var range in ranges)
 		nums.UnionWith(Enumerable.Range(range[0], range[1] - range[0] + 1));
 	rules.Add(new Rule(pieces[0], nums));
 	i++;
 }
-i += 2;
-var myTicket = list[i].Split(',').Select(x => int.Parse(x)).ToList();
+i += 2;// skip empty and "your ticket:"
+var myTicket = list[i].Split(',').Select(int.Parse).ToList();
 
 var invalid = new List<int>();
 var valid = new List<List<int>>();
-i += 3;
-for (; i < list.Length; i++)
+i += 3;// skip my ticket, empty, and "nearby tickets:"
+foreach (var line in list.Skip(i))
 {
-	var nums = list[i].Split(',').Select(x => int.Parse(x)).ToList();
+	var nums = line.Split(',').Select(int.Parse).ToList();
 	var isValid = true;
 	foreach (var num in nums)
 	{
@@ -48,50 +48,29 @@ for (; i < list.Length; i++)
 WriteLine($"{invalid.Sum()} :: {timer.Elapsed}");
 timer.Restart();
 
-
-var dict = new Dictionary<int, Rule>();
-var multipleRuleIndexes = new List<int>();
-
-for (var r = 0; r < rules.Count; r++)
+var fieldsByIndex = new Dictionary<int, string>();
+var unmatched = new List<Rule>(rules);
+while (unmatched.Any())
 {
-	FindMatchForRule(r);
+	var copy = new List<Rule>(unmatched);
+	unmatched.Clear();
+	foreach (var rule in copy)
+	{
+		var unknown = Enumerable.Range(0, valid[0].Count).Where(x => !fieldsByIndex.ContainsKey(x)).ToList();
+		var matches = unknown.Where(tIndex => valid.All(x => rule.allowed.Contains(x[tIndex]))).ToList();
+		if (matches.Count() == 1)
+			fieldsByIndex[matches[0]] = rule.name;
+		else
+			unmatched.Add(rule);
+	}
 }
 
-while (multipleRuleIndexes.Any())
-{
-	var copy = new List<int>(multipleRuleIndexes);
-	multipleRuleIndexes.Clear();
-	foreach (var r in copy)
-		FindMatchForRule(r);
-}
-
-if (multipleRuleIndexes.Any()) throw new Exception("multiple again");
-
-var part2 = dict
-	.Where(x => x.Value.name.StartsWith("departure "))
-	.Select(x => x.Key)
-	.Select(x => myTicket[x])
+var part2 = fieldsByIndex
+	.Where(x => x.Value.StartsWith("departure ", StringComparison.Ordinal))
+	.Select(x => myTicket[x.Key])
 	.Aggregate(1L, (acc, value) => acc * value);
 
 WriteLine($"{part2} :: {timer.Elapsed}");
 timer.Stop();
-
-void FindMatchForRule(int r)
-{
-	var rule = rules[r];
-	var matches = new List<int>();
-	for (var tIndex = 0; tIndex < valid[0].Count; tIndex++)
-	{
-		if (dict.ContainsKey(tIndex))
-			continue;
-		var isMatch = valid.All(x => rule.allowed.Contains(x[tIndex]));
-		if (isMatch)
-			matches.Add(tIndex);
-	}
-	if (matches.Count == 1)
-		dict[matches[0]] = rule;
-	else
-		multipleRuleIndexes.Add(r);
-}
 
 record Rule(string name, HashSet<int> allowed);
