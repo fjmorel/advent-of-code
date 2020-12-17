@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,7 +16,7 @@ timer.Stop();
 
 static long Part1(string[] list)
 {
-	var write = new Dictionary<Cube, bool>();
+	var write = new ConcurrentDictionary<Cube, bool>();
 	for (var i = 0; i < list.Length; i++)
 		for (var j = 0; j < list[i].Length; j++)
 			write[new Cube(i - 1, j - 1, 0)] = list[i][j] == '#';
@@ -23,11 +24,11 @@ static long Part1(string[] list)
 	for (var cycle = 1; cycle <= 6; cycle++)
 	{
 		var read = new Dictionary<Cube, bool>(write);
-		foreach (var point in read.SelectMany(x => x.Key.GetAdjacent(true)).ToHashSet())
+		Parallel.ForEach(read.SelectMany(x => x.Key.GetAdjacent(true)).ToHashSet(), point =>
 		{
 			var adjActive = point.GetAdjacent().Count(x => read.GetValueOrDefault(x, false));
 			write[point] = adjActive == 3 || (adjActive == 2 && read.GetValueOrDefault(point, false));
-		}
+		});
 	}
 
 	return write.Count(x => x.Value);
@@ -35,7 +36,7 @@ static long Part1(string[] list)
 
 static long Part2(string[] list)
 {
-	var write = new Dictionary<Hypercube, bool>();
+	var write = new ConcurrentDictionary<Hypercube, bool>();
 	for (var i = 0; i < list.Length; i++)
 		for (var j = 0; j < list[i].Length; j++)
 			write[new Hypercube(0, i - 1, j - 1, 0)] = list[i][j] == '#';
@@ -43,11 +44,11 @@ static long Part2(string[] list)
 	for (var cycle = 1; cycle <= 6; cycle++)
 	{
 		var read = new Dictionary<Hypercube, bool>(write);
-		foreach (var point in read.SelectMany(x => x.Key.GetAdjacent(true)).ToHashSet())
+		Parallel.ForEach(read.SelectMany(x => x.Key.GetAdjacent(true)).ToHashSet(), point =>
 		{
 			var adjActive = point.GetAdjacent().Count(x => read.GetValueOrDefault(x, false));
 			write[point] = adjActive == 3 || (adjActive == 2 && read.GetValueOrDefault(point, false));
-		}
+		});
 	}
 
 	return write.Count(x => x.Value);
