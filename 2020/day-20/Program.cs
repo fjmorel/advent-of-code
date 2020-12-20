@@ -8,7 +8,7 @@ using static System.Console;
 var list = System.IO.File.ReadAllLines("input.txt");
 
 var tiles = new List<Tile>();
-var adjacent = new Dictionary<int, List<AdjacentTile>>();
+var adjacent = new Dictionary<int, Dictionary<Side, int>>();
 for (var i = 0; i < list.Length; i += 12)
 	tiles.Add(new(int.Parse(list[i][5..^1]), list[(i + 1)..(i + 11)].Select(x => x.Select(x => x == '#').ToArray()).ToArray()));
 
@@ -30,12 +30,12 @@ long Part1()
 		var mainTile = queue.Dequeue();
 		var matches = tiles
 			.Where(x => x != mainTile)
-			.Select(tile => (tile, result: AreAdjacent(mainTile, tile)))
+			.Select(tile => (tile, result: mainTile.MatchWith(tile)))
 			.Where(x => x.result.side != Side.None)
 			.ToList();
 
 		// Store list of adjacent tiles
-		adjacent[mainTile.Id] = matches.Select(x => new AdjacentTile(x.tile.Id, x.result.side)).ToList();
+		adjacent[mainTile.Id] = matches.ToDictionary(x => x.result.side, x => x.tile.Id);
 		// Transform matches as needed only once, and then find their matches
 		foreach (var match in matches)
 		{
@@ -61,7 +61,6 @@ long Part1()
 long Part2()
 {
 	var sea = BuildSea();
-	var totalTrues = sea.Sum(x => x.Count(y => y));
 	var monster = new string[]
 	{
 		"                  # ",
@@ -69,77 +68,39 @@ long Part2()
 		" #  #  #  #  #  #   ",
 	};
 	var monsterPattern = monster
-		.SelectMany((line, i) => line.Select((ch, j) => (i, j, isNeeded: ch == '#')))
-		.Where(x => x.isNeeded)
-		.Select(a => new Coord(a.i, a.j))
+		.SelectMany((line, i) => line.Select((ch, j) => (i, j, ch)))
+		.Where(x => x.ch == '#')
+		.Select(a => (a.i, a.j))
 		.ToList();
-	var monsterTrues = monsterPattern.Count;
+	var monsterWidth = monsterPattern.Max(c => c.i);
+	var monsterHeight = monsterPattern.Max(c => c.j);
 
-	var uniqueTransformSets = new List<Transformation[]>()
+	var uniqueTransformSets = new Transformation[][]
 	{
 		new[]{ Transformation.None, },
-		// Top matches
 		new[]{ Transformation.FlipVertical },
-		new[]{ Transformation.RotateLeft },
-		new[]{ Transformation.RotateLeft, Transformation.FlipVertical },
-		new[]{ Transformation.FlipVertical, Transformation.FlipHorizontal },
 		new[]{ Transformation.FlipHorizontal },
-		new[]{ Transformation.RotateLeft, Transformation.FlipHorizontal },
-		new[]{ Transformation.RotateRight },
-		// Bottom matches
-		new[]{ Transformation.FlipVertical },
-		new[]{ Transformation.RotateRight, Transformation.FlipHorizontal },
-		new[]{ Transformation.RotateLeft },
-		new[]{ Transformation.FlipHorizontal },
-		new[]{ Transformation.FlipVertical, Transformation.FlipHorizontal },
-		new[]{ Transformation.RotateRight },
-		new[]{ Transformation.RotateLeft, Transformation.FlipHorizontal },
-		// Left matches
-		new[]{ Transformation.RotateRight },
-		new[]{ Transformation.RotateLeft, Transformation.FlipVertical },
-		new[]{ Transformation.FlipHorizontal },
-		new[]{ Transformation.RotateRight, Transformation.FlipVertical },
-		new[]{ Transformation.RotateLeft },
-		new[]{ Transformation.FlipHorizontal, Transformation.FlipVertical },
-		new[]{ Transformation.FlipVertical },
-		// Right matches
-		new[]{ Transformation.RotateLeft, Transformation.FlipVertical },
-		new[]{ Transformation.RotateRight },
-		new[]{ Transformation.FlipHorizontal },
-		new[]{ Transformation.RotateLeft },
-		new[]{ Transformation.RotateRight, Transformation.FlipVertical },
-		new[]{ Transformation.FlipVertical },
-		new[]{ Transformation.FlipHorizontal, Transformation.FlipVertical },
+		new[]{ Transformation.FlipVertical, Transformation.FlipHorizontal },// = 2 RotateLeft or 2 RotateRight
+		new[]{ Transformation.RotateLeft },// = RotateRight + FlipHorizontal + FlipVertical
+		new[]{ Transformation.RotateLeft, Transformation.FlipVertical },// = RotateRight + FlipHorizontal
+		new[]{ Transformation.RotateLeft, Transformation.FlipHorizontal },// = RotateRight + FlipVertical
+		new[]{ Transformation.RotateLeft, Transformation.FlipHorizontal, Transformation.FlipVertical },// = RotateRight
 	};
 
 	foreach (var transforms in uniqueTransformSets)
 	{
 		var adjSea = ApplyTransforms(sea, transforms);
-		var numMonsters = FindMonsters(adjSea, monsterPattern);
+		var numMonsters = 0;
+		for (var i = 0; i < adjSea[0].Length - monsterWidth; i++)
+			for (var j = 0; j < adjSea.Length - monsterHeight; j++)
+				if (monsterPattern.All(c => adjSea[i + c.i][j + c.j]))
+					numMonsters++;
+
 		if (numMonsters > 0)
-			return totalTrues - numMonsters * monsterTrues;
+			return sea.Sum(x => x.Count(y => y)) - numMonsters * monsterPattern.Count;
 	}
 	return 0;
 }
-
-long FindMonsters(bool[][] sea, List<Coord> monsterPattern)
-{
-	var num = 0;
-	var monsterWidth = monsterPattern.Max(c => c.X);
-	var monsterHeight = monsterPattern.Max(c => c.Y);
-	var seaSize = sea.Length;
-	for (var x = 0; x < sea[0].Length - monsterWidth; x++)
-	{
-		for (var y = 0; y < sea.Length - monsterHeight; y++)
-		{
-			var match = monsterPattern.All(c => sea[x + c.X][y + c.Y]);
-			if (match)
-				num++;
-		}
-	}
-	return num;
-}
-
 
 bool[][] BuildSea()
 {
@@ -147,7 +108,7 @@ bool[][] BuildSea()
 	var tileGrid = Enumerable.Range(0, tileGridSize).Select(x => new int[tileGridSize]).ToArray();
 
 	var corners = adjacent.Where(x => x.Value.Count == 2).ToList();
-	var origin = corners.Single(x => x.Value.All(y => y.side == Side.Right || y.side == Side.Bottom));
+	var origin = corners.Single(x => x.Value.ContainsKey(Side.Right) && x.Value.ContainsKey(Side.Bottom));
 	tileGrid[0][0] = origin.Key;
 	for (var i = 0; i < tileGridSize; i++)
 	{
@@ -155,14 +116,14 @@ bool[][] BuildSea()
 		{
 			if (i == 0 && j == 0)
 				continue;
-			if (i == 0)
-				tileGrid[i][j] = adjacent[tileGrid[i][j - 1]].Single(x => x.side == Side.Right).Id;
-			else
-				tileGrid[i][j] = adjacent[tileGrid[i - 1][j]].Single(x => x.side == Side.Bottom).Id;
+			if (i == 0)// in first row, use previous column
+				tileGrid[i][j] = adjacent[tileGrid[i][j - 1]][Side.Right];
+			else// otherwise go ahead and use previous row
+				tileGrid[i][j] = adjacent[tileGrid[i - 1][j]][Side.Bottom];
 		}
 	}
 
-	var dict = tiles.ToDictionary(x => x.Id, x => x.contents.Skip(1).SkipLast(1).Select(x => x.Skip(1).SkipLast(1).ToArray()).ToArray());
+	var dict = tiles.ToDictionary(x => x.Id, x => x.contents[1..^1].Select(x => x[1..^1].ToArray()).ToArray());
 	var sea = new List<bool[]>();
 
 	for (var i = 0; i < tileGrid.Length; i++)
@@ -177,112 +138,110 @@ bool[][] BuildSea()
 	return sea.ToArray();
 }
 
-Match AreAdjacent(Tile first, Tile second)
-{
-	if (first.Top.SequenceEqual(second.Top))
-		return new(Side.Top, Transformation.FlipVertical);
-	if (first.Top.SequenceEqual(second.Bottom))
-		return new(Side.Top);
-	if (first.Top.SequenceEqual(second.Left))
-		return new(Side.Top, Transformation.RotateLeft);
-	if (first.Top.SequenceEqual(second.Right))
-		return new(Side.Top, Transformation.RotateLeft, Transformation.FlipVertical);
-	if (first.Top.SequenceEqual(second.ReverseTop))
-		return new(Side.Top, Transformation.FlipVertical, Transformation.FlipHorizontal);
-	if (first.Top.SequenceEqual(second.ReverseBottom))
-		return new(Side.Top, Transformation.FlipHorizontal);
-	if (first.Top.SequenceEqual(second.ReverseLeft))
-		return new(Side.Top, Transformation.RotateLeft, Transformation.FlipHorizontal);
-	if (first.Top.SequenceEqual(second.ReverseRight))
-		return new(Side.Top, Transformation.RotateRight);
-
-	if (first.Bottom.SequenceEqual(second.Top))
-		return new(Side.Bottom);
-	if (first.Bottom.SequenceEqual(second.Bottom))
-		return new(Side.Bottom, Transformation.FlipVertical);
-	if (first.Bottom.SequenceEqual(second.Left))
-		return new(Side.Bottom, Transformation.RotateRight, Transformation.FlipHorizontal);
-	if (first.Bottom.SequenceEqual(second.Right))
-		return new(Side.Bottom, Transformation.RotateLeft);
-	if (first.Bottom.SequenceEqual(second.ReverseTop))
-		return new(Side.Bottom, Transformation.FlipHorizontal);
-	if (first.Bottom.SequenceEqual(second.ReverseBottom))
-		return new(Side.Bottom, Transformation.FlipVertical, Transformation.FlipHorizontal);
-	if (first.Bottom.SequenceEqual(second.ReverseLeft))
-		return new(Side.Bottom, Transformation.RotateRight);
-	if (first.Bottom.SequenceEqual(second.ReverseRight))
-		return new(Side.Bottom, Transformation.RotateLeft, Transformation.FlipHorizontal);
-
-	if (first.Left.SequenceEqual(second.Top))
-		return new(Side.Left, Transformation.RotateRight);
-	if (first.Left.SequenceEqual(second.Bottom))
-		return new(Side.Left, Transformation.RotateLeft, Transformation.FlipVertical);
-	if (first.Left.SequenceEqual(second.Left))
-		return new(Side.Left, Transformation.FlipHorizontal);
-	if (first.Left.SequenceEqual(second.Right))
-		return new(Side.Left);
-	if (first.Left.SequenceEqual(second.ReverseTop))
-		return new(Side.Left, Transformation.RotateRight, Transformation.FlipVertical);
-	if (first.Left.SequenceEqual(second.ReverseBottom))
-		return new(Side.Left, Transformation.RotateLeft);
-	if (first.Left.SequenceEqual(second.ReverseLeft))
-		return new(Side.Left, Transformation.FlipHorizontal, Transformation.FlipVertical);
-	if (first.Left.SequenceEqual(second.ReverseRight))
-		return new(Side.Left, Transformation.FlipVertical);
-
-	if (first.Right.SequenceEqual(second.Top))
-		return new(Side.Right, Transformation.RotateLeft, Transformation.FlipVertical);
-	if (first.Right.SequenceEqual(second.Bottom))
-		return new(Side.Right, Transformation.RotateRight);
-	if (first.Right.SequenceEqual(second.Left))
-		return new(Side.Right);
-	if (first.Right.SequenceEqual(second.Right))
-		return new(Side.Right, Transformation.FlipHorizontal);
-	if (first.Right.SequenceEqual(second.ReverseTop))
-		return new(Side.Right, Transformation.RotateLeft);
-	if (first.Right.SequenceEqual(second.ReverseBottom))
-		return new(Side.Right, Transformation.RotateRight, Transformation.FlipVertical);
-	if (first.Right.SequenceEqual(second.ReverseLeft))
-		return new(Side.Right, Transformation.FlipVertical);
-	if (first.Right.SequenceEqual(second.ReverseRight))
-		return new(Side.Right, Transformation.FlipHorizontal, Transformation.FlipVertical);
-
-	return new(Side.None);
-}
-
 T[][] ApplyTransforms<T>(T[][] original, params Transformation[] transformations)
 {
 	var adj = original;
 	foreach (var transform in transformations)
-	{
-		adj = (transform switch
-		{
-			Transformation.None => adj,
-			Transformation.FlipVertical => adj.Reverse(),
-			Transformation.FlipHorizontal => adj.Select(x => x.Reverse().ToArray()),
-			Transformation.RotateLeft => adj.Select((x, i) => adj.Select(y => y[i]).ToArray()).Reverse(),
-			Transformation.RotateRight => adj.Reverse().Select((x, i) => adj.Select(y => y[i]).Reverse().ToArray()),
-			_ => throw new NotSupportedException(),
-		}).ToArray();
-	}
+		adj = ApplyTransform(adj, transform);
 	return adj;
 }
 
+T[][] ApplyTransform<T>(T[][] original, Transformation transform) => (transform switch
+{
+	Transformation.None => original,
+	Transformation.FlipVertical => original.Reverse(),
+	Transformation.FlipHorizontal => original.Select(x => x.Reverse().ToArray()),
+	Transformation.RotateLeft => original.Select((x, i) => original.Select(y => y[i]).ToArray()).Reverse(),
+	Transformation.RotateRight => original.Reverse().Select((x, i) => original.Select(y => y[i]).Reverse().ToArray()),
+	_ => throw new NotSupportedException(),
+}).ToArray();
+
 record Tile(int Id, bool[][] contents, bool Transformed = false)
 {
-	public IEnumerable<bool> Top => contents.First();
-	public IEnumerable<bool> Right => contents.Select(x => x.Last());
-	public IEnumerable<bool> Bottom => contents.Last();
-	public IEnumerable<bool> Left => contents.Select(x => x.First());
-	public IEnumerable<bool> ReverseTop => Top.Reverse();
-	public IEnumerable<bool> ReverseRight => Right.Reverse();
-	public IEnumerable<bool> ReverseBottom => Bottom.Reverse();
-	public IEnumerable<bool> ReverseLeft => Left.Reverse();
+	IEnumerable<bool> Top => contents.First();
+	IEnumerable<bool> Right => contents.Select(x => x.Last());
+	IEnumerable<bool> Bottom => contents.Last();
+	IEnumerable<bool> Left => contents.Select(x => x.First());
+	IEnumerable<bool> ReverseTop => Top.Reverse();
+	IEnumerable<bool> ReverseRight => Right.Reverse();
+	IEnumerable<bool> ReverseBottom => Bottom.Reverse();
+	IEnumerable<bool> ReverseLeft => Left.Reverse();
+
+	public Match MatchWith(Tile second)
+	{
+		if (Top.SequenceEqual(second.Top))
+			return new(Side.Top, Transformation.FlipVertical);
+		if (Top.SequenceEqual(second.Bottom))
+			return new(Side.Top);
+		if (Top.SequenceEqual(second.Left))
+			return new(Side.Top, Transformation.RotateLeft);
+		if (Top.SequenceEqual(second.Right))
+			return new(Side.Top, Transformation.RotateLeft, Transformation.FlipVertical);
+		if (Top.SequenceEqual(second.ReverseTop))
+			return new(Side.Top, Transformation.FlipVertical, Transformation.FlipHorizontal);
+		if (Top.SequenceEqual(second.ReverseBottom))
+			return new(Side.Top, Transformation.FlipHorizontal);
+		if (Top.SequenceEqual(second.ReverseLeft))
+			return new(Side.Top, Transformation.RotateLeft, Transformation.FlipHorizontal);
+		if (Top.SequenceEqual(second.ReverseRight))
+			return new(Side.Top, Transformation.RotateRight);
+
+		if (Bottom.SequenceEqual(second.Top))
+			return new(Side.Bottom);
+		if (Bottom.SequenceEqual(second.Bottom))
+			return new(Side.Bottom, Transformation.FlipVertical);
+		if (Bottom.SequenceEqual(second.Left))
+			return new(Side.Bottom, Transformation.RotateRight, Transformation.FlipHorizontal);
+		if (Bottom.SequenceEqual(second.Right))
+			return new(Side.Bottom, Transformation.RotateLeft);
+		if (Bottom.SequenceEqual(second.ReverseTop))
+			return new(Side.Bottom, Transformation.FlipHorizontal);
+		if (Bottom.SequenceEqual(second.ReverseBottom))
+			return new(Side.Bottom, Transformation.FlipVertical, Transformation.FlipHorizontal);
+		if (Bottom.SequenceEqual(second.ReverseLeft))
+			return new(Side.Bottom, Transformation.RotateRight);
+		if (Bottom.SequenceEqual(second.ReverseRight))
+			return new(Side.Bottom, Transformation.RotateLeft, Transformation.FlipHorizontal);
+
+		if (Left.SequenceEqual(second.Top))
+			return new(Side.Left, Transformation.RotateRight);
+		if (Left.SequenceEqual(second.Bottom))
+			return new(Side.Left, Transformation.RotateLeft, Transformation.FlipVertical);
+		if (Left.SequenceEqual(second.Left))
+			return new(Side.Left, Transformation.FlipHorizontal);
+		if (Left.SequenceEqual(second.Right))
+			return new(Side.Left);
+		if (Left.SequenceEqual(second.ReverseTop))
+			return new(Side.Left, Transformation.RotateRight, Transformation.FlipVertical);
+		if (Left.SequenceEqual(second.ReverseBottom))
+			return new(Side.Left, Transformation.RotateLeft);
+		if (Left.SequenceEqual(second.ReverseLeft))
+			return new(Side.Left, Transformation.FlipHorizontal, Transformation.FlipVertical);
+		if (Left.SequenceEqual(second.ReverseRight))
+			return new(Side.Left, Transformation.FlipVertical);
+
+		if (Right.SequenceEqual(second.Top))
+			return new(Side.Right, Transformation.RotateLeft, Transformation.FlipVertical);
+		if (Right.SequenceEqual(second.Bottom))
+			return new(Side.Right, Transformation.RotateRight);
+		if (Right.SequenceEqual(second.Left))
+			return new(Side.Right);
+		if (Right.SequenceEqual(second.Right))
+			return new(Side.Right, Transformation.FlipHorizontal);
+		if (Right.SequenceEqual(second.ReverseTop))
+			return new(Side.Right, Transformation.RotateLeft);
+		if (Right.SequenceEqual(second.ReverseBottom))
+			return new(Side.Right, Transformation.RotateRight, Transformation.FlipVertical);
+		if (Right.SequenceEqual(second.ReverseLeft))
+			return new(Side.Right, Transformation.FlipVertical);
+		if (Right.SequenceEqual(second.ReverseRight))
+			return new(Side.Right, Transformation.FlipHorizontal, Transformation.FlipVertical);
+
+		return new(Side.None);
+	}
 }
 
 record Match(Side side, params Transformation[] transforms);
-record AdjacentTile(int Id, Side side);
-record Coord(int X, int Y);
 
 enum Side { None, Left, Top, Right, Bottom }
 enum Transformation { None, FlipVertical, FlipHorizontal, RotateLeft, RotateRight }
