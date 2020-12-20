@@ -18,14 +18,9 @@ for (; list[i] != ""; i++)
 	if (pieces[1][0] == '"')
 		rules[index] = new Rule(pieces[1][1], null);
 	else
-	{
-		var nums = pieces[1].Split(" | ").Select(x => x.Split(" ").Select(int.Parse).ToList()).ToList();
-		rules[index] = new Rule(null, nums);
-	}
+		rules[index] = new Rule(null, pieces[1].Split(" | ").Select(x => x.Split(" ").Select(int.Parse).ToList()).ToList());
 }
 i++;
-
-//var potentials = GenerateTrees(rules, rules[0]).ToHashSet();
 
 var timer = Stopwatch.StartNew();
 WriteLine($"{Part1()} :: {timer.Elapsed}");
@@ -35,17 +30,12 @@ timer.Stop();
 
 long Part1()
 {
-	var valid = 0;
-	foreach (var line in list.Skip(i))
-	{
-		// var matches = potentials.Contains(line) || potentials.Any(x => x.StartsWith(line));
-		// if (matches)
-		// 	valid++;
-		var result = IsValid(rules, line, rules[0]);
-		if (result.valid && result.handled == line.Length)
-			valid++;
-	}
-	return valid;
+	//var potentials = GeneratePossibilities(rules, rules[0]);
+	return list.Skip(i)
+		.Select(line => (line.Length, result: IsValid(rules, line, rules[0])))
+		.Count(x => x.result.valid && x.result.handled == x.Length);
+	// if (potentials.Contains(line) || potentials.Any(x => x.StartsWith(line)))
+	// 	valid++;
 }
 
 long Part2()
@@ -55,8 +45,8 @@ long Part2()
 	rules[8] = new Rule(null, new() { new() { 42 }, new() { 42, 8 } });
 	rules[11] = new Rule(null, new() { new() { 42, 31 }, new() { 42, 11, 31 } });
 
-	var potential42s = GenerateTrees(rules, rules[42]);
-	var potential31s = GenerateTrees(rules, rules[31]);
+	var potential42s = GeneratePossibilities(rules, rules[42]);
+	var potential31s = GeneratePossibilities(rules, rules[31]);
 
 	var valid = 0;
 	foreach (var line in list.Skip(i))
@@ -93,13 +83,8 @@ long Part2()
 		var isValid = sub.IsEmpty && num42 > num31 && num31 > 0;
 		if (isValid)
 			valid++;
-
-		// var result = IsValid(rules, line, rules[0]);
-		// if (result.valid && result.handled == line.Length)
-		// 	valid++;
 	}
 	return valid;
-	// between 379 and 431...
 }
 
 (bool valid, int handled) IsValid(Dictionary<int, Rule> rules, ReadOnlySpan<char> substring, Rule rule)
@@ -110,7 +95,7 @@ long Part2()
 	if (rule.letter.HasValue)
 		return (rule.letter == substring[0], 1);
 
-	foreach (var alternative in rule.options!)
+	foreach (var alternative in rule.options ?? Enumerable.Empty<List<int>>())
 	{
 		var isValid = true;
 		var counted = 0;
@@ -123,8 +108,6 @@ long Part2()
 				break;
 			}
 			counted += handled;
-			if (counted >= substring.Length)
-				break;
 		}
 		if (isValid)
 		{
@@ -134,21 +117,21 @@ long Part2()
 	return (false, 0);
 }
 
-List<string> GenerateTrees(Dictionary<int, Rule> rules, Rule rule)
+HashSet<string> GeneratePossibilities(Dictionary<int, Rule> rules, Rule rule)
 {
 	if (rule.letter.HasValue)
 		return new() { rule.letter.Value.ToString() };
 
-	var list = new List<string>() { };
-	foreach (var alternate in rule.options!)
+	var list = new HashSet<string>() { };
+	foreach (var alternate in rule.options ?? Enumerable.Empty<List<int>>())
 	{
-		var sublist = new List<string>() { "" };
+		var sublist = new HashSet<string>() { "" };
 		foreach (var subrule in alternate.Select(x => rules[x]))
 		{
-			var subtrees = GenerateTrees(rules, subrule);
-			sublist = sublist.SelectMany(x => subtrees.Select(y => x + y)).ToList();
+			var subtrees = GeneratePossibilities(rules, subrule);
+			sublist = sublist.SelectMany(x => subtrees.Select(y => x + y)).ToHashSet();
 		}
-		list.AddRange(sublist);
+		list.UnionWith(sublist);
 	}
 	return list;
 }
