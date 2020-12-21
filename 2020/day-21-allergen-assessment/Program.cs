@@ -20,9 +20,6 @@ timer.Stop();
 
 long Part1()
 {
-	var items = foods.Select(x => new Food(new HashSet<string>(x.Ingredients), new HashSet<string>(x.Allergens))).ToList();
-
-
 	while (allergens.Values.Any(x => x == null))
 	{
 		foreach (var allergen in allergens.Keys)
@@ -30,50 +27,21 @@ long Part1()
 			if (allergens[allergen] != null)
 				continue;
 
-			var definitelyContain = items.Where(x => x.Allergens.Contains(allergen)).ToList();
-			if (definitelyContain.Count == 1)
-			{
-				if (definitelyContain[0].Ingredients.Count == 1)
-				{
-					var ingredient = definitelyContain[0].Ingredients.First();
-					allergens[allergen] = ingredient;
-					foreach (var item in items)
-					{
-						if (item.Ingredients.Contains(ingredient))
-						{
-							item.Allergens.Add(allergen);
-							item.Ingredients.Remove(ingredient);
-						}
-					}
-				}
-			}
-			else
-			{
-				for (var i = 0; i < definitelyContain.Count; i++)
-				{
-					var union = new HashSet<string>(definitelyContain[i].Ingredients);
-					foreach (var item in definitelyContain)
-						union.IntersectWith(item.Ingredients);
+			var definitelyContain = foods.Where(x => x.Allergens.Contains(allergen));
+			var union = new HashSet<string>(definitelyContain.First().Ingredients);
+			foreach (var item in definitelyContain.Skip(1))
+				union.IntersectWith(item.Ingredients);
 
-					if (union.Count == 1)
-					{
-						var ingredient = union.First();
-						allergens[allergen] = ingredient;
-						foreach (var item in items)
-						{
-							if (item.Ingredients.Contains(ingredient))
-							{
-								item.Allergens.Add(allergen);
-								item.Ingredients.Remove(ingredient);
-							}
-						}
-					}
-				}
+			if (union.Count == 1)
+			{
+				allergens[allergen] = union.First();
+				foreach (var item in foods)
+					item.Ingredients.Remove(union.First());
 			}
 		}
 	}
 
-	return items.SelectMany(x => x.Ingredients).Count();
+	return foods.SelectMany(x => x.Ingredients).Count();
 }
 
 string Part2()
@@ -81,7 +49,4 @@ string Part2()
 	return string.Join(',', allergens.OrderBy(x => x.Key).Select(x => x.Value));
 }
 
-record Food(HashSet<string> Ingredients, HashSet<string> Allergens)
-{
-	public bool Tainted => Allergens.Any();
-}
+record Food(HashSet<string> Ingredients, HashSet<string> Allergens);
