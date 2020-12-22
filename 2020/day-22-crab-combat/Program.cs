@@ -38,14 +38,14 @@ long GetScore(IEnumerable<int> p1, IEnumerable<int> p2)
 
 (Queue<int> p1Deck, Queue<int> p2Deck) PlayRecursive(Queue<int> p1Deck, Queue<int> p2Deck)
 {
-	var states = new List<Memory>();
+	var states = new HashSet<string>();
 
 	while (p1Deck.Any() && p2Deck.Any())
 	{
-		if (states.Any(x => x.p1.SequenceEqual(p1Deck) && x.p2.SequenceEqual(p2Deck)))
+		var state = string.Join(',', p1Deck) + '-' + string.Join(',', p2Deck);
+		if (states.Contains(state))
 			return (p1Deck, new Queue<int>());
-
-		states.Add(new(p1Deck.ToArray(), p2Deck.ToArray()));
+		states.Add(state);
 
 		int p1 = p1Deck.Dequeue(), p2 = p2Deck.Dequeue();
 		if (p1 <= p1Deck.Count && p2 <= p2Deck.Count)
