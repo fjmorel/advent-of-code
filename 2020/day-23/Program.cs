@@ -32,47 +32,49 @@ long Part2()
 
 LinkedList<int> RunSimulation(List<int> startingCups, int iterations, int max)
 {
+	WriteLine($"{timer.Elapsed} :: start");
 	var cups = new LinkedList<int>(startingCups.Concat(Enumerable.Range(1, max).Skip(9)));
 
-	var lookup = new Dictionary<int, LinkedListNode<int>>(max);
-	var adding = cups.First;
-	do
+	WriteLine($"{timer.Elapsed} :: create lookup");
+	var lookup = new List<LinkedListNode<int>>(max) { null };
+	for(var i = 1; i <= 9; i++)
+		lookup.Add(cups.Find(i));
+
+	var adding = cups.Find(10);
+	while(adding != null)
 	{
-		lookup[adding.Value] = adding;
+		lookup.Add(adding);
 		adding = adding.Next;
-	} while (adding != null);
+	}
 
 	var removed = new LinkedListNode<int>[3];
 
+	WriteLine($"{timer.Elapsed} :: iterate");
 	for (var i = 0; i < iterations; i++)
 	{
 		var first = cups.First;
-		removed[2] = first.Next;
-		removed[1] = first.Next.Next;
-		removed[0] = first.Next.Next.Next;
 
+		removed[2] = first.Next;
+		removed[1] = removed[2].Next;
+		removed[0] = removed[1].Next;
 		foreach (var node in removed)
 			cups.Remove(node);
 
-		var destinationValue = first.Value - 1;
-		while (true)
+		var destination = lookup[first.Value - 1];
+		while(destination == null || removed.Contains(destination))
 		{
-			if (destinationValue < 1)
-				destinationValue = max;
-			else if (removed.Any(x => x.Value == destinationValue))
-				destinationValue--;
+			if(destination == null)
+				destination = lookup[max];
 			else
-			{
-				var destination = lookup[destinationValue];
-				foreach (var node in removed)
-					cups.AddAfter(destination, node);
-
-				cups.RemoveFirst();
-				cups.AddLast(first);
-				break;
-			}
+				destination = lookup[destination.Value - 1];
 		}
+		foreach (var node in removed)
+			cups.AddAfter(destination, node);
+
+		cups.Remove(first);
+		cups.AddLast(first);
 	}
 
+	WriteLine($"{timer.Elapsed} :: done");
 	return cups;
 }
