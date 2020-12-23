@@ -19,8 +19,8 @@ timer.Stop();
 string Part1()
 {
 	var cupList = RunSimulation(startingCups, 100, 9);
-    var result = string.Join("", cupList.Select(x => x.ToString()));
-    return string.Join("", result.Split('1').Reverse());
+	var result = string.Join("", cupList.Select(x => x.ToString()));
+	return string.Join("", result.Split('1').Reverse());
 }
 
 long Part2()
@@ -28,27 +28,23 @@ long Part2()
 	var cupList = RunSimulation(startingCups, 10_000_000, 1_000_000);
 	var oneNode = cupList.Find(1);
 	return (long)oneNode.Next.Value * (long)oneNode.Next.Next.Value;
-    // not 999980000099 (too high)
 }
 
 LinkedList<int> RunSimulation(List<int> startingCups, int iterations, int max)
 {
-	var cups = startingCups.ToList();
-	cups.AddRange(Enumerable.Range(1, max).Skip(9));
+	var cups = new LinkedList<int>(startingCups.Concat(Enumerable.Range(1, max).Skip(9)));
 
-	var cupList = new LinkedList<int>(cups);
-	var dict = new Dictionary<int, LinkedListNode<int>>();
-
-	var adding = cupList.First;
+	var lookup = new Dictionary<int, LinkedListNode<int>>();
+	var adding = cups.First;
 	do
 	{
-		dict[adding.Value] = adding;
+		lookup[adding.Value] = adding;
 		adding = adding.Next;
 	} while (adding != null);
 
 	for (var i = 0; i < iterations; i++)
 	{
-		var first = cupList.First;
+		var first = cups.First;
 		var current = first.Value;
 		var removed = new List<LinkedListNode<int>>()
 				{
@@ -57,31 +53,30 @@ LinkedList<int> RunSimulation(List<int> startingCups, int iterations, int max)
 						first.Next.Next.Next,
 				};
 		foreach (var node in removed)
-			cupList.Remove(node);
+			cups.Remove(node);
 
-		var lookFor = current - 1;
+		var destinationValue = current - 1;
 		while (true)
 		{
-			if (lookFor < 1)
-				lookFor = max;
-			else if (removed.Any(x => x.Value == lookFor))
-				lookFor--;
+			if (destinationValue < 1)
+				destinationValue = max;
+			else if (removed.Any(x => x.Value == destinationValue))
+				destinationValue--;
 			else
 			{
-				var previous = dict[lookFor];
+				var destination = lookup[destinationValue];
 				foreach (var node in removed)
 				{
-					cupList.AddAfter(previous, node);
-					previous = node;
+					cups.AddAfter(destination, node);
+					destination = node;
 				}
-				cupList.RemoveFirst();
-				cupList.AddLast(current);
-				dict[cupList.Last.Value] = cupList.Last;
+				cups.RemoveFirst();
+				cups.AddLast(first);
 				break;
 			}
 		}
 
 	}
 
-	return cupList;
+	return cups;
 }
