@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 
@@ -18,63 +19,72 @@ timer.Stop();
 
 string Part1()
 {
-	var cupList = RunSimulation(startingCups, 100, 9);
-	var result = string.Join("", cupList.Select(x => x.ToString()));
-	return string.Join("", result.Split('1').Reverse());
+	var pointers = RunSimulation(startingCups, 100, 9);
+	var result = new StringBuilder();
+	var current = pointers[1];
+	while (current != 1)
+	{
+		result.Append(current);
+		current = pointers[current];
+	}
+	return result.ToString();
 }
 
 long Part2()
 {
-	var cupList = RunSimulation(startingCups, 10_000_000, 1_000_000);
-	var star1 = cupList.Find(1).Next;
-	return (long)star1.Value * (long)star1.Next.Value;
+	var pointers = RunSimulation(startingCups, 10_000_000, 1_000_000);
+	return (long)pointers[1] * (long)pointers[pointers[1]];
 }
 
-LinkedList<int> RunSimulation(List<int> startingCups, int iterations, int max)
+int[] RunSimulation(List<int> startingCups, int iterations, int max)
 {
-	WriteLine($"{timer.Elapsed} :: start");
-	var cups = new LinkedList<int>(startingCups.Concat(Enumerable.Range(1, max).Skip(9)));
-
 	WriteLine($"{timer.Elapsed} :: create lookup");
-	var lookup = new List<LinkedListNode<int>>(max) { null };
-	for(var i = 1; i <= 9; i++)
-		lookup.Add(cups.Find(i));
 
-	var adding = cups.Find(10);
-	while(adding != null)
+	var pointers = new int[max + 1];
+
+	// initialize 10-max in numerical order
+	for (var i = 10; i <= max; i++)
+		pointers[i] = i + 1;
+	// initialize 1-9 in input order
+	for (var i = 0; i < startingCups.Count - 1; i++)
+		pointers[startingCups[i]] = startingCups[i + 1];
+
+	var current = startingCups[0];
+
+	// If only 9 cups, make last input point to first input
+	if (max == startingCups.Count)
+		pointers[startingCups.Last()] = current;
+	// Otherwise last input => 10 && max >= first input
+	else
 	{
-		lookup.Add(adding);
-		adding = adding.Next;
+		pointers[startingCups.Last()] = 10;
+		pointers[max] = current;
 	}
 
-	var removed = new LinkedListNode<int>[3];
+	var removed = new int[3];
 
 	WriteLine($"{timer.Elapsed} :: iterate");
 	for (var i = 0; i < iterations; i++)
 	{
-		var first = cups.First;
+		removed[0] = pointers[current];
+		removed[1] = pointers[removed[0]];
+		removed[2] = pointers[removed[1]];
+		pointers[current] = pointers[removed[2]];
 
-		removed[2] = first.Next;
-		removed[1] = removed[2].Next;
-		removed[0] = removed[1].Next;
-		foreach (var node in removed)
-			cups.Remove(node);
-
-		var destination = lookup[first.Value - 1];
-		while(destination == null || removed.Contains(destination))
+		var destination = current - 1;
+		while (destination == 0 || removed.Contains(destination))
 		{
-			if(destination == null)
-				destination = lookup[max];
+			if (destination == 0)
+				destination = max;
 			else
-				destination = lookup[destination.Value - 1];
+				destination--;
 		}
-		foreach (var node in removed)
-			cups.AddAfter(destination, node);
+		pointers[removed[2]] = pointers[destination];
+		pointers[destination] = removed[0];
 
-		cups.Remove(first);
-		cups.AddLast(first);
+		current = pointers[current];
 	}
 
 	WriteLine($"{timer.Elapsed} :: done");
-	return cups;
+	return pointers;
 }
