@@ -26,15 +26,15 @@ string Part1()
 long Part2()
 {
 	var cupList = RunSimulation(startingCups, 10_000_000, 1_000_000);
-	var oneNode = cupList.Find(1);
-	return (long)oneNode.Next.Value * (long)oneNode.Next.Next.Value;
+	var star1 = cupList.Find(1).Next;
+	return (long)star1.Value * (long)star1.Next.Value;
 }
 
 LinkedList<int> RunSimulation(List<int> startingCups, int iterations, int max)
 {
 	var cups = new LinkedList<int>(startingCups.Concat(Enumerable.Range(1, max).Skip(9)));
 
-	var lookup = new Dictionary<int, LinkedListNode<int>>();
+	var lookup = new Dictionary<int, LinkedListNode<int>>(max);
 	var adding = cups.First;
 	do
 	{
@@ -42,20 +42,19 @@ LinkedList<int> RunSimulation(List<int> startingCups, int iterations, int max)
 		adding = adding.Next;
 	} while (adding != null);
 
+	var removed = new LinkedListNode<int>[3];
+
 	for (var i = 0; i < iterations; i++)
 	{
 		var first = cups.First;
-		var current = first.Value;
-		var removed = new List<LinkedListNode<int>>()
-				{
-						first.Next,
-						first.Next.Next,
-						first.Next.Next.Next,
-				};
+		removed[2] = first.Next;
+		removed[1] = first.Next.Next;
+		removed[0] = first.Next.Next.Next;
+
 		foreach (var node in removed)
 			cups.Remove(node);
 
-		var destinationValue = current - 1;
+		var destinationValue = first.Value - 1;
 		while (true)
 		{
 			if (destinationValue < 1)
@@ -66,16 +65,13 @@ LinkedList<int> RunSimulation(List<int> startingCups, int iterations, int max)
 			{
 				var destination = lookup[destinationValue];
 				foreach (var node in removed)
-				{
 					cups.AddAfter(destination, node);
-					destination = node;
-				}
+
 				cups.RemoveFirst();
 				cups.AddLast(first);
 				break;
 			}
 		}
-
 	}
 
 	return cups;
