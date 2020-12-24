@@ -16,42 +16,42 @@ timer.Stop();
 
 static long Part1(string[] list)
 {
-	var write = new ConcurrentDictionary<Cube, bool>();
+	var alive = new HashSet<Cube>();
 	for (var i = 0; i < list.Length; i++)
 		for (var j = 0; j < list[i].Length; j++)
-			write[new Cube(i - 1, j - 1, 0)] = list[i][j] == '#';
+			if (list[i][j] == '#')
+				alive.Add(new(i - 1, j - 1, 0));
 
 	for (var cycle = 1; cycle <= 6; cycle++)
 	{
-		var read = new Dictionary<Cube, bool>(write);
-		Parallel.ForEach(read.SelectMany(x => x.Key.GetAdjacent(true)).ToHashSet(), point =>
+		alive = alive.SelectMany(x => x.GetAdjacent(true)).Distinct().AsParallel().Where(point =>
 		{
-			var adjActive = point.GetAdjacent().Count(x => read.GetValueOrDefault(x, false));
-			write[point] = adjActive == 3 || (adjActive == 2 && read.GetValueOrDefault(point, false));
-		});
+			var adjActive = point.GetAdjacent().Count(x => alive.Contains(x));
+			return adjActive == 3 || (adjActive == 2 && alive.Contains(point));
+		}).ToHashSet();
 	}
 
-	return write.Count(x => x.Value);
+	return alive.Count;
 }
 
 static long Part2(string[] list)
 {
-	var write = new ConcurrentDictionary<Hypercube, bool>();
+	var alive = new HashSet<Hypercube>();
 	for (var i = 0; i < list.Length; i++)
 		for (var j = 0; j < list[i].Length; j++)
-			write[new Hypercube(0, i - 1, j - 1, 0)] = list[i][j] == '#';
+			if (list[i][j] == '#')
+				alive.Add(new(0, i - 1, j - 1, 0));
 
 	for (var cycle = 1; cycle <= 6; cycle++)
 	{
-		var read = new Dictionary<Hypercube, bool>(write);
-		Parallel.ForEach(read.SelectMany(x => x.Key.GetAdjacent(true)).ToHashSet(), point =>
+		alive = alive.SelectMany(x => x.GetAdjacent(true)).Distinct().AsParallel().Where(point =>
 		{
-			var adjActive = point.GetAdjacent().Count(x => read.GetValueOrDefault(x, false));
-			write[point] = adjActive == 3 || (adjActive == 2 && read.GetValueOrDefault(point, false));
-		});
+			var adjActive = point.GetAdjacent().Count(x => alive.Contains(x));
+			return adjActive == 3 || (adjActive == 2 && alive.Contains(point));
+		}).ToHashSet();
 	}
 
-	return write.Count(x => x.Value);
+	return alive.Count;
 }
 
 record Cube(int x, int y, int z)
