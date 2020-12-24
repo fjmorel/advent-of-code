@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -9,13 +10,8 @@ using static System.Console;
 
 var list = System.IO.File.ReadAllLines("input.txt");
 
-// Set up initial tiles (true if black)
-var tiles = new Dictionary<Coordinate, bool>();
-foreach (var line in list)
-{
-	var position = GetCoordinate(ParseLine(line));
-	tiles[position] = !tiles.GetValueOrDefault(position, false);
-}
+// Tile state (true == black)
+var tiles = new ConcurrentDictionary<Coordinate, bool>();
 
 var timer = Stopwatch.StartNew();
 WriteLine($"{Part1()} :: {timer.Elapsed}");
@@ -25,6 +21,11 @@ timer.Stop();
 
 long Part1()
 {
+	foreach (var line in list)
+	{
+		var position = ParseLine(line).Aggregate(Coordinate.Origin, (pos, dir) => pos.WithMove(dir));
+		tiles[position] = !tiles.GetValueOrDefault(position, false);
+	}
 	return tiles.Count(x => x.Value);
 }
 
@@ -33,22 +34,15 @@ long Part2()
 	for (var i = 1; i <= 100; i++)
 	{
 		var currentBlack = tiles.Where(x => x.Value).Select(x => x.Key).ToHashSet();
-		var positionsToCheck = tiles.Keys.SelectMany(x => x.GetNeighbors(true)).ToHashSet();
-		foreach (var position in positionsToCheck)
+		var positionsToCheck = currentBlack.Concat(currentBlack.SelectMany(x => x.GetNeighbors())).ToHashSet();
+		Parallel.ForEach(positionsToCheck, position =>
 		{
-			var isBlack = tiles.GetValueOrDefault(position, false);
 			var blackNeighbors = position.GetNeighbors().Count(x => currentBlack.Contains(x));
-			if (isBlack)
-				tiles[position] = !(blackNeighbors == 0 || blackNeighbors > 2);
-			else
-				tiles[position] = blackNeighbors == 2;
-		}
+			tiles[position] = blackNeighbors == 2 || (tiles.GetValueOrDefault(position, false) && blackNeighbors == 1);
+		});
 	}
 	return tiles.Count(x => x.Value);
 }
-
-Coordinate GetCoordinate(IEnumerable<Direction> directions)
-	=> directions.Aggregate(Coordinate.Origin, (pos, dir) => pos.WithMove(dir));
 
 // old awful way of turning long list of movements into shortest possible move
 string CondenseDirections(IEnumerable<Direction> directions)
@@ -199,6 +193,7 @@ IEnumerable<Direction> ParseLine(string line)
 
 /// <summary>
 /// X = W<-->E, Y = NW<-->SE, Z = NE<-->SW. x+y+z==0
+/// https://www.redblobgames.com/grids/hexagons/ Cube coordinates
 /// </summary>
 record Coordinate(int X, int Y, int Z)
 {
@@ -218,10 +213,8 @@ record Coordinate(int X, int Y, int Z)
 		_ => throw new NotSupportedException(),
 	};
 
-	public IEnumerable<Coordinate> GetNeighbors(bool includeSelf = false)
+	public IEnumerable<Coordinate> GetNeighbors()
 	{
-		if (includeSelf)
-			yield return this;
 		yield return this.WithMove(Direction.E);
 		yield return this.WithMove(Direction.SE);
 		yield return this.WithMove(Direction.NE);
