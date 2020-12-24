@@ -11,7 +11,7 @@ using static System.Console;
 var list = System.IO.File.ReadAllLines("input.txt");
 
 // Tile state (true == black)
-var tiles = new ConcurrentDictionary<Coordinate, bool>();
+var tiles = new Dictionary<Coordinate, bool>();
 
 var timer = Stopwatch.StartNew();
 WriteLine($"{Part1()} :: {timer.Elapsed}");
@@ -31,141 +31,19 @@ long Part1()
 
 long Part2()
 {
+	var blackTiles = tiles.Where(x => x.Value).Select(x => x.Key).ToHashSet();
 	for (var i = 1; i <= 100; i++)
 	{
-		var currentBlack = tiles.Where(x => x.Value).Select(x => x.Key).ToHashSet();
-		var positionsToCheck = currentBlack.Concat(currentBlack.SelectMany(x => x.GetNeighbors())).ToHashSet();
-		Parallel.ForEach(positionsToCheck, position =>
-		{
-			var blackNeighbors = position.GetNeighbors().Count(x => currentBlack.Contains(x));
-			tiles[position] = blackNeighbors == 2 || (tiles.GetValueOrDefault(position, false) && blackNeighbors == 1);
-		});
+		blackTiles = blackTiles
+			// Add all neighbors as possible new black tiles
+			.Concat(blackTiles.SelectMany(x => x.GetNeighbors()))
+			// Only check each tile once and in parallel
+			.Distinct().AsParallel()
+			// Check if the tile should now be black
+			.Where(x => x.ShouldBeBlack(blackTiles))
+			.ToHashSet();
 	}
-	return tiles.Count(x => x.Value);
-}
-
-// old awful way of turning long list of movements into shortest possible move
-string CondenseDirections(IEnumerable<Direction> directions)
-{
-	var ALL_DIRECTIONS = new Direction[] { Direction.E, Direction.SE, Direction.NE, Direction.W, Direction.SW, Direction.NW };
-	var sums = directions
-		.GroupBy(x => x)
-		.Select(x => new { Key = x.Key, Count = x.Count() })
-		.ToDictionary(x => x.Key, x => x.Count);
-	foreach (var direction in ALL_DIRECTIONS)
-		sums[direction] = sums.GetValueOrDefault(direction, 0);
-
-
-	while (sums[Direction.E] > 0 && sums[Direction.NW] > 0)
-	{
-		sums[Direction.E]--;
-		sums[Direction.NW]--;
-		sums[Direction.NE]++;
-	}
-	while (sums[Direction.E] > 0 && sums[Direction.SW] > 0)
-	{
-		sums[Direction.E]--;
-		sums[Direction.SW]--;
-		sums[Direction.SE]++;
-	}
-	while (sums[Direction.SE] > 0 && sums[Direction.NE] > 0)
-	{
-		sums[Direction.SE]--;
-		sums[Direction.NE]--;
-		sums[Direction.E]++;
-	}
-	while (sums[Direction.W] > 0 && sums[Direction.NE] > 0)
-	{
-		sums[Direction.W]--;
-		sums[Direction.NE]--;
-		sums[Direction.NW]++;
-	}
-	while (sums[Direction.W] > 0 && sums[Direction.SE] > 0)
-	{
-		sums[Direction.W]--;
-		sums[Direction.SE]--;
-		sums[Direction.SW]++;
-	}
-	while (sums[Direction.SW] > 0 && sums[Direction.NW] > 0)
-	{
-		sums[Direction.SW]--;
-		sums[Direction.NW]--;
-		sums[Direction.W]++;
-	}
-	while (sums[Direction.E] > 0 && sums[Direction.W] > 0)
-	{
-		sums[Direction.E]--;
-		sums[Direction.W]--;
-	}
-	while (sums[Direction.SW] > 0 && sums[Direction.NE] > 0)
-	{
-		sums[Direction.NE]--;
-		sums[Direction.SW]--;
-	}
-	while (sums[Direction.SE] > 0 && sums[Direction.NW] > 0)
-	{
-		sums[Direction.SE]--;
-		sums[Direction.NW]--;
-	}
-
-	while (sums[Direction.E] > 0 && sums[Direction.NW] > 0)
-	{
-		sums[Direction.E]--;
-		sums[Direction.NW]--;
-		sums[Direction.NE]++;
-	}
-	while (sums[Direction.E] > 0 && sums[Direction.SW] > 0)
-	{
-		sums[Direction.E]--;
-		sums[Direction.SW]--;
-		sums[Direction.SE]++;
-	}
-	while (sums[Direction.SE] > 0 && sums[Direction.NE] > 0)
-	{
-		sums[Direction.SE]--;
-		sums[Direction.NE]--;
-		sums[Direction.E]++;
-	}
-	while (sums[Direction.W] > 0 && sums[Direction.NE] > 0)
-	{
-		sums[Direction.W]--;
-		sums[Direction.NE]--;
-		sums[Direction.NW]++;
-	}
-	while (sums[Direction.W] > 0 && sums[Direction.SE] > 0)
-	{
-		sums[Direction.W]--;
-		sums[Direction.SE]--;
-		sums[Direction.SW]++;
-	}
-	while (sums[Direction.SW] > 0 && sums[Direction.NW] > 0)
-	{
-		sums[Direction.SW]--;
-		sums[Direction.NW]--;
-		sums[Direction.W]++;
-	}
-	while (sums[Direction.E] > 0 && sums[Direction.W] > 0)
-	{
-		sums[Direction.E]--;
-		sums[Direction.W]--;
-	}
-	while (sums[Direction.SW] > 0 && sums[Direction.NE] > 0)
-	{
-		sums[Direction.NE]--;
-		sums[Direction.SW]--;
-	}
-	while (sums[Direction.SE] > 0 && sums[Direction.NW] > 0)
-	{
-		sums[Direction.SE]--;
-		sums[Direction.NW]--;
-	}
-
-	var position = new StringBuilder();
-	foreach (var direction in ALL_DIRECTIONS)
-		for (var i = 0; i < sums[direction]; i++)
-			position.Append(direction.ToString());
-	return position.ToString();
-
+	return blackTiles.Count;
 }
 
 IEnumerable<Direction> ParseLine(string line)
@@ -221,6 +99,12 @@ record Coordinate(int X, int Y, int Z)
 		yield return this.WithMove(Direction.W);
 		yield return this.WithMove(Direction.SW);
 		yield return this.WithMove(Direction.NW);
+	}
+
+	public bool ShouldBeBlack(HashSet<Coordinate> allCurrentlyBlack)
+	{
+		var blackNeighbors = GetNeighbors().Count(x => allCurrentlyBlack.Contains(x));
+		return (blackNeighbors == 2 || (blackNeighbors == 1 && allCurrentlyBlack.Contains(this)));
 	}
 }
 
