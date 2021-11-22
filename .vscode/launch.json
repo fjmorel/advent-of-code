@@ -9,7 +9,7 @@
 			"type": "coreclr",
 			"request": "launch",
 			"preLaunchTask": "build",
-			"program": "${fileDirname}/bin/Debug/net5.0/day.dll",
+			"program": "${fileDirname}/bin/Debug/net6.0/day.dll",
 			"args": [],
 			"cwd": "${fileDirname}",
 			"console": "internalConsole",

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using static System.Console;
 
@@ -7,8 +8,14 @@ const char FLOOR = '.', EMPTY = 'L', OCCUPIED = '#';
 var read = System.IO.File.ReadLines("input.txt").Select(x => x.ToCharArray()).ToArray();
 var size = new Position(read.Length, read[0].Length);
 
-WriteLine(FindSteadyState(read, size, 4, false));
-WriteLine(FindSteadyState(read, size, 5, true));
+var timer = Stopwatch.StartNew();
+WriteLine($"{Part1()} :: {timer.Elapsed}");
+timer.Restart();
+WriteLine($"{Part2()} :: {timer.Elapsed}");
+timer.Stop();
+
+int Part1() => FindSteadyState(read, size, 4, false);
+int Part2() => FindSteadyState(read, size, 5, true);
 
 static int FindSteadyState(char[][] read, Position size, int threshold, bool lineOfSight)
 {
