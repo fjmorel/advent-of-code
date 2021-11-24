@@ -1,5 +1,5 @@
-﻿var list = System.IO.File.ReadAllLines("input.txt");
-// var list = System.IO.File.ReadAllLines("example.txt");
+﻿var list = File.ReadAllLines("input.txt");
+// list = File.ReadAllLines("example.txt");
 
 var timer = Stopwatch.StartNew();
 Console.WriteLine($"{Part1()} :: {timer.Elapsed}");
