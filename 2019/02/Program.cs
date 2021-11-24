@@ -10,11 +10,7 @@ timer.Stop();
 
 long Part1()
 {
-	var copy = new int[opCodes.Count];
-	opCodes.CopyTo(copy);
-	copy[1] = 12;
-	copy[2] = 2;
-	return Compute(copy);
+	return Compute(opCodes, 12, 2);
 }
 
 long Part2()
@@ -23,11 +19,7 @@ long Part2()
 	{
 		for (var j = 0; j < 100; j++)
 		{
-			var copy = new int[opCodes.Count];
-			opCodes.CopyTo(copy);
-			copy[1] = i;
-			copy[2] = j;
-			var result = Compute(copy);
+			var result = Compute(opCodes, i, j);
 			if (result == 19690720)
 				return 100 * i + j;
 		}
@@ -35,36 +27,48 @@ long Part2()
 	return -1;
 }
 
-int Compute(int[] codes)
+int Compute(List<int> original, int noun, int verb)
 {
+	var copy = new int[original.Count];
+	original.CopyTo(copy);
+	copy[1] = noun;
+	copy[2] = verb;
+
+
 	var i = 0;
 	while (true)
 	{
-		switch (codes[i])
+		// Run the instruction at the current pointer and find out how many parameters it had
+		var parameterCount = copy[i] switch
 		{
-			case 1:
-				i += Add(codes, i);
-				break;
-			case 2:
-				i += Multiply(codes, i);
-				break;
-			case 99:
-				return codes[0];
-			default:
-				throw new ArgumentException("Unexpected op: " + codes[i]);
-		}
+			1 => Add(copy, i),
+			2 => Multiply(copy, i),
+			99 => -1,
+			_ => throw new NotSupportedException("Unexpected Opcode: " + copy[i]),
+		};
+		// -1 is special value to indicate we should halt
+		if (parameterCount < 0)
+			return copy[0];
+
+		// Go to next instruction (instruction parameter count + 1 for Opcode)
+		i += 1 + parameterCount;
 	}
-	throw new ArgumentException("Never hit 99");
 }
 
+/// <summary>
+/// Get the values indicated by the pointers, and set sum in position in pointer
+/// </summary>
 int Add(int[] codes, int index)
 {
 	codes[codes[index + 3]] = codes[codes[index + 1]] + codes[codes[index + 2]];
-	return 4;
+	return 3;
 }
 
+/// <summary>
+/// Get the values indicated by the pointers, and set product in position in pointer
+/// </summary>
 int Multiply(int[] codes, int index)
 {
 	codes[codes[index + 3]] = codes[codes[index + 1]] * codes[codes[index + 2]];
-	return 4;
+	return 3;
 }
