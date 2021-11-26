@@ -38,10 +38,7 @@
 				"-c",
 				"Release",
 			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
+			"group": "none",
 			"presentation": {
 				"reveal": "silent"
 			},
