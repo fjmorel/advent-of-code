@@ -62,7 +62,16 @@ async Task<long> Part2()
 
 async Task<long> Paint(Dictionary<Point, TileState> screen, ChannelReader<long> output, ChannelWriter<long> input)
 {
-	Console.Clear();
+	bool enableOutput = true;
+	try
+	{
+		Console.Clear();
+	}
+	catch (Exception)
+	{
+		enableOutput = false;
+		Console.WriteLine("Console manipulation has been disabled due to redirection");
+	}
 	long score = 0, paddleX = 0, paddleY = 0;
 	await input.WriteAsync(0);
 	while (await output.WaitToReadAsync())
@@ -74,8 +83,11 @@ async Task<long> Paint(Dictionary<Point, TileState> screen, ChannelReader<long> 
 		if (x == -1 && y == 0)
 		{
 			score = state;
-			Console.SetCursorPosition(0, 0);
-			Console.Write("Score: " + score);
+			if (enableOutput)
+			{
+				Console.SetCursorPosition(0, 0);
+				Console.Write("Score: " + score);
+			}
 		}
 		else
 		{
@@ -95,21 +107,26 @@ async Task<long> Paint(Dictionary<Point, TileState> screen, ChannelReader<long> 
 				await input.WriteAsync(num);
 			}
 			screen[new(x, y)] = tile;
-			Console.SetCursorPosition((int)x, (int)y + 1);
-			var ch = tile switch
+
+			if (enableOutput)
 			{
-				TileState.Empty => " ",
-				TileState.Ball => "O",
-				TileState.Block => "=",
-				TileState.HorizontalPaddle => "=",
-				TileState.Wall => "*",
-				_ => throw new NotSupportedException("Unexpected tile state"),
-			};
-			Console.Write(ch);
+				Console.SetCursorPosition((int)x, (int)y + 1);
+				var ch = tile switch
+				{
+					TileState.Empty => " ",
+					TileState.Ball => "O",
+					TileState.Block => "=",
+					TileState.HorizontalPaddle => "=",
+					TileState.Wall => "*",
+					_ => throw new NotSupportedException("Unexpected tile state"),
+				};
+				Console.Write(ch);
+			}
 		}
 	}
 
-	Console.SetCursorPosition(0, (int)paddleY + 3);
+	if (enableOutput)
+		Console.SetCursorPosition(0, (int)paddleY + 3);
 	return score;
 }
 
