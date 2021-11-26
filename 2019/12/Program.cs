@@ -40,6 +40,9 @@ long Part2()
 {
 	// Setup moons in first position with 0 velocity
 	var moons = initialPositions.Select(x => new Moon() { Position = x }).ToArray();
+	var xes = initialPositions.Select(p => p.x).ToArray();
+	var yes = initialPositions.Select(p => p.y).ToArray();
+	var zes = initialPositions.Select(p => p.z).ToArray();
 
 	var linked = new MoonWithInfluencingBodies[moons.Length];
 	for (var i = 0; i < moons.Length; i++)
@@ -50,14 +53,39 @@ long Part2()
 		linked[i] = new(moons[i], related.ToArray());
 	}
 
-	// 4_686_774_924
-	for (var i = 1; i <= 1_000_000; i++)
+	// Iterate system until all axes have reset at least once
+	long equalX = 0, equalY = 0, equalZ = 0, round = 0;
+	while (equalX == 0 || equalY == 0 || equalZ == 0)
 	{
 		MoveOneStep(linked);
+		round++;
+
+		if (equalX == 0 && moons.Select(m => m.Position.x).SequenceEqual(xes) && moons.All(m => m.Velocity.x == 0))
+			equalX = round;
+		if (equalY == 0 && moons.Select(m => m.Position.y).SequenceEqual(yes) && moons.All(m => m.Velocity.y == 0))
+			equalY = round;
+		if (equalZ == 0 && moons.Select(m => m.Position.z).SequenceEqual(zes) && moons.All(m => m.Velocity.z == 0))
+			equalZ = round;
 	}
 
-	return moons.Sum(x => x.GetEnergy());
+	// then find the first iteration where all 3 are reset
+	var sorted = new long[] { equalX, equalY, equalZ }.OrderByDescending(x => x).ToList();
+	return LeastCommonMultiple(LeastCommonMultiple(sorted[0], sorted[1]), sorted[2]);
 }
+
+long GreatestCommonDivisor(long greater, long lesser)
+{
+	greater = Math.Abs(greater);
+	lesser = Math.Abs(lesser);
+	while (true)
+	{
+		long remainder = greater % lesser;
+		if (remainder == 0) return lesser;
+		greater = lesser;
+		lesser = remainder;
+	};
+}
+long LeastCommonMultiple(long greater, long lesser) => greater * lesser / GreatestCommonDivisor(greater, lesser);
 
 void MoveOneStep(MoonWithInfluencingBodies[] linked)
 {
