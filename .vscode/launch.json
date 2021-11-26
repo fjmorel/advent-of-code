@@ -14,6 +14,17 @@
 			"cwd": "${fileDirname}",
 			"console": "internalConsole",
 			"stopAtEntry": false
+		},
+		{
+			"name": "Ray a Day in Release Mode",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "release",
+			"program": "${fileDirname}/bin/Release/net6.0/day.dll",
+			"args": [],
+			"cwd": "${fileDirname}",
+			"console": "internalConsole",
+			"stopAtEntry": false
 		}
 	]
 }
