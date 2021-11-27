@@ -1,8 +1,11 @@
 ﻿var timer = Stopwatch.StartNew();
 var list = File.ReadAllLines("input.txt");
-// list = File.ReadAllLines("example.txt");
+list = File.ReadAllLines("example.txt");
 
 var reactions = ParseReactions();
+const string ORE = "ORE";
+const string FUEL = "FUEL";
+const long TRILLION = 1_000_000_000_000;
 
 Console.WriteLine($"_ :: {timer.Elapsed}");// setup time
 Console.WriteLine($"{Part1()} :: {timer.Elapsed}");
@@ -14,97 +17,112 @@ long Part1()
 {
 	var need = new Dictionary<string, long>();
 	var have = new Dictionary<string, long>();
-	need["FUEL"] = 1;
+	need[FUEL] = 1;
 	Produce(need, have);
-	return need["ORE"];
+	return need[ORE];
 }
 
 long Part2()
 {
-	var maxOrePerFuel = Part1();
 	var need = new Dictionary<string, long>();
 	var have = new Dictionary<string, long>();
-	have["ORE"] = 1_000_000_000_000;
-	long count = have["ORE"] / maxOrePerFuel;
-	need["FUEL"] = count;
-	count--;
-	while (have["ORE"] > 0)
+	have[ORE] = TRILLION;
+
+	// Run once to find out ore per run
+	// Then run what's left divided by max ore per run to eliminate most of it
+	long step = 1;
+	need[FUEL] = step;
+	Produce(need, have);
+	long produced = 0;// instead of 'step' to avoid OBOE for some reason
+	var maxOrePerFuel = TRILLION - have[ORE];
+
+	step = have[ORE] / maxOrePerFuel;
+	need[FUEL] = step;
+	while (have[ORE] > 0)
 	{
-		var completed = Produce(need, have, true);
-		if (completed)
+		// As long as it produced the fuel, keep running
+		Produce(need, have, true);
+		if (!need.ContainsKey(FUEL))
 		{
-			count++;
-			need["FUEL"] = 1;
+			produced += step;
+			step = Math.Max(have[ORE] / maxOrePerFuel, 1);
+			need[FUEL] = step;
 		}
 		else
 			break;
 	}
 
-	return count;
+	return produced;
 }
 
-bool Produce(Dictionary<string, long> need, Dictionary<string, long> have, bool quitIfNeedOre = false)
+void Produce(Dictionary<string, long> need, Dictionary<string, long> have, bool quitIfNeedOre = false)
 {
-	while (need.Any(x => x.Key != "ORE"))
+	while (need.Any(x => x.Key != ORE))
 	{
 		// Pick a thing we still need
-		var entry = need.First(x => x.Key != "ORE");
+		var entry = need.First(x => x.Key != ORE);
 		var product = entry.Key;
 		var needed = entry.Value;
-		need.Remove(product);
 
 		// Figure out if we already have some leftover we can use
 		if (have.ContainsKey(product))
 		{
-			if (needed >= have[product])
+			var currentHave = have[product];
+			if (needed >= currentHave)
 			{
-				needed -= have[product];
+				needed -= currentHave;
 				have.Remove(product);
 			}
 			else
 			{
-				have[product] = have[product] - needed;
+				have[product] = currentHave - needed;
 				continue;
 			}
 		}
 
 		// Figure out many reactions will be needed to produce it
 		var reaction = reactions[product];
-		var multiplier = 1;
-		while (reaction.output * multiplier < needed)
-			multiplier++;
+		var output = reaction.output;
+		while (output < needed)
+			output += reaction.output;
+		var multiplier = output / reaction.output;
 
-		var output = reaction.output * multiplier;
 		foreach (var reagent in reaction.reagents)
 		{
 			var chemical = reagent.chemical;
 			var reagentNeeded = reagent.quantity * multiplier;
-			// Figure out if we already have some leftover we can use
-			if (have.ContainsKey(chemical))
-			{
-				if (reagentNeeded >= have[chemical])
-				{
-					if (quitIfNeedOre && chemical == "ORE")
-						return false;
-					reagentNeeded -= have[chemical];
-					have.Remove(chemical);
-					need[chemical] = need.GetValueOrDefault(chemical) + reagentNeeded;
-				}
-				else
-				{
-					have[chemical] = have[chemical] - reagentNeeded;
-					continue;
-				}
-			}
-			else
-			{
-				if (quitIfNeedOre && chemical == "ORE")
-					return false;
-				need[chemical] = need.GetValueOrDefault(chemical) + reagentNeeded;
-			}
+			if (!TryHandleChemical(chemical, reagentNeeded, quitIfNeedOre, need, have))
+				return;
 		}
 
 		have[product] = have.GetValueOrDefault(product) + (output - needed);
+		need.Remove(product);
+	}
+}
+
+bool TryHandleChemical(string chemical, long quantityNeeded, bool quitIfNeedOre, Dictionary<string, long> need, Dictionary<string, long> have)
+{
+	var alreadyHave = have.GetValueOrDefault(chemical);
+	if (alreadyHave > 0)
+	{
+		if (quantityNeeded >= alreadyHave)
+		{
+			if (quitIfNeedOre && chemical == ORE)
+				return false;
+			quantityNeeded -= alreadyHave;
+			need[chemical] = need.GetValueOrDefault(chemical) + quantityNeeded;
+			have.Remove(chemical);
+		}
+		else
+		{
+			have[chemical] = alreadyHave - quantityNeeded;
+		}
+	}
+	else
+	{
+		if (quitIfNeedOre && chemical == ORE)
+			return false;
+		need[chemical] = need.GetValueOrDefault(chemical) + quantityNeeded;
 	}
 	return true;
 }

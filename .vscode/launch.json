@@ -16,7 +16,7 @@
 			"stopAtEntry": false
 		},
 		{
-			"name": "Ray a Day in Release Mode",
+			"name": "Run a Day in Release Mode",
 			"type": "coreclr",
 			"request": "launch",
 			"preLaunchTask": "release",
