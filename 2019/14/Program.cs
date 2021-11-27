@@ -15,33 +15,29 @@ timer.Stop();
 
 long Part1()
 {
-	var need = InitLookup();
-	var have = InitLookup();
-	need[FUEL] = 1;
-	TryProduce(false, need, have);
-	return need[ORE];
+	var state = GetInitialState();
+	Produce(new(1, FUEL), state);
+	return state.OreNeeded;
 }
 
 long Part2()
 {
-	var need = InitLookup();
-	var have = InitLookup();
-	have[ORE] = TRILLION;
+	var state = GetInitialState();
+	state.Supply[ORE] = TRILLION;
 
 	// Run once to find out ore per run
 	// Then run what's left divided by max ore per run to eliminate most of it
 	long step = 1;
-	need[FUEL] = step;
-	TryProduce(true, need, have);
+	Produce(new(step, FUEL), state);
 	long produced = step;
-	var maxOrePerFuel = TRILLION - have[ORE];
+	var maxOrePerFuel = TRILLION - state.Supply[ORE];
 
-	while (have[ORE] > 0)
+	while (state.Supply[ORE] > 0)
 	{
 		// As long as it produced the fuel, keep running
-		step = Math.Max(have[ORE] / maxOrePerFuel, 1);
-		need[FUEL] = step;
-		if (TryProduce(true, need, have))
+		step = Math.Max(state.Supply[ORE] / maxOrePerFuel, 1);
+		Produce(new(step, FUEL), state);
+		if (state.OreNeeded == 0)
 			produced += step;
 		else
 			break;
@@ -50,69 +46,64 @@ long Part2()
 	return produced;
 }
 
-Dictionary<string, long> InitLookup()
+State GetInitialState()
 {
 	var lookup = new Dictionary<string, long>();
 	lookup[ORE] = 0;
 	foreach (var reagent in reactions.Keys)
 		lookup[reagent] = 0;
-	return lookup;
+
+	return new State(lookup);
 }
 
-bool TryProduce(bool quitIfNeedOre, Dictionary<string, long> need, Dictionary<string, long> have)
+void Produce(Reagent initialNeed, State state)
 {
-	while (need.Any(x => x.Value > 0 && x.Key != ORE))
+	var needs = new Queue<Reagent>();
+	needs.Enqueue(initialNeed);
+	while (needs.Count > 0)
 	{
-		var (product, needed) = need.Where(x => x.Value > 0 && x.Key != ORE).First();
-		if (!TryProduceReagent(product, needed, quitIfNeedOre, need, have))
-			return false;
+		var reagent = needs.Dequeue();
+		ProduceReagent(reagent.chemical, reagent.quantity, state);
 	}
-	return true;
 }
 
-bool TryProduceReagent(string chemical, long quantityNeeded, bool quitIfNeedOre, Dictionary<string, long> need, Dictionary<string, long> have)
+void ProduceReagent(string chemical, long quantityNeeded, State state)
 {
 	// If need more than we have,
 	// Then use up supply and add need
-	var currentHave = have[chemical];
+	var currentHave = state.Supply[chemical];
 	if (quantityNeeded > currentHave)
 	{
 		quantityNeeded -= currentHave;
-		have[chemical] = 0;
+		state.Supply[chemical] = 0;
 	}
 	// Otherwise, partially use up supply and don't run reaction
 	else
 	{
-		have[chemical] = currentHave - quantityNeeded;
-		need[chemical] = 0;
-		return true;
+		state.Supply[chemical] = currentHave - quantityNeeded;
+		return;
 	}
 
 	// Figure out many reactions will be needed to produce it
 	if (chemical != ORE)
 	{
 		var reaction = reactions[chemical];
+		// Feels weird to go overboard with *2 and then do a second loop, but it greatly speeds up Part 2
 		var output = reaction.output;
 		while (output < quantityNeeded)
-			output += reaction.output;
+			output *= 2;
+		while (output >= quantityNeeded + reaction.output)
+			output -= reaction.output;
 		var multiplier = output / reaction.output;
 
 		foreach (var reagent in reaction.reagents)
-		{
-			var subChemical = reagent.chemical;
-			var reagentNeeded = reagent.quantity * multiplier;
-			if (!TryProduceReagent(subChemical, reagentNeeded, quitIfNeedOre, need, have))
-				return false;
-		}
-		have[chemical] += output - quantityNeeded;
-		need[chemical] = 0;
+			ProduceReagent(reagent.chemical, reagent.quantity * multiplier, state);
+		state.Supply[chemical] += output - quantityNeeded;
 	}
 	else
 	{
-		need[chemical] += quantityNeeded;
+		state.OreNeeded += quantityNeeded;
 	}
-
-	return true;
 }
 
 Dictionary<string, Formula> ParseReactions()
@@ -125,11 +116,15 @@ Dictionary<string, Formula> ParseReactions()
 		var groups = match.Groups;
 		var counts = groups["reagent_count"].Captures.Select(x => long.Parse(x.ValueSpan));
 		var names = groups["reagent_name"].Captures.Select(x => x.Value);
-		var reagents = counts.Zip(names).Select((tuple) => new Reagent(tuple.Item1, tuple.Item2)).ToList();
+		var reagents = counts.Zip(names).Select((tuple) => new Reagent(tuple.Item1, tuple.Item2)).ToArray();
 		output[groups["product_name"].Value] = new(long.Parse(groups["product_count"].ValueSpan), reagents);
 	}
 	return output;
 }
 
-public readonly record struct Formula(long output, List<Reagent> reagents);
+public record State(Dictionary<string, long> Supply)
+{
+	public long OreNeeded { get; set; }
+}
+public readonly record struct Formula(long output, Reagent[] reagents);
 public readonly record struct Reagent(long quantity, string chemical);
