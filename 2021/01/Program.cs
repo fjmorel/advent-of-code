@@ -11,11 +11,10 @@ timer.Stop();
 
 long Part1()
 {
-	return nums.Skip(1).Select((x, i) => x > nums[i]).Where(x => x).Count();
+	return nums.Skip(1).Select((x, i) => x > nums[i]).Count(x => x);
 }
 
 long Part2()
 {
-	var summed = nums.Skip(2).Select((x, i) => x + nums[i] + nums[i + 1]).ToList();
-	return summed.Skip(1).Select((x, i) => x > summed[i]).Where(x => x).Count();
+	return nums.Skip(3).Select((x, i) => x > nums[i]).Count(x => x);
 }
