@@ -1,6 +1,6 @@
 ﻿var timer = Stopwatch.StartNew();
-var list = File.ReadAllLines("input.txt");
-// list = File.ReadAllLines("example.txt");
+var lines = File.ReadAllLines("input.txt");
+// lines = File.ReadAllLines("example.txt");
 
 Console.WriteLine($"_ :: {timer.Elapsed}");// setup time
 Console.WriteLine($"{Part1()} :: {timer.Elapsed}");
