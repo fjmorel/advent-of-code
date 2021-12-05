@@ -10,14 +10,13 @@ timer.Restart();
 Console.WriteLine($"{Part2()} :: {timer.Elapsed}");
 timer.Stop();
 
-long Part1() => vents.Where(v => v.IsStraight).Aggregate(new Dictionary<Point, int>(), MapVent).Count(x => x.Value > 1);
+long Part1() => vents.Where(v => v.IsStraight).SelectMany(v => v.GetPoints()).Aggregate(new Dictionary<Point, int>(), MapPoint).Count(x => x.Value > 1);
 
-long Part2() => vents.Aggregate(new Dictionary<Point, int>(), MapVent).Count(x => x.Value > 1);
+long Part2() => vents.SelectMany(v => v.GetPoints()).Aggregate(new Dictionary<Point, int>(), MapPoint).Count(x => x.Value > 1);
 
-Dictionary<Point, int> MapVent(Dictionary<Point, int> map, Vent vent)
+Dictionary<Point, int> MapPoint(Dictionary<Point, int> map, Point pt)
 {
-	foreach (var pt in vent.GetPoints())
-		map[pt] = map.GetValueOrDefault(pt, 0) + 1;
+	map[pt] = map.GetValueOrDefault(pt, 0) + 1;
 	return map;
 }
 
