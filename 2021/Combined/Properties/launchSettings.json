@@ -2,7 +2,7 @@
   "profiles": {
     "Combined": {
       "commandName": "Project",
-      "commandLineArgs": "02"
+      "commandLineArgs": "all"
     }
   }
 }

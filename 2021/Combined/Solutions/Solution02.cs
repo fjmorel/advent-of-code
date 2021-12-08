@@ -15,36 +15,31 @@ public class Solution02 : ISolution
 
     public async Task<long> GetPart1()
     {
-        var location = _data.Aggregate(default(Point), (point, step) => point.Move(step));
+        var location = _data.Aggregate(default(Point), Move);
         return location.x * location.y;
     }
 
     public async Task<long> GetPart2()
     {
-        var location = _data.Aggregate(default(PointWithAim), (point, step) => point.Move(step));
+        var location = _data.Aggregate(default(PointWithAim), Move);
         return location.x * location.y;
     }
 
-    public readonly record struct Point(int x, int y)
+    public Point Move(Point pt, Step step) => step.direction switch
     {
-        public Point Move(Step step) => step.direction switch
-        {
-            "down" => this with { y = this.y + step.magnitude },
-            "up" => this with { y = this.y - step.magnitude },
-            "forward" => this with { x = this.x + step.magnitude },
-            _ => throw new ArgumentException("Unexpected direction: " + step.direction),
-        };
-    }
-    public readonly record struct PointWithAim(int x, int y, int aim)
+        "down" => pt with { y = pt.y + step.magnitude },
+        "up" => pt with { y = pt.y - step.magnitude },
+        "forward" => pt with { x = pt.x + step.magnitude },
+        _ => throw new ArgumentException("Unexpected direction: " + step.direction),
+    };
+    public PointWithAim Move(PointWithAim pt, Step step) => step.direction switch
     {
-        public PointWithAim Move(Step step) => step.direction switch
-        {
-            "down" => this with { aim = this.aim + step.magnitude },
-            "up" => this with { aim = this.aim - step.magnitude },
-            "forward" => this with { x = this.x + step.magnitude, y = this.y + step.magnitude * this.aim },
-            _ => throw new ArgumentException("Unexpected direction: " + step.direction),
-        };
-    }
+        "down" => pt with { aim = pt.aim + step.magnitude },
+        "up" => pt with { aim = pt.aim - step.magnitude },
+        "forward" => pt with { x = pt.x + step.magnitude, y = pt.y + step.magnitude * pt.aim },
+        _ => throw new ArgumentException("Unexpected direction: " + step.direction),
+    };
+    public readonly record struct PointWithAim(int x, int y, int aim);
     public readonly record struct Step(string direction, int magnitude);
 }
 

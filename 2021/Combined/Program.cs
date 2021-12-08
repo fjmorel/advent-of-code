@@ -1,27 +1,46 @@
-﻿var day = args[0];
+﻿using Combined;
 
-var timer = Stopwatch.StartNew();
-var lines = File.ReadAllLines($"inputs/{day}.txt");
-// lines = File.ReadAllLines($"examples/{day}.txt");
+var arg = args.FirstOrDefault();
+if (string.IsNullOrWhiteSpace(arg))
+    arg = Console.ReadLine();
 
-var job = GetSolution(day);
+if (arg == "all")
+    await RunAllDays();
+else
+    await TryRunDay(arg!);
 
-Console.WriteLine($"SETUP :: {timer.Elapsed}");// setup time
-Console.WriteLine($"{await job.GetPart1()} :: {timer.Elapsed}");
-timer.Restart();
-Console.WriteLine($"{await job.GetPart2()} :: {timer.Elapsed}");
-timer.Stop();
-
-ISolution GetSolution(string day)
+async Task RunAllDays()
 {
-	var types = typeof(ISolution).Assembly.GetTypes();
-	var type = typeof(ISolution).Assembly.GetType("Combined.Solutions.Solution" + day, true);
-	var solution = Activator.CreateInstance(type!, new object[] { lines });
-	return (ISolution)solution!;
+    for (var i = 1; i <= 25; i++)
+    {
+        var day = i.ToString("00");
+        if (!await TryRunDay(day))
+            Console.WriteLine($"Failed to run Day {day}.");
+    }
 }
 
-interface ISolution
+async Task<bool> TryRunDay(string day)
 {
-	Task<long> GetPart1();
-	Task<long> GetPart2();
+    var timer = Stopwatch.StartNew();
+
+    var folder = "inputs";
+    // folder = "examples";
+
+    var inputPath = $"inputs/{day}.txt";
+    // inputPath = $"examples/{day}.txt";
+
+    if (!Utilities.TryGetData(folder, day, out var lines))
+        return false;
+
+    if (!Utilities.TryGetSolution(day, lines, out var job))
+        return false;
+
+    Console.WriteLine($"Day {day}");
+    Console.WriteLine($"SETUP :: {timer.Elapsed}");// setup time
+    Console.WriteLine($"{await job.GetPart1()} :: {timer.Elapsed}");
+    timer.Restart();
+    Console.WriteLine($"{await job.GetPart2()} :: {timer.Elapsed}");
+    timer.Stop();
+    Console.WriteLine();
+    return true;
 }

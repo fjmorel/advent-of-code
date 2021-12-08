@@ -2,13 +2,13 @@ namespace Combined.Solutions;
 
 public class Solution07 : ISolution
 {
-	private readonly List<int> nums;
+	private readonly int[] nums;
 	private readonly int min;
 	private readonly int max;
 
 	public Solution07(string[] lines)
 	{
-		nums = lines[0].Split(',').Select(int.Parse).ToList();
+		nums = lines[0].ParseCsvInts();
 		min = nums.Min();
 		max = nums.Max();
 	}

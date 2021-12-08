@@ -8,7 +8,7 @@ public class Solution04 : ISolution
 
 	public Solution04(string[] lines)
 	{
-		numbers = lines[0].Split(',').Select(x => int.Parse(x)).ToArray();
+		numbers = lines[0].ParseCsvInts();
 		lookup = numbers.Select((num, i) => (num, i)).ToDictionary(x => x.num, x => x.i);
 		cards = lines
 			.Skip(1).Chunk(6)
