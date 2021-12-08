@@ -7,7 +7,7 @@
 			"label": "build",
 			"command": "dotnet",
 			"options": {
-				"cwd": "${fileDirname}"
+				"cwd": "${fileDirname}/..",
 			},
 			"type": "shell",
 			"args": [
@@ -28,7 +28,7 @@
 			"label": "release",
 			"command": "dotnet",
 			"options": {
-				"cwd": "${fileDirname}",
+				"cwd": "${fileDirname}/..",
 			},
 			"type": "shell",
 			"args": [

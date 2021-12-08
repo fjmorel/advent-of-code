@@ -25,6 +25,28 @@
 			"cwd": "${fileDirname}",
 			"console": "internalConsole",
 			"stopAtEntry": false
+		},
+		{
+			"name": "Launch Combined",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "build",
+			"program": "${fileDirname}/bin/Debug/net6.0/Combined.dll",
+			"args": ["08"],
+			"cwd": "${fileDirname}",
+			"console": "internalConsole",
+			"stopAtEntry": false
+		},
+		{
+			"name": "Run Combined in Release Mode",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "release",
+			"program": "${fileDirname}/bin/Release/net6.0/Combined.dll",
+			"args": ["08"],
+			"cwd": "${fileDirname}",
+			"console": "internalConsole",
+			"stopAtEntry": false
 		}
 	]
 }
