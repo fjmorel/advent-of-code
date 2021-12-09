@@ -2,7 +2,7 @@
 
 public class WorkInProgressTests
 {
-	private const string _day = "09";
+	private const string _day = "10";
 
 	[Fact]
 	public async Task DailyExample()
