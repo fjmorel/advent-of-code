@@ -2,7 +2,8 @@ namespace Combined.Solutions;
 
 public class Solution10 : ISolution
 {
-    private readonly HashSet<char> OPEN = new() { '(', '[', '{', '<' };
+    private static readonly char[] OPEN = "([{<".ToCharArray();
+    private static readonly char[] CLOSE = ")]}>".ToCharArray();
     private readonly string[] _lines;
 
     public Solution10(string[] lines)
@@ -12,13 +13,9 @@ public class Solution10 : ISolution
 
     public async Task<long> GetPart1()
     {
-        var corrupt = new Dictionary<char, long>()
-        {
-            [')'] = 0,
-            [']'] = 0,
-            ['}'] = 0,
-            ['>'] = 0,
-        };
+        var corrupt = new Dictionary<char, long>();
+        foreach (var symbol in CLOSE)
+            corrupt[symbol] = 0;
         foreach (var line in _lines)
         {
             var (result, _) = CheckLine(line);
@@ -36,50 +33,32 @@ public class Solution10 : ISolution
         {
             var (_, result) = CheckLine(line);
             if (result.Any())
-                scores.Add(result.Aggregate(0L, (score, symbol) => score * 5 + CloseToScore(symbol)));
+                scores.Add(result.Aggregate(0L, (score, symbol) => score * 5 + Array.IndexOf(CLOSE, symbol) + 1));
         }
 
         scores.Sort();
         return scores[scores.Count / 2];
     }
 
-    private (char? corruptSymbol, char[] neededToClose) CheckLine(string line)
+    private static (char? corruptSymbol, char[] neededToClose) CheckLine(string line)
     {
-        var open = new Stack<char>();
+        var stack = new Stack<char>();
         foreach (var symbol in line)
         {
             if (OPEN.Contains(symbol))
-                open.Push(symbol);
+                stack.Push(symbol);
             else
             {
-                if (!open.TryPeek(out var match))
-                    throw new InvalidOperationException("Don't know what to do here");
-
-                if (symbol == OpenToClose(match))
-                    open.Pop();
+                var open = stack.Peek();
+                if (symbol == OpenToClose(open))
+                    stack.Pop();
                 else
-                {
                     return (symbol, Array.Empty<char>());
-                }
             }
         }
 
-        return (null, open.Select(OpenToClose).ToArray());
+        return (null, stack.Select(OpenToClose).ToArray());
     }
 
-    private static char OpenToClose(char open) => open switch
-    {
-        '[' => ']',
-        '{' => '}',
-        '<' => '>',
-        '(' => ')',
-    };
-
-    private static long CloseToScore(char close) => close switch
-    {
-        ')' => 1,
-        ']' => 2,
-        '}' => 3,
-        '>' => 4,
-    };
+    private static char OpenToClose(char open) => CLOSE[Array.IndexOf(OPEN, open)];
 }

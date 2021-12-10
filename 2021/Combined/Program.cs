@@ -26,9 +26,6 @@ async Task<bool> TryRunDay(string day)
     var folder = "inputs";
     // folder = "examples";
 
-    var inputPath = $"inputs/{day}.txt";
-    // inputPath = $"examples/{day}.txt";
-
     if (!Utilities.TryGetData(folder, day, out var lines))
         return false;
 
