@@ -13,6 +13,8 @@ public class SolutionTests
     [InlineData("07", 37, 168)]
     [InlineData("08", 26, 61229)]
     [InlineData("09", 15, 1134)]
+    [InlineData("10", 26397, 288957)]
+    [InlineData("11", 0, 0)]
     public async Task RunExample(string day, long part1, long part2)
     {
         await Helpers.RunDay(day, "examples", part1, part2);
@@ -28,6 +30,8 @@ public class SolutionTests
     [InlineData("07", 329389, 86397080)]
     [InlineData("08", 512, 1091165)]
     [InlineData("09", 452, 1263735)]
+    [InlineData("10", 299793, 3654963618)]
+    [InlineData("11", 0, 0)]
     public async Task RunInput(string day, long part1, long part2)
     {
         await Helpers.RunDay(day, "inputs", part1, part2);

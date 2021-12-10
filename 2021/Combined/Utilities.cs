@@ -7,7 +7,7 @@ public class Utilities
     /// <summary>
     /// Current folder of Combined assembly, to find the input files
     /// </summary>
-    private static string _root = Path.GetDirectoryName(typeof(Utilities).Assembly.Location)!;
+    private static readonly string _root = Path.GetDirectoryName(typeof(Utilities).Assembly.Location)!;
 
     public static bool TryGetData(string folder, string day, [NotNullWhen(true)] out string[]? lines)
     {
