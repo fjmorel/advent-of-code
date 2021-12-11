@@ -64,7 +64,7 @@ public class Solution07 : ISolution
 
     async Task<long> GetSelfThrust(int[] settings)
     {
-        var computer = new Computer(_opCodes);
+        var computer = new IntCodeComputer(_opCodes);
         long output = 0;
         foreach (var setting in settings)
         {
@@ -95,7 +95,7 @@ public class Solution07 : ISolution
                 await writer.WriteAsync(0);
         }
 
-        var computer = new Computer(_opCodes);
+        var computer = new IntCodeComputer(_opCodes);
 
         // read from current channel, but write into next computer's channel
         var tasks = new Task[count];

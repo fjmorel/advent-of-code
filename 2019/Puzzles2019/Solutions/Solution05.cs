@@ -13,10 +13,10 @@ public class Solution05 : ISolution
 
     public async ValueTask<long> GetPart2() => Compute(_opCodes, 5);
 
-// todo: convert to using shared Computer class
+// todo: convert to using shared IntCodeComputer class
     // async ValueTask<long> Compute(long input)
     // {
-    //     var intCode = new Computer(_opCodes);
+    //     var intCode = new IntCodeComputer(_opCodes);
     //
     //     var channel = Channel.CreateUnbounded<long>();
     //     await intCode.Run(channel.Reader, channel.Writer);

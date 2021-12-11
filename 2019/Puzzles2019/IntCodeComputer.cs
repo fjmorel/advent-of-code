@@ -1,17 +1,10 @@
 ﻿namespace Puzzles2019;
 
-public enum Mode
-{
-    Position = 0,
-    Immediate = 1,
-    Relative = 2,
-}
-
-public class Computer
+public class IntCodeComputer
 {
     private readonly long[] _opCodes;
 
-    public Computer(long[] opCodes)
+    public IntCodeComputer(long[] opCodes)
     {
         _opCodes = opCodes;
     }
@@ -56,7 +49,7 @@ public class Computer
         }
     }
 
-    IEnumerable<Mode> GetModes(long num, int minLength)
+    private IEnumerable<Mode> GetModes(long num, int minLength)
     {
         var returned = 0;
         while (num > 0)
@@ -77,7 +70,7 @@ public class Computer
     /// <summary>
     /// Get the values indicated by the pointers, and set sum in position in pointer.
     /// </summary>
-    static long Add(ComputerState state, long i, Mode[] modes)
+    private static long Add(ComputerState state, long i, Mode[] modes)
     {
         state.Set(i + 3, modes[2], state.Get(i + 1, modes[0]) + state.Get(i + 2, modes[1]));
         return 3;
@@ -86,7 +79,7 @@ public class Computer
     /// <summary>
     /// Get the values indicated by the pointers, and set product in position in pointer.
     /// </summary>
-    static long Multiply(ComputerState state, long i, Mode[] modes)
+    private static long Multiply(ComputerState state, long i, Mode[] modes)
     {
         state.Set(i + 3, modes[2], state.Get(i + 1, modes[0]) * state.Get(i + 2, modes[1]));
         return 3;
@@ -95,7 +88,7 @@ public class Computer
     /// <summary>
     /// Takes a single integer as input and saves it to the position given by its only parameter.
     /// </summary>
-    static async Task<long> Input(ComputerState state, long i, Mode[] modes)
+    private static async Task<long> Input(ComputerState state, long i, Mode[] modes)
     {
         state.Set(i + 1, modes[0], await state.input.ReadAsync());
         return 1;
@@ -104,7 +97,7 @@ public class Computer
     /// <summary>
     /// Outputs the value of its only parameter.
     /// </summary>
-    static async Task<long> Output(ComputerState state, long i, Mode[] modes)
+    private static async Task<long> Output(ComputerState state, long i, Mode[] modes)
     {
         await state.output.WriteAsync(state.Get(i + 1, modes[0]));
         return 1;
@@ -115,7 +108,7 @@ public class Computer
     /// it sets the instruction pointer to the value from the second parameter.
     /// Otherwise, it does nothing.
     /// </summary>
-    static long JumpIfTrue(ComputerState state, ref long i, Mode[] modes)
+    private static long JumpIfTrue(ComputerState state, ref long i, Mode[] modes)
     {
         if (state.Get(i + 1, modes[0]) != 0)
         {
@@ -133,7 +126,7 @@ public class Computer
     /// it sets the instruction pointer to the value from the second parameter.
     /// Otherwise, it does nothing.
     /// </summary>
-    static long JumpIfFalse(ComputerState state, ref long i, Mode[] modes)
+    private static long JumpIfFalse(ComputerState state, ref long i, Mode[] modes)
     {
         if (state.Get(i + 1, modes[0]) == 0)
         {
@@ -151,7 +144,7 @@ public class Computer
     /// it stores 1 in the position given by the third parameter.
     /// Otherwise, it stores 0.
     /// </summary>
-    static long LessThan(ComputerState state, long i, Mode[] modes)
+    private static long LessThan(ComputerState state, long i, Mode[] modes)
     {
         state.Set(i + 3, modes[2], state.Get(i + 1, modes[0]) < state.Get(i + 2, modes[1]) ? 1 : 0);
         return 3;
@@ -162,19 +155,19 @@ public class Computer
     /// it stores 1 in the position given by the third parameter.
     /// Otherwise, it stores 0.
     /// </summary>
-    static long Equals(ComputerState state, long i, Mode[] modes)
+    private static long Equals(ComputerState state, long i, Mode[] modes)
     {
         state.Set(i + 3, modes[2], state.Get(i + 1, modes[0]) == state.Get(i + 2, modes[1]) ? 1 : 0);
         return 3;
     }
 
-    static long RelativeBaseOffset(ComputerState state, long i, Mode[] modes)
+    private static long RelativeBaseOffset(ComputerState state, long i, Mode[] modes)
     {
         state.RelativeBase += state.Get(i + 1, modes[0]);
         return 1;
     }
 
-    public record ComputerState(Dictionary<long, long> memory, ChannelReader<long> input, ChannelWriter<long> output)
+    private record ComputerState(Dictionary<long, long> memory, ChannelReader<long> input, ChannelWriter<long> output)
     {
         public long RelativeBase = 0;
 
@@ -194,7 +187,7 @@ public class Computer
             return Get(realIndex);
         }
 
-        public long GetIndex(long index, Mode mode)
+        private long GetIndex(long index, Mode mode)
         {
             return mode switch
             {
@@ -204,6 +197,13 @@ public class Computer
                 _ => throw new NotSupportedException("Unexpected mode: " + mode),
             };
         }
+    }
+
+    private enum Mode
+    {
+        Position = 0,
+        Immediate = 1,
+        Relative = 2,
     }
 }
 

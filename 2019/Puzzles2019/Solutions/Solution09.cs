@@ -15,7 +15,7 @@ public class Solution09 : ISolution
         var writer = channel.Writer;
         var reader = channel.Reader;
         await writer.WriteAsync(1);
-        await new Computer(_opCodes).Run(reader, writer);
+        await new IntCodeComputer(_opCodes).Run(reader, writer);
         return await reader.ReadAsync();
 	}
 
@@ -25,7 +25,7 @@ public class Solution09 : ISolution
         var writer = channel.Writer;
         var reader = channel.Reader;
         await writer.WriteAsync(2);
-        await new Computer(_opCodes).Run(reader, writer);
+        await new IntCodeComputer(_opCodes).Run(reader, writer);
         return await reader.ReadAsync();
 	}
 
