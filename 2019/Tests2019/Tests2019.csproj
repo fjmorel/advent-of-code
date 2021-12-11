@@ -21,7 +21,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Puzzles2019\Puzzles2019.csproj" />
+        <ProjectReference Include="..\Puzzles2019\Puzzles2019.csproj" />
+        <Using Include="Xunit" />
+        <Using Include="Puzzles2019" />
+        <Using Include="Puzzles2019.Solutions" />
     </ItemGroup>
 
 </Project>

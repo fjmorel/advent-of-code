@@ -1,5 +1,4 @@
-﻿using Puzzles2021;
-using Spectre.Console;
+﻿using Spectre.Console;
 using Spectre.Console.Rendering;
 
 if (!args.Any())

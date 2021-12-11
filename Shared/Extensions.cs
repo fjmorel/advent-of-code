@@ -14,6 +14,10 @@
     /// Parse an array of numbers separate by comma
     /// </summary>
     public static int[] ParseCsvInts(this string line) => line.Split(',').Select(int.Parse).ToArray();
+    /// <summary>
+    /// Parse an array of numbers separate by comma
+    /// </summary>
+    public static long[] ParseCsvLongs(this string line) => line.Split(',').Select(long.Parse).ToArray();
 
     /// <summary>
     /// Parse an array of digits with no separator

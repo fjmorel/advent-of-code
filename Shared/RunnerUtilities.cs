@@ -18,7 +18,8 @@ public class RunnerUtilities
 
     public static bool TryGetSolution(Assembly assembly, string day, string[] input, [NotNullWhen(true)] out ISolution? solution)
     {
-        var type = assembly.GetType("Combined.Solutions.Solution" + day);
+        var assemblyname = assembly.GetName().Name;
+        var type = assembly.GetType($"{assemblyname}.Solutions.Solution{day}");
         if (type == null)
         {
             solution = null;
