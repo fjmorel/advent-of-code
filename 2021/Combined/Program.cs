@@ -1,43 +1,92 @@
 ﻿using Combined;
+using Spectre.Console;
+using Spectre.Console.Rendering;
 
-var arg = args.FirstOrDefault();
-if (string.IsNullOrWhiteSpace(arg))
-    arg = Console.ReadLine();
+if (!args.Any())
+    args = new string[] { Console.ReadLine()! };
 
-if (arg == "all")
-    await RunAllDays();
-else
-    await TryRunDay(arg!);
-
-async Task RunAllDays()
+foreach (var arg in args)
 {
-    for (var i = 1; i <= 25; i++)
-    {
-        var day = i.ToString("00");
-        if (!await TryRunDay(day))
-            Console.WriteLine($"Failed to run Day {day}.");
-    }
+    if (string.IsNullOrWhiteSpace(arg))
+        continue;
+    if (arg == "all")
+        foreach (var day in Enumerable.Range(1, 25))
+            await TryRunDay(day.ToString("00"));
+    else
+        await TryRunDay(arg!);
 }
 
-async Task<bool> TryRunDay(string day)
+async ValueTask<TimeSpan[]> TryRunDay(string day)
 {
     var timer = Stopwatch.StartNew();
-
     var folder = "inputs";
     // folder = "examples";
-
     if (!Utilities.TryGetData(folder, day, out var lines))
-        return false;
+    {
+        AnsiConsole.WriteLine($"Could not get data for day {day}");
+        return Array.Empty<TimeSpan>();
+    }
 
     if (!Utilities.TryGetSolution(day, lines, out var job))
-        return false;
+    {
+        AnsiConsole.WriteLine($"Could not get solution class for day {day}");
+        return Array.Empty<TimeSpan>();
+    }
+    var setupTime = timer.Elapsed;
 
-    Console.WriteLine($"Day {day}");
-    Console.WriteLine($"SETUP :: {timer.Elapsed}");// setup time
-    Console.WriteLine($"{await job.GetPart1()} :: {timer.Elapsed}");
-    timer.Restart();
-    Console.WriteLine($"{await job.GetPart2()} :: {timer.Elapsed}");
-    timer.Stop();
-    Console.WriteLine();
-    return true;
+    var table = new Table();
+    var times = await AnsiConsole.Live(table).StartAsync(async ctx =>
+    {
+        table.Title($"Day {day}", new Style(Color.Green, decoration: Decoration.Bold));
+        table.AddColumn("Step");
+        table.AddColumn("Value", col => { col.Alignment = Justify.Right; });
+        table.AddColumn("Time", col => { col.Alignment = Justify.Right; });
+        table.BorderStyle = new Style(Color.Red);
+
+        table.AddRow(GetRow("Setup", "", setupTime));
+        ctx.Refresh();
+        timer.Restart();
+        var part1 = await job.GetPart1();
+        var part1Time = timer.Elapsed;
+        table.AddRow(GetRow("Part 1", part1.ToString(), part1Time));
+        ctx.Refresh();
+        timer.Restart();
+        var part2 = await job.GetPart2();
+        var part2Time = timer.Elapsed;
+        table.AddRow(GetRow("Part 2", part2.ToString(), part2Time));
+        ctx.Refresh();
+        timer.Stop();
+
+        return new[] { setupTime, part1Time, part2Time };
+    });
+    return times;
+}
+
+IRenderable[] GetRow(string step, string value, TimeSpan elapsed)
+{
+    var ms = elapsed.TotalMilliseconds;
+    var digits = ms switch
+    {
+        >= 1_000 => 0,
+        >= 100 => 1,
+        >= 10 => 2,
+        _ => 3,
+    };
+    var text = ms.ToString("F" + digits);
+    var color = ms switch
+    {
+        < 1 => Color.Cyan2,
+        < 10 => Color.SpringGreen1,
+        < 20 => Color.Green1,
+        < 50 => Color.GreenYellow,
+        < 100 => Color.Orange1,
+        < 1_000 => Color.DarkOrange,
+        _ => Color.OrangeRed1,
+    };
+    return new IRenderable[]
+    {
+        new Text(step, new Style(decoration: Decoration.Bold)),
+        new Text(value),
+        new Text($"{text} ms", new Style(color)),
+    };
 }
