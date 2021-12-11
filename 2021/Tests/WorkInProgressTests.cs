@@ -2,17 +2,29 @@
 
 public class WorkInProgressTests
 {
-	private const string _day = "11";
+    private const string _day = "12";
 
-	[Fact]
-	public async Task DailyExample()
-	{
-		await Helpers.RunDay(_day, "examples", 0, 0);
-	}
+    [Fact]
+    public async Task DailyExample1()
+    {
+        await Helpers.RunPart1(_day, "examples", 0);
+    }
 
-	[Fact]
-	public async Task DailyInput()
-	{
-		await Helpers.RunDay(_day, "inputs", 0, 0);
-	}
+    [Fact]
+    public async Task DailyExample2()
+    {
+        await Helpers.RunPart2(_day, "examples", 0);
+    }
+
+    [Fact]
+    public async Task DailyInput1()
+    {
+        await Helpers.RunPart1(_day, "inputs", 0);
+    }
+
+    [Fact]
+    public async Task DailyInput2()
+    {
+        await Helpers.RunPart2(_day, "inputs", 0);
+    }
 }
