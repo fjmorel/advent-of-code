@@ -2,20 +2,20 @@
 
 internal class Helpers
 {
-    public static async Task RunDay(string day, string folder, long part1, long part2)
+    public static async ValueTask RunDay(string day, string folder, long part1, long part2)
     {
         var job = GetJob(day, folder);
         Assert.Equal(part1, await job.GetPart1());
         Assert.Equal(part2, await job.GetPart2());
     }
 
-    public static async Task RunPart1(string day, string folder, long solution)
+    public static async ValueTask RunPart1(string day, string folder, long solution)
     {
         var job = GetJob(day, folder);
         Assert.Equal(solution, await job.GetPart1());
     }
 
-    public static async Task RunPart2(string day, string folder, long solution)
+    public static async ValueTask RunPart2(string day, string folder, long solution)
     {
         var job = GetJob(day, folder);
         Assert.Equal(solution, await job.GetPart2());

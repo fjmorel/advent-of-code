@@ -13,9 +13,9 @@ public class Solution07 : ISolution
 		max = nums.Max();
 	}
 
-	public async Task<long> GetPart1() => GetBestPosition(i => nums.Select(x => Math.Abs(x - i)).Sum());
+	public async ValueTask<long> GetPart1() => GetBestPosition(i => nums.Select(x => Math.Abs(x - i)).Sum());
 
-	public async Task<long> GetPart2() => GetBestPosition(i => nums.Select(x => Math.Abs(x - i)).Select(x => x * (x + 1) / 2).Sum());
+	public async ValueTask<long> GetPart2() => GetBestPosition(i => nums.Select(x => Math.Abs(x - i)).Select(x => x * (x + 1) / 2).Sum());
 
 	long GetBestPosition(Func<int, long> calculator) => Enumerable.Range(min, max - min + 1).Min(calculator);
 }

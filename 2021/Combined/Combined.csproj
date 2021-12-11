@@ -7,12 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Update="examples\*">
+		<None Update="**\*.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="inputs\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Spectre.Console" Version="0.43.0" />
 	</ItemGroup>
 
 </Project>

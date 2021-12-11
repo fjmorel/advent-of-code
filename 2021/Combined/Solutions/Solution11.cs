@@ -16,13 +16,13 @@ public class Solution11 : ISolution
         }
     }
 
-    public async Task<long> GetPart1()
+    public async ValueTask<long> GetPart1()
     {
         var grid = new Dictionary<Point, long>(_original);
         return Enumerable.Range(1, 100).Aggregate(0L, (flashes, _) => flashes + Iterate(grid));
     }
 
-    public async Task<long> GetPart2()
+    public async ValueTask<long> GetPart2()
     {
         var grid = new Dictionary<Point, long>(_original);
         return Enumerable.Range(1, int.MaxValue).First(i => Iterate(grid) == grid.Count);

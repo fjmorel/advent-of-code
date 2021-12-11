@@ -9,9 +9,9 @@ public class Solution05 : ISolution
 		_vents = lines.Select(x => new Vent(x)).ToList();
 	}
 
-	public async Task<long> GetPart1() => _vents.Where(v => v.IsStraight).SelectMany(v => v.GetPoints()).Aggregate(new Dictionary<Point, int>(), MapPoint).Count(x => x.Value > 1);
+	public async ValueTask<long> GetPart1() => _vents.Where(v => v.IsStraight).SelectMany(v => v.GetPoints()).Aggregate(new Dictionary<Point, int>(), MapPoint).Count(x => x.Value > 1);
 
-	public async Task<long> GetPart2() => _vents.SelectMany(v => v.GetPoints()).Aggregate(new Dictionary<Point, int>(), MapPoint).Count(x => x.Value > 1);
+	public async ValueTask<long> GetPart2() => _vents.SelectMany(v => v.GetPoints()).Aggregate(new Dictionary<Point, int>(), MapPoint).Count(x => x.Value > 1);
 
 	Dictionary<Point, int> MapPoint(Dictionary<Point, int> map, Point pt)
 	{

@@ -9,14 +9,14 @@ public class Solution03 : ISolution
 		_data = lines;
 	}
 
-	public async Task<long> GetPart1()
+	public async ValueTask<long> GetPart1()
 	{
 		var gamma = string.Join("", _data[0].Select((_, i) => GetSurpulusOnes(_data, i) >= 0 ? '1' : '0'));
 		var epsilon = string.Join("", gamma.Select(x => x == '0' ? '1' : '0'));
 		return ConvertNum(gamma) * ConvertNum(epsilon);
 	}
 
-	public async Task<long> GetPart2()
+	public async ValueTask<long> GetPart2()
 	{
 		var o2 = GetRating(_data, true);
 		var co2 = GetRating(_data, false);

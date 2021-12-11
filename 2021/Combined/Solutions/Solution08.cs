@@ -29,9 +29,9 @@ public class Solution08 : ISolution
         _sharedSixes = GetSharedLetters(_real, 6);
     }
 
-    public async Task<long> GetPart1() => _lines.Sum(x => x.GetUniqueCounts());
+    public async ValueTask<long> GetPart1() => _lines.Sum(x => x.GetUniqueCounts());
 
-    public async Task<long> GetPart2() => _lines.Sum(x => x.GetValue(_real, _sharedFives, _sharedSixes));
+    public async ValueTask<long> GetPart2() => _lines.Sum(x => x.GetValue(_real, _sharedFives, _sharedSixes));
 
     private static Line ParseLine(string line)
     {

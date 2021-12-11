@@ -17,9 +17,9 @@ public class Solution09 : ISolution
         }
     }
 
-    public async Task<long> GetPart1() => GetLowestPoints().Select(pt => _points[pt] + 1).Sum();
+    public async ValueTask<long> GetPart1() => GetLowestPoints().Select(pt => _points[pt] + 1).Sum();
 
-    public async Task<long> GetPart2()
+    public async ValueTask<long> GetPart2()
     {
         var sizes = new List<long>();
         foreach (var low in GetLowestPoints())

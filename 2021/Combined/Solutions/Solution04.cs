@@ -16,9 +16,9 @@ public class Solution04 : ISolution
 			.ToList();
 	}
 
-	public async Task<long> GetPart1() => GetScore(cards.MinBy(CountNeededToWin)!);
+	public async ValueTask<long> GetPart1() => GetScore(cards.MinBy(CountNeededToWin)!);
 
-	public async Task<long> GetPart2() => GetScore(cards.MaxBy(CountNeededToWin)!);
+	public async ValueTask<long> GetPart2() => GetScore(cards.MaxBy(CountNeededToWin)!);
 
 	long GetScore(int[] card)
 	{

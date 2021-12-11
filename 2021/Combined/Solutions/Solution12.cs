@@ -7,12 +7,12 @@ public class Solution12 : ISolution
 	{
 	}
 
-	public async Task<long> GetPart1()
+	public async ValueTask<long> GetPart1()
 	{
 		return 0;
 	}
 
-	public async Task<long> GetPart2()
+	public async ValueTask<long> GetPart2()
 	{
 		return 0;
 	}

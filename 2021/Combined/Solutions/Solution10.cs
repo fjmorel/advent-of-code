@@ -11,7 +11,7 @@ public class Solution10 : ISolution
         _lines = lines;
     }
 
-    public async Task<long> GetPart1()
+    public async ValueTask<long> GetPart1()
     {
         var corrupt = new Dictionary<char, long>();
         foreach (var symbol in CLOSE)
@@ -26,7 +26,7 @@ public class Solution10 : ISolution
         return corrupt[')'] * 3 + corrupt[']'] * 57 + corrupt['}'] * 1197 + corrupt['>'] * 25137;
     }
 
-    public async Task<long> GetPart2()
+    public async ValueTask<long> GetPart2()
     {
         var scores = new List<long>();
         foreach (var line in _lines)

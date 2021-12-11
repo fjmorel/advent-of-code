@@ -13,13 +13,13 @@ public class Solution02 : ISolution
         }).ToList();
     }
 
-    public async Task<long> GetPart1()
+    public async ValueTask<long> GetPart1()
     {
         var location = _data.Aggregate(default(Point), Move);
         return location.x * location.y;
     }
 
-    public async Task<long> GetPart2()
+    public async ValueTask<long> GetPart2()
     {
         var location = _data.Aggregate(default(PointWithAim), Move);
         return location.x * location.y;

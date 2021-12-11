@@ -9,9 +9,9 @@ public class Solution06 : ISolution
 		initial = lines[0].Split(',').GroupBy(x => x).Select(group => new Fish(group.Count(), int.Parse(group.Key)));
 	}
 
-	public async Task<long> GetPart1() => Enumerable.Range(1, 80).Aggregate(initial, RunDay).Sum(x => x.count);
+	public async ValueTask<long> GetPart1() => Enumerable.Range(1, 80).Aggregate(initial, RunDay).Sum(x => x.count);
 
-	public async Task<long> GetPart2() => Enumerable.Range(1, 256).Aggregate(initial, RunDay).Sum(x => x.count);
+	public async ValueTask<long> GetPart2() => Enumerable.Range(1, 256).Aggregate(initial, RunDay).Sum(x => x.count);
 
 	IEnumerable<Fish> RunDay(IEnumerable<Fish> list, int i)
 		=> list
