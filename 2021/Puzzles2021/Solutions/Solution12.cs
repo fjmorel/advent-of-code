@@ -1,4 +1,4 @@
-namespace Combined.Solutions;
+namespace Puzzles2021.Solutions;
 
 public class Solution12 : ISolution
 {

@@ -1,7 +1,11 @@
-﻿namespace Tests;
+﻿using Puzzles2021.Solutions;
+using System.Reflection;
+
+namespace Tests2021;
 
 internal class Helpers
 {
+    private static readonly Assembly _assembly = typeof(Solution01).Assembly;
     public static async ValueTask RunDay(string day, string folder, long part1, long part2)
     {
         var job = GetJob(day, folder);
@@ -23,9 +27,9 @@ internal class Helpers
 
     private static ISolution GetJob(string day, string folder)
     {
-        Assert.True(Utilities.TryGetData(folder, day, out var lines));
+        Assert.True(RunnerUtilities.TryGetData(_assembly, folder, day, out var lines));
         Assert.NotNull(lines);
-        Assert.True(Utilities.TryGetSolution(day, lines!, out var job));
+        Assert.True(RunnerUtilities.TryGetSolution(_assembly, day, lines!, out var job));
         Assert.NotNull(job);
         return job!;
     }

@@ -1,4 +1,4 @@
-namespace Combined.Solutions;
+namespace Puzzles2021.Solutions;
 
 public class Solution09 : ISolution
 {
@@ -31,7 +31,7 @@ public class Solution09 : ISolution
             {
                 var pt = toCheck.Dequeue();
                 basin.Add(pt);
-                foreach (var adj in pt.GetAdjacent().Where(x => _points.GetValueOrDefault(x, 9) != 9 && !basin.Contains(x)))
+                foreach (var adj in pt.GetOrthogonal().Where(x => _points.GetValueOrDefault(x, 9) != 9 && !basin.Contains(x)))
                     toCheck.Enqueue(adj);
             }
 
@@ -42,5 +42,5 @@ public class Solution09 : ISolution
     }
 
     private IEnumerable<Point> GetLowestPoints()
-        => _points.Where(kv => kv.Key.GetAdjacent().All(x => _points.GetValueOrDefault(x, 9) > kv.Value)).Select(x => x.Key);
+        => _points.Where(kv => kv.Key.GetOrthogonal().All(x => _points.GetValueOrDefault(x, 9) > kv.Value)).Select(x => x.Key);
 }

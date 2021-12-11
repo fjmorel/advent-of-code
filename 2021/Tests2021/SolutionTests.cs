@@ -1,4 +1,4 @@
-namespace Tests;
+namespace Tests2021;
 
 public class SolutionTests
 {

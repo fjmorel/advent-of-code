@@ -21,10 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Combined\Combined.csproj" />
+    <ProjectReference Include="..\Puzzles2021\Puzzles2021.csproj" />
 	<Using Include="Xunit" />
-	<Using Include="Combined" />
-	<Using Include="Combined.Solutions" />
+	<Using Include="Puzzles2021" />
+	<Using Include="Puzzles2021.Solutions" />
   </ItemGroup>
 
 </Project>

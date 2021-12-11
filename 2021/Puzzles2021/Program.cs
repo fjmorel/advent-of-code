@@ -1,4 +1,4 @@
-﻿using Combined;
+﻿using Puzzles2021;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -18,16 +18,17 @@ foreach (var arg in args)
 
 async ValueTask<TimeSpan[]> TryRunDay(string day)
 {
+    var assembly = typeof(Program).Assembly;
     var timer = Stopwatch.StartNew();
     var folder = "inputs";
     // folder = "examples";
-    if (!Utilities.TryGetData(folder, day, out var lines))
+    if (!RunnerUtilities.TryGetData(assembly, folder, day, out var lines))
     {
         AnsiConsole.WriteLine($"Could not get data for day {day}");
         return Array.Empty<TimeSpan>();
     }
 
-    if (!Utilities.TryGetSolution(day, lines, out var job))
+    if (!RunnerUtilities.TryGetSolution(assembly, day, lines, out var job))
     {
         AnsiConsole.WriteLine($"Could not get solution class for day {day}");
         return Array.Empty<TimeSpan>();
