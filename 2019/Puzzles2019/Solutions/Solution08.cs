@@ -61,6 +61,7 @@ public class Solution08 : ISolution
                 {
                     0 => ConsoleColor.Black,
                     1 => ConsoleColor.White,
+                    _ => throw new ArgumentException($"Unexpected pixel value: [{pixel}]"),
                 };
                 Console.ForegroundColor = color;
                 Console.Write(block);

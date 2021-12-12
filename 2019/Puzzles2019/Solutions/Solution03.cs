@@ -7,27 +7,27 @@ public class Solution03 : ISolution
     private readonly HashSet<Point> intersections;
 
     public Solution03(string[] lines)
-	{
+    {
         var wires = lines.Select(ParseInstructions).ToArray();
         firstPositions = GetPositions(wires[0]);
         secondPositions = GetPositions(wires[1]);
         intersections = firstPositions.Intersect(secondPositions).ToHashSet();
-	}
+    }
 
-	public async ValueTask<long> GetPart1()
-	{
+    public async ValueTask<long> GetPart1()
+    {
         return intersections.Skip(1).Min(point => Math.Abs(point.x) + Math.Abs(point.y));
-	}
+    }
 
-	public async ValueTask<long> GetPart2()
-	{
+    public async ValueTask<long> GetPart2()
+    {
         return intersections.Skip(1).Min(point =>
         {
             var first = firstPositions.IndexOf(point);
             var second = secondPositions.IndexOf(point);
             return first + second;
         });
-	}
+    }
 
     List<Point> GetPositions(List<Instruction> instructions)
     {
@@ -56,10 +56,11 @@ public class Solution03 : ISolution
             'R' => start with { x = start.x + move.magnitude },
             'D' => start with { y = start.y - move.magnitude },
             'U' => start with { y = start.y + move.magnitude },
+            _ => throw new ArgumentException($"Unexpected direction: [{move.dir}]"),
         };
     }
 
     readonly record struct Instruction(char dir, int magnitude);
+
     readonly record struct Point(int x, int y);
 }
-

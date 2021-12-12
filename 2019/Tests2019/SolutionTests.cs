@@ -45,7 +45,7 @@ public class SolutionTests
     [InlineData("08", 1703, -1)]// HCGFE
     [InlineData("09", 3780860499, 33343)]
     [InlineData("10", 326, 1623)]
-    [InlineData("11", 2021, 0)]// LBJHEKLH
+    [InlineData("11", 2021, -1)]// LBJHEKLH
     [InlineData("12", 10028, 314610635824376)]
     [InlineData("13", 369, 19210)]
     [InlineData("14", 532506, 2595245)]
