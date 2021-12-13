@@ -3,6 +3,10 @@
 /// </summary>
 public interface ISolution
 {
-    ValueTask<long> GetPart1();
-    ValueTask<long> GetPart2();
+    ValueTask<long> GetPart1() => new (0L);
+    ValueTask<long> GetPart2() => new (0L);
+
+    // todo: handle tests which have string output
+    // async ValueTask<string> GetPart1String() => (await GetPart1()).ToString();
+    // async ValueTask<string> GetPart2String() => (await GetPart2()).ToString();
 }
