@@ -2,24 +2,23 @@ namespace Tests2019;
 
 public class SolutionTests
 {
-
     [Theory]
-    [InlineData("01", 3364035, 5043167)]
-    [InlineData("02", 150, 900)]
-    [InlineData("03", 198, 230)]
-    [InlineData("04", 4512, 1924)]
-    [InlineData("05", 5, 12)]
-    [InlineData("06", 5934, 26984457539)]
-    [InlineData("07", 37, 168)]
-    [InlineData("08", 26, 61229)]
-    [InlineData("09", 15, 1134)]
-    [InlineData("10", 26397, 288957)]
-    [InlineData("11", 1656, 195)]
-    [InlineData("12", 0, 0)]
-    [InlineData("13", 0, 0)]
-    [InlineData("14", 0, 0)]
-    [InlineData("15", 0, 0)]
-    [InlineData("16", 0, 0)]
+    [InlineData("01", 33583, 50346)]
+    //[InlineData("02", 0, 0)]// Intcode puzzle
+    [InlineData("03", 135, 410)]
+    //[InlineData("04", 0, 0)]// No example
+    //[InlineData("05", 0, 0)]// Intcode puzzle
+    [InlineData("06", 54, 4)]// Not 42 due to added lines from part 2 example
+    //[InlineData("07", 0, 0)]// Intcode puzzle
+    //[InlineData("08", 0, 0)]// No example (returns console output)
+    //[InlineData("09", 0, 0)]// Intcode puzzle
+    [InlineData("10", 210, 802)]
+    //[InlineData("11", 0, 0)]// Intcode puzzle (returns console output)
+    [InlineData("12", 14645, 4686774924)]
+    //[InlineData("13", 0, 0)]// Intcode puzzle
+    [InlineData("14", 2210736, 460664)]
+    //[InlineData("15", 0, 0)]// Intcode puzzle
+    [InlineData("16", 24465799, 84462026)]// Example data from part 2
     [InlineData("17", 0, 0)]
     [InlineData("18", 0, 0)]
     [InlineData("19", 0, 0)]
@@ -64,5 +63,4 @@ public class SolutionTests
     {
         await Helpers.RunDay(day, "inputs", part1, part2);
     }
-
 }
