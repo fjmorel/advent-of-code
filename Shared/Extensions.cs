@@ -14,6 +14,7 @@
     /// Parse an array of numbers separate by comma
     /// </summary>
     public static int[] ParseCsvInts(this string line) => line.Split(',').Select(int.Parse).ToArray();
+
     /// <summary>
     /// Parse an array of numbers separate by comma
     /// </summary>
@@ -23,4 +24,30 @@
     /// Parse an array of digits with no separator
     /// </summary>
     public static int[] ParseDigits(this string line) => line.Select(c => c - 48).ToArray();
+
+    /// <summary>
+    /// Output a set of coordinates to the console for debugging (or sometimes viewing a solution)
+    /// </summary>
+    /// <param name="points">List/Set of points</param>
+    /// <param name="characterSelector">Determine what to print for a given Point</param>
+    public static void Print(this IReadOnlyCollection<Point> points, Func<Point, char> characterSelector)
+    {
+        var minX = points.MinBy(pt => pt.x).x;
+        var minY = points.MinBy(pt => pt.y).y;
+        var maxX = points.MaxBy(pt => pt.x).x;
+        var maxY = points.MaxBy(pt => pt.y).y;
+
+        Console.WriteLine();
+
+        for (var y = minY; y <= maxY; y++)
+        {
+            Console.WriteLine();
+            for (var x = minX; x <= maxX; x++)
+            {
+                Console.Write(characterSelector(new(x, y)));
+            }
+        }
+
+        Console.WriteLine();
+    }
 }
