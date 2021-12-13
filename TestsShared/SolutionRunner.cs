@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Shared;
+using System.Reflection;
 
 namespace TestsShared;
 
@@ -27,9 +28,10 @@ public record SolutionRunner(Assembly _assembly)
 
     private ISolution GetJob(string day, string folder)
     {
-        Assert.True(RunnerUtilities.TryGetData(_assembly, folder, day, out var lines));
+        var runner = new Runner(_assembly);
+        Assert.True(runner.TryGetData(folder, day, out var lines));
         Assert.NotNull(lines);
-        Assert.True(RunnerUtilities.TryGetSolution(_assembly, day, lines!, out var job));
+        Assert.True(runner.TryGetSolution(day, lines!, out var job));
         Assert.NotNull(job);
         return job!;
     }

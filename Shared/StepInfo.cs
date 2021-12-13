@@ -1,13 +1,11 @@
-﻿using Spectre.Console;
-using Spectre.Console.Rendering;
+﻿using Spectre.Console.Rendering;
 
-namespace PuzzlesTemplate;
+namespace Shared;
 
-public readonly record struct StepInfo(string step, string value, TimeSpan elapsed)
+internal readonly record struct StepInfo(string step, string value, TimeSpan elapsed)
 {
     public IRenderable[] GetTableCells()
     {
-
         var ms = elapsed.TotalMilliseconds;
         var digits = ms switch
         {
