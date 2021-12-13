@@ -1,0 +1,12 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Puzzles2019": {
+      "commandName": "Project",
+      "environmentVariables": {
+        
+      },
+      "commandLineArgs": "all"
+    }
+  }
+}

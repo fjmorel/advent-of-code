@@ -47,8 +47,6 @@ public class IntCodeComputer
             if (parameterCount != 0)
                 i += 1 + parameterCount;
         }
-
-        return memory;
     }
 
     private IEnumerable<Mode> GetModes(long num, int minLength)
