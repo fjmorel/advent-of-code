@@ -1,3 +1,5 @@
+using Spectre.Console;
+
 namespace Puzzles2019.Solutions;
 
 public class Solution08 : ISolution
@@ -32,7 +34,7 @@ public class Solution08 : ISolution
 
     public async ValueTask<long> GetPart2()
     {
-        Console.WriteLine();
+        AnsiConsole.WriteLine();
         // set up transparent image
         var image = Enumerable.Range(1, 6).Select(x => Enumerable.Range(1, 25).Select(y => 2).ToArray()).ToArray();
         foreach (var layer in layers)
@@ -52,25 +54,25 @@ public class Solution08 : ISolution
         }
 
         const char block = '\u2588';
-        Console.BackgroundColor = ConsoleColor.White;
+        AnsiConsole.Background = Color.White;
         foreach (var row in image)
         {
             foreach (var pixel in row)
             {
                 var color = pixel switch
                 {
-                    0 => ConsoleColor.Black,
-                    1 => ConsoleColor.White,
+                    0 => Color.Black,
+                    1 => Color.White,
                     _ => throw new ArgumentException($"Unexpected pixel value: [{pixel}]"),
                 };
-                Console.ForegroundColor = color;
-                Console.Write(block);
+                AnsiConsole.Foreground = color;
+                AnsiConsole.Write(block);
             }
 
-            Console.WriteLine();
+            AnsiConsole.WriteLine();
         }
 
-        Console.ResetColor();
+        AnsiConsole.ResetColors();
         return -1;
     }
 }

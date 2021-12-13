@@ -2,7 +2,9 @@
 using Spectre.Console.Rendering;
 
 if (!args.Any())
-    args = new string[] { Console.ReadLine()! };
+    args = new string[] { AnsiConsole.Prompt(new TextPrompt<string>("Days to run:")) };
+if (args.Length == 1)
+    args = args[0].Split(' ');
 
 foreach (var arg in args)
 {

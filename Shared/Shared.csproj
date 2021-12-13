@@ -3,5 +3,10 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Spectre.Console" Version="0.43.0" />
+        <PackageReference Include="Spectre.Console.Analyzer" Version="0.43.0" />
+        <Using Include="Spectre.Console" />
+    </ItemGroup>
 
 </Project>

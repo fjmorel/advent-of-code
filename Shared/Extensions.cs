@@ -1,4 +1,7 @@
-﻿public static class Extensions
+﻿using Spectre.Console;
+
+#pragma warning disable CA1050
+public static class Extensions
 {
     /// <summary>
     /// Parse a single number from each line
@@ -32,22 +35,22 @@
     /// <param name="characterSelector">Determine what to print for a given Point</param>
     public static void Print(this IReadOnlyCollection<Point> points, Func<Point, char> characterSelector)
     {
-        var minX = points.MinBy(pt => pt.x).x;
-        var minY = points.MinBy(pt => pt.y).y;
-        var maxX = points.MaxBy(pt => pt.x).x;
-        var maxY = points.MaxBy(pt => pt.y).y;
+        var minX = points.Min(pt => pt.x);
+        var minY = points.Min(pt => pt.y);
+        var maxX = points.Max(pt => pt.x);
+        var maxY = points.Max(pt => pt.y);
 
-        Console.WriteLine();
+        AnsiConsole.WriteLine();
 
         for (var y = minY; y <= maxY; y++)
         {
-            Console.WriteLine();
+            AnsiConsole.WriteLine();
             for (var x = minX; x <= maxX; x++)
             {
-                Console.Write(characterSelector(new(x, y)));
+                AnsiConsole.Write(characterSelector(new(x, y)));
             }
         }
 
-        Console.WriteLine();
+        AnsiConsole.WriteLine();
     }
 }

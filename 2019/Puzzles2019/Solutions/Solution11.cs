@@ -1,3 +1,5 @@
+using Spectre.Console;
+
 namespace Puzzles2019.Solutions;
 
 public class Solution11 : ISolution
@@ -26,24 +28,24 @@ public class Solution11 : ISolution
         var maxY = grid.Keys.MaxBy(p => p.y).y;
 
         // still not sure why this axis was inverted
-        Console.WriteLine();
+        AnsiConsole.WriteLine();
         for (var y = maxY; y >= minY; y--)
         {
             for (var x = minX; x <= maxX; x++)
             {
                 var color = grid.GetValueOrDefault(new Point(x, y));
-                Console.Write(color == 1 ? '#' : ' ');
+                AnsiConsole.Write(color == 1 ? '#' : ' ');
             }
 
-            Console.WriteLine();
+            AnsiConsole.WriteLine();
         }
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
+        AnsiConsole.WriteLine();
+        AnsiConsole.WriteLine();
+        AnsiConsole.WriteLine();
+        AnsiConsole.WriteLine();
+        AnsiConsole.WriteLine();
+        AnsiConsole.WriteLine();
+        AnsiConsole.WriteLine();
 
         return -1;
     }

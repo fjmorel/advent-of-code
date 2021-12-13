@@ -1,3 +1,5 @@
+using Spectre.Console;
+
 namespace Puzzles2019.Solutions;
 
 public class Solution13 : ISolution
@@ -65,12 +67,12 @@ public class Solution13 : ISolution
         bool enableOutput = true;
         try
         {
-            Console.Clear();
+            AnsiConsole.Clear();
         }
         catch (Exception)
         {
             enableOutput = false;
-            Console.WriteLine("Console manipulation has been disabled due to redirection");
+            AnsiConsole.WriteLine("Console manipulation has been disabled due to redirection");
         }
 
         long score = 0, paddleX = 0, paddleY = 0;
@@ -86,8 +88,8 @@ public class Solution13 : ISolution
                 score = state;
                 if (enableOutput)
                 {
-                    Console.SetCursorPosition(0, 0);
-                    Console.Write("Score: " + score);
+                    AnsiConsole.Cursor.SetPosition(0, 0);
+                    AnsiConsole.Write("Score: " + score);
                 }
             }
             else
@@ -113,7 +115,7 @@ public class Solution13 : ISolution
 
                 if (enableOutput)
                 {
-                    Console.SetCursorPosition((int)x, (int)y + 1);
+                    AnsiConsole.Cursor.SetPosition((int)x, (int)y + 1);
                     var ch = tile switch
                     {
                         TileState.Empty => " ",
@@ -123,13 +125,13 @@ public class Solution13 : ISolution
                         TileState.Wall => "*",
                         _ => throw new NotSupportedException("Unexpected tile state"),
                     };
-                    Console.Write(ch);
+                    AnsiConsole.Write(ch);
                 }
             }
         }
 
         if (enableOutput)
-            Console.SetCursorPosition(0, (int)paddleY + 3);
+            AnsiConsole.Cursor.SetPosition(0, (int)paddleY + 3);
         return score;
     }
     public readonly record struct Point(long x, long y);
