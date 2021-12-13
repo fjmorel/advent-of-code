@@ -1,12 +1,10 @@
 ﻿using System.Reflection;
 
-namespace TestsTemplate;
+namespace TestsShared;
 
-internal class Helpers
+public record SolutionRunner(Assembly _assembly)
 {
-    private static readonly Assembly _assembly = typeof(Solution01).Assembly;
-
-    public static async Task RunDay(string day, string folder, long part1, long part2)
+    public async Task RunDay(string day, string folder, long part1, long part2)
     {
         var job = GetJob(day, folder);
         var actual1 = await job.GetPart1();
@@ -15,19 +13,19 @@ internal class Helpers
         Assert.Equal(part2, actual2);
     }
 
-    public static async Task RunPart1(string day, string folder, long solution)
+    public async Task RunPart1(string day, string folder, long solution)
     {
         var job = GetJob(day, folder);
         Assert.Equal(solution, await job.GetPart1());
     }
 
-    public static async Task RunPart2(string day, string folder, long solution)
+    public async Task RunPart2(string day, string folder, long solution)
     {
         var job = GetJob(day, folder);
         Assert.Equal(solution, await job.GetPart2());
     }
 
-    private static ISolution GetJob(string day, string folder)
+    private ISolution GetJob(string day, string folder)
     {
         Assert.True(RunnerUtilities.TryGetData(_assembly, folder, day, out var lines));
         Assert.NotNull(lines);

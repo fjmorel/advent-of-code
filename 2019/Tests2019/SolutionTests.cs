@@ -2,6 +2,8 @@ namespace Tests2019;
 
 public class SolutionTests
 {
+    private static readonly SolutionRunner _runner = new(typeof(Solution01).Assembly);
+
     [Theory]
     [InlineData("01", 33583, 50346)]
     //[InlineData("02", 0, 0)]// Intcode puzzle
@@ -30,7 +32,7 @@ public class SolutionTests
     [InlineData("25", 0, 0)]
     public async Task RunExample(string day, long part1, long part2)
     {
-        await Helpers.RunDay(day, "examples", part1, part2);
+        await _runner.RunDay(day, "examples", part1, part2);
     }
 
     [Theory]
@@ -48,7 +50,7 @@ public class SolutionTests
     [InlineData("12", 10028, 314610635824376)]
     [InlineData("13", 369, 19210)]
     [InlineData("14", 532506, 2595245)]
-    [InlineData("15", 0, 0)]
+    //[InlineData("15", 0, 0)]// not done
     [InlineData("16", 40921727, 89950138)]
     [InlineData("17", 0, 0)]
     [InlineData("18", 0, 0)]
@@ -61,6 +63,6 @@ public class SolutionTests
     [InlineData("25", 0, 0)]
     public async Task RunInput(string day, long part1, long part2)
     {
-        await Helpers.RunDay(day, "inputs", part1, part2);
+        await _runner.RunDay(day, "inputs", part1, part2);
     }
 }

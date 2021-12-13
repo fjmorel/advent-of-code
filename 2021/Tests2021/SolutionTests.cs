@@ -2,6 +2,7 @@ namespace Tests2021;
 
 public class SolutionTests
 {
+    private static readonly SolutionRunner _runner = new(typeof(Solution01).Assembly);
 
     [Theory]
     [InlineData("01", 7L, 5L)]
@@ -19,7 +20,7 @@ public class SolutionTests
     [InlineData("13", 0, 0)]
     public async Task RunExample(string day, long part1, long part2)
     {
-        await Helpers.RunDay(day, "examples", part1, part2);
+        await _runner.RunDay(day, "examples", part1, part2);
     }
 
     [Theory]
@@ -38,7 +39,7 @@ public class SolutionTests
     [InlineData("13", 0, 0)]
     public async Task RunInput(string day, long part1, long part2)
     {
-        await Helpers.RunDay(day, "inputs", part1, part2);
+        await _runner.RunDay(day, "inputs", part1, part2);
     }
 
 }
