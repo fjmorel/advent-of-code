@@ -9,7 +9,7 @@ public class IntCodeComputer
         _opCodes = opCodes;
     }
 
-    public async Task Run(ChannelReader<long> reader, ChannelWriter<long> writer)
+    public async Task<Dictionary<long, long>> Run(ChannelReader<long> reader, ChannelWriter<long> writer)
     {
         var memory = _opCodes.Select((value, i) => (value, (long)i)).ToDictionary(x => x.Item2, x => x.value);
         var state = new ComputerState(memory, reader, writer);
@@ -39,7 +39,7 @@ public class IntCodeComputer
             if (parameterCount < 0)
             {
                 writer.TryComplete();
-                return;
+                return memory;
             }
 
             // Go to next instruction (instruction parameter count + 1 for Opcode)
@@ -47,6 +47,8 @@ public class IntCodeComputer
             if (parameterCount != 0)
                 i += 1 + parameterCount;
         }
+
+        return memory;
     }
 
     private IEnumerable<Mode> GetModes(long num, int minLength)

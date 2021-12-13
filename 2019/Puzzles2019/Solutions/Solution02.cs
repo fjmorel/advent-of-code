@@ -2,14 +2,22 @@ namespace Puzzles2019.Solutions;
 
 public class Solution02 : ISolution
 {
-    private readonly int[] _opCodes;
+    private readonly long[] _opCodes;
+    private readonly Channel<long> _channel;
 
     public Solution02(string[] lines)
     {
-        _opCodes = lines[0].ParseCsvInts();
+        _opCodes = lines[0].ParseCsvLongs();
+        _channel = Channel.CreateUnbounded<long>();
     }
 
-    public async ValueTask<long> GetPart1() => Compute(_opCodes, 12, 2);
+    public async ValueTask<long> GetPart1()
+    {
+        _opCodes[1] = 12;// noun
+        _opCodes[2] = 2;// verb
+        var memory = await new IntCodeComputer(_opCodes).Run(_channel.Reader, _channel.Writer);
+        return memory[0];
+    }
 
     public async ValueTask<long> GetPart2()
     {
@@ -17,58 +25,14 @@ public class Solution02 : ISolution
         {
             for (var j = 0; j < 100; j++)
             {
-                var result = Compute(_opCodes, i, j);
-                if (result == 19690720)
+                _opCodes[1] = i;// noun
+                _opCodes[2] = j;// verb
+                var memory = await new IntCodeComputer(_opCodes).Run(_channel.Reader, _channel.Writer);
+                if (memory[0] == 19690720)
                     return 100 * i + j;
             }
         }
+
         return -1;
     }
-
-    int Compute(int[] original, int noun, int verb)
-    {
-        var copy = new int[original.Length];
-        Array.Copy(original, copy, original.Length);
-        copy[1] = noun;
-        copy[2] = verb;
-
-
-        var i = 0;
-        while (true)
-        {
-            // Run the instruction at the current pointer and find out how many parameters it had
-            var parameterCount = copy[i] switch
-            {
-                1 => Add(copy, i),
-                2 => Multiply(copy, i),
-                99 => -1,
-                _ => throw new NotSupportedException("Unexpected Opcode: " + copy[i]),
-            };
-            // -1 is special value to indicate we should halt
-            if (parameterCount < 0)
-                return copy[0];
-
-            // Go to next instruction (instruction parameter count + 1 for Opcode)
-            i += 1 + parameterCount;
-        }
-    }
-
-    /// <summary>
-    /// Get the values indicated by the pointers, and set sum in position in pointer
-    /// </summary>
-    int Add(int[] codes, int index)
-    {
-        codes[codes[index + 3]] = codes[codes[index + 1]] + codes[codes[index + 2]];
-        return 3;
-    }
-
-    /// <summary>
-    /// Get the values indicated by the pointers, and set product in position in pointer
-    /// </summary>
-    int Multiply(int[] codes, int index)
-    {
-        codes[codes[index + 3]] = codes[codes[index + 1]] * codes[codes[index + 2]];
-        return 3;
-    }
 }
-
