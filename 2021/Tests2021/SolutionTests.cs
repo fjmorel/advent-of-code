@@ -18,7 +18,18 @@ public class SolutionTests
     [InlineData("11", 1656, 195)]
     [InlineData("12", 19, 103)]
     [InlineData("13", 17, -1)]
-    [InlineData("14", 0, 0)]
+    [InlineData("14", 0000, 0000)]
+    [InlineData("15", 0000, 0000)]
+    [InlineData("16", 0000, 0000)]
+    [InlineData("17", 0000, 0000)]
+    [InlineData("18", 0000, 0000)]
+    [InlineData("19", 0000, 0000)]
+    [InlineData("20", 0000, 0000)]
+    [InlineData("21", 0000, 0000)]
+    [InlineData("22", 0000, 0000)]
+    [InlineData("23", 0000, 0000)]
+    [InlineData("24", 0000, 0000)]
+    [InlineData("25", 0000, 0000)]
     public async Task RunExample(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "examples", part1, part2);
@@ -38,7 +49,18 @@ public class SolutionTests
     [InlineData("11", 1665, 235)]
     [InlineData("12", 5874, 153592)]
     [InlineData("13", 720, -1)]// Console output: AHPRPAUZ
-    [InlineData("14", 0, 0)]
+    [InlineData("14", 0000, 0000)]
+    [InlineData("15", 0000, 0000)]
+    [InlineData("16", 0000, 0000)]
+    [InlineData("17", 0000, 0000)]
+    [InlineData("18", 0000, 0000)]
+    [InlineData("19", 0000, 0000)]
+    [InlineData("20", 0000, 0000)]
+    [InlineData("21", 0000, 0000)]
+    [InlineData("22", 0000, 0000)]
+    [InlineData("23", 0000, 0000)]
+    [InlineData("24", 0000, 0000)]
+    [InlineData("25", 0000, 0000)]
     public async Task RunInput(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "inputs", part1, part2);
