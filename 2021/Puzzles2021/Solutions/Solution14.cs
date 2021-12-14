@@ -15,38 +15,26 @@ public class Solution14 : ISolution
         _letters = _rules.SelectMany(x => new char[] { x.Key.Item1, x.Key.Item2, x.Value }).ToHashSet();
     }
 
-    public async ValueTask<long> GetPart1()
+    public async ValueTask<long> GetPart1() => Run(10);
+
+    public async ValueTask<long> GetPart2() => Run(40);
+
+    private long Run(int iterations)
     {
-        var final = Enumerable.Range(1, 10).Aggregate(GetEmpty(), Insert);
+        var start = GetEmpty();
+        for (var i = 1; i < _template.Length; i++)
+            start[(_template[i - 1], _template[i])]++;
+
+        var final = Enumerable.Range(1, iterations).Aggregate(start, Insert);
         var totals = GetCounts(final);
         return totals.Max() - totals.Min();
     }
 
-    public async ValueTask<long> GetPart2()
-    {
-        var final = Enumerable.Range(1, 40).Aggregate(GetEmpty(), Insert);
-        var totals = GetCounts(final);
-        return totals.Max() - totals.Min();
-    }
-
-    private Dictionary<(char, char), long> GetEmpty(bool initialize = true)
-    {
-        var counts = new Dictionary<(char, char), long>();
-        foreach (var rule in _rules.Keys)
-            counts[rule] = 0;
-
-        if (initialize)
-            for (var i = 1; i < _template.Length; i++)
-                counts[(_template[i - 1], _template[i])]++;
-
-        return counts;
-    }
+    private Dictionary<(char, char), long> GetEmpty() => _rules.ToDictionary(x => x.Key, _ => 0L);
 
     private IReadOnlyCollection<long> GetCounts(Dictionary<(char, char), long> pairs)
     {
-        var result = new Dictionary<char, long>();
-        foreach (var letter in _letters)
-            result[letter] = 0;
+        var result = _letters.ToDictionary(x => x, _ => 0L);
 
         foreach (var ((before, after), value) in pairs)
         {
@@ -64,7 +52,7 @@ public class Solution14 : ISolution
 
     private Dictionary<(char, char), long> Insert(Dictionary<(char, char), long> previous, int _)
     {
-        var next = GetEmpty(false);
+        var next = GetEmpty();
         foreach (var ((before, after), value) in previous)
         {
             var middle = _rules[(before, after)];
