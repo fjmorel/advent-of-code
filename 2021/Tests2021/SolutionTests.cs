@@ -18,7 +18,7 @@ public class SolutionTests
     [InlineData("11", 1656, 195)]
     [InlineData("12", 19, 103)]
     [InlineData("13", 17, -1)]
-    [InlineData("14", 0000, 0000)]
+    [InlineData("14", 1588, 2188189693529)]
     [InlineData("15", 0000, 0000)]
     [InlineData("16", 0000, 0000)]
     [InlineData("17", 0000, 0000)]
@@ -49,7 +49,7 @@ public class SolutionTests
     [InlineData("11", 1665, 235)]
     [InlineData("12", 5874, 153592)]
     [InlineData("13", 720, -1)]// Console output: AHPRPAUZ
-    [InlineData("14", 0000, 0000)]
+    [InlineData("14", 3143, 4110215602456)]
     [InlineData("15", 0000, 0000)]
     [InlineData("16", 0000, 0000)]
     [InlineData("17", 0000, 0000)]
