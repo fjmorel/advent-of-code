@@ -3,15 +3,13 @@ namespace Puzzles2021.Solutions;
 public class Solution14 : ISolution
 {
     private readonly HashSet<char> _letters;
-    private readonly Dictionary<(char, char), char> _rules = new();
+    private readonly Dictionary<(char, char), char> _rules;
     private readonly string _template;
 
     public Solution14(string[] lines)
     {
         _template = lines[0];
-        foreach (var line in lines.Skip(2))
-            _rules[(line[0], line[1])] = line[^1];
-
+        _rules = lines.Skip(2).ToDictionary(x => (x[0], x[1]), x => x[^1]);
         _letters = _rules.SelectMany(x => new char[] { x.Key.Item1, x.Key.Item2, x.Value }).ToHashSet();
     }
 
