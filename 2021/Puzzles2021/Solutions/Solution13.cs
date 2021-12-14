@@ -1,5 +1,3 @@
-using Spectre.Console;
-
 namespace Puzzles2021.Solutions;
 
 public class Solution13 : ISolution

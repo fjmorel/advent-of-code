@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Shared;
@@ -67,14 +66,14 @@ public record Runner(Assembly assembly)
         table.AddRow(new StepInfo($"Day {day} Setup", "", setupTime).GetTableCells());
         ctx.Refresh();
         timer.Restart();
-        var part1 = await job.GetPart1();
+        var part1 = await job.GetPart1String();
         var part1Time = timer.Elapsed;
-        table.AddRow(new StepInfo("Part 1", part1.ToString(), part1Time).GetTableCells());
+        table.AddRow(new StepInfo("Part 1", part1, part1Time).GetTableCells());
         ctx.Refresh();
         timer.Restart();
-        var part2 = await job.GetPart2();
+        var part2 = await job.GetPart2String();
         var part2Time = timer.Elapsed;
-        table.AddRow(new StepInfo("Part 2", part2.ToString(), part2Time).GetTableCells());
+        table.AddRow(new StepInfo("Part 2", part2, part2Time).GetTableCells());
         ctx.Refresh();
         timer.Stop();
 

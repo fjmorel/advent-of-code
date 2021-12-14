@@ -1,6 +1,4 @@
-﻿using Spectre.Console;
-
-#pragma warning disable CA1050
+﻿#pragma warning disable CA1050
 public static class Extensions
 {
     /// <summary>

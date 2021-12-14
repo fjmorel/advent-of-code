@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Puzzles2020.Solutions;
 
 public class Solution23 : ISolution
