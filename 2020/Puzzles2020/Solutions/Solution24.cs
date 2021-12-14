@@ -39,7 +39,7 @@ public class Solution24 : ISolution
         return blackTiles.Count;
     }
 
-    IEnumerable<Direction> ParseLine(string line)
+    private IEnumerable<Direction> ParseLine(string line)
     {
         for (var i = 0; i < line.Length; i++)
         {
@@ -62,13 +62,11 @@ public class Solution24 : ISolution
         }
     }
 
-    /// <summary>
-    /// X = W<-->E, Y = NW<-->SE, Z = NE<-->SW. x+y+z==0
-    /// https://www.redblobgames.com/grids/hexagons/ Cube coordinates
-    /// </summary>
-    record Coordinate(int X, int Y, int Z)
+    // X = W<-->E, Y = NW<-->SE, Z = NE<-->SW. x+y+z==0
+    // https://www.redblobgames.com/grids/hexagons/ Cube coordinates
+    private record Coordinate(int X, int Y, int Z)
     {
-        public static Coordinate Origin = new(0, 0, 0);
+        public static readonly Coordinate Origin = new(0, 0, 0);
 
         public Coordinate WithMove(Direction direction) => direction switch
         {
@@ -86,12 +84,12 @@ public class Solution24 : ISolution
 
         public IEnumerable<Coordinate> GetNeighbors()
         {
-            yield return this.WithMove(Direction.E);
-            yield return this.WithMove(Direction.SE);
-            yield return this.WithMove(Direction.NE);
-            yield return this.WithMove(Direction.W);
-            yield return this.WithMove(Direction.SW);
-            yield return this.WithMove(Direction.NW);
+            yield return WithMove(Direction.E);
+            yield return WithMove(Direction.SE);
+            yield return WithMove(Direction.NE);
+            yield return WithMove(Direction.W);
+            yield return WithMove(Direction.SW);
+            yield return WithMove(Direction.NW);
         }
 
         public bool ShouldBeBlack(HashSet<Coordinate> allCurrentlyBlack)
@@ -101,7 +99,7 @@ public class Solution24 : ISolution
         }
     }
 
-    enum Direction
+    private enum Direction
     {
         E,
         SE,

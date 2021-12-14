@@ -62,7 +62,7 @@ public class Solution13 : ISolution
         return await paint;
     }
 
-    async Task<long> Paint(Dictionary<Point, TileState> screen, ChannelReader<long> output, ChannelWriter<long> input)
+    private async Task<long> Paint(Dictionary<Point, TileState> screen, ChannelReader<long> output, ChannelWriter<long> input)
     {
         bool enableOutput = true;
         try

@@ -2,7 +2,7 @@ namespace Tests2020;
 
 public class SolutionTests
 {
-    private static readonly SolutionRunner _runner = new(typeof(Puzzles2020.Solutions.Solution01).Assembly);
+    private static readonly SolutionTester _runner = new(typeof(Puzzles2020.Solutions.Solution01).Assembly);
 
     [Theory]
     [InlineData("01", 514579, 241861950)]
@@ -25,8 +25,6 @@ public class SolutionTests
     [InlineData("18", 71, 231)]
     //[InlineData("19", 0000, 0000)]// Different examples for Parts 1 and 2
     [InlineData("20", 20899048083289, 273)]
-    // todo: handle testing days with text solutions
-    //[InlineData("21", 5, -1)]// mxmxvkd,sqjhc,fvjkl
     [InlineData("22", 306, 291)]
     [InlineData("23", 67384529, 149245887792)]
     [InlineData("24", 10, 2208)]
@@ -57,8 +55,6 @@ public class SolutionTests
     [InlineData("18", 131076645626, 109418509151782)]
     [InlineData("19", 299, 414)]
     [InlineData("20", 7492183537913, 2323)]
-    // todo: handle testing days with text solutions
-    //[InlineData("21", 2573, -1)]// "bjpkhx,nsnqf,snhph,zmfqpn,qrbnjtj,dbhfd,thn,sthnsg"
     [InlineData("22", 33694, 31835)]
     [InlineData("23", 25468379, 474747880250)]
     [InlineData("24", 549, 4147)]
@@ -66,5 +62,13 @@ public class SolutionTests
     public async Task RunInput(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "inputs", part1, part2);
+    }
+
+    [Theory]
+    [InlineData("examples", "21", "5", "mxmxvkd,sqjhc,fvjkl")]
+    [InlineData("inputs", "21", "2573", "bjpkhx,nsnqf,snhph,zmfqpn,qrbnjtj,dbhfd,thn,sthnsg")]
+    public async Task RunStrings(string folder, string day, string part1, string part2)
+    {
+        await _runner.RunDay(day, folder, part1, part2);
     }
 }

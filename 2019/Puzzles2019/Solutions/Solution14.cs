@@ -3,9 +3,9 @@ namespace Puzzles2019.Solutions;
 public class Solution14 : ISolution
 {
     private readonly Dictionary<string, Formula> reactions;
-    const string ORE = "ORE";
-    const string FUEL = "FUEL";
-    const long TRILLION = 1_000_000_000_000;
+    private const string ORE = "ORE";
+    private const string FUEL = "FUEL";
+    private const long TRILLION = 1_000_000_000_000;
 
     public Solution14(string[] lines)
     {
@@ -45,7 +45,7 @@ public class Solution14 : ISolution
         return produced;
     }
 
-    State GetInitialState()
+    private State GetInitialState()
     {
         var lookup = new Dictionary<string, long>();
         lookup[ORE] = 0;
@@ -55,7 +55,7 @@ public class Solution14 : ISolution
         return new State(lookup);
     }
 
-    void Produce(Reagent initialNeed, State state)
+    private void Produce(Reagent initialNeed, State state)
     {
         var needs = new Queue<Reagent>();
         needs.Enqueue(initialNeed);
@@ -66,7 +66,7 @@ public class Solution14 : ISolution
         }
     }
 
-    void ProduceReagent(string chemical, long quantityNeeded, State state)
+    private void ProduceReagent(string chemical, long quantityNeeded, State state)
     {
         // If need more than we have,
         // Then use up supply and add need
@@ -105,7 +105,7 @@ public class Solution14 : ISolution
         }
     }
 
-    Dictionary<string, Formula> ParseReactions(string[] lines)
+    private Dictionary<string, Formula> ParseReactions(string[] lines)
     {
         var output = new Dictionary<string, Formula>();
         var regex = new Regex("(((?<reagent_count>[0-9]+) (?<reagent_name>[A-Za-z]+),? )+)=> (?<product>(?<product_count>[0-9]+) (?<product_name>[A-Za-z]+))");

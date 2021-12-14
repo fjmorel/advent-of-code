@@ -4,7 +4,7 @@ public class Solution06 : ISolution
 {
     private readonly Dictionary<string, string> keyOrbitsValue;
 
-    const string CENTER = "COM";
+    private const string CENTER = "COM";
 
     public Solution06(string[] lines)
     {
@@ -41,7 +41,7 @@ public class Solution06 : ISolution
         return you.IndexOf(common) + santa.IndexOf(common);
     }
 
-    IEnumerable<string> GetChain(string start)
+    private IEnumerable<string> GetChain(string start)
     {
         while (start != CENTER)
         {

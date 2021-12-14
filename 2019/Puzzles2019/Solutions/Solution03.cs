@@ -29,7 +29,7 @@ public class Solution03 : ISolution
         });
     }
 
-    List<Point> GetPositions(List<Instruction> instructions)
+    private List<Point> GetPositions(List<Instruction> instructions)
     {
         return instructions.Aggregate(new List<Point>() { default }, (list, instruction) =>
         {
@@ -40,7 +40,7 @@ public class Solution03 : ISolution
         });
     }
 
-    List<Instruction> ParseInstructions(string line)
+    private List<Instruction> ParseInstructions(string line)
     {
         return line
             .Split(',')
@@ -48,7 +48,7 @@ public class Solution03 : ISolution
             .ToList();
     }
 
-    Point Move(Point start, Instruction move)
+    private Point Move(Point start, Instruction move)
     {
         return move.dir switch
         {
@@ -60,7 +60,7 @@ public class Solution03 : ISolution
         };
     }
 
-    readonly record struct Instruction(char dir, int magnitude);
+    private readonly record struct Instruction(char dir, int magnitude);
 
-    readonly record struct Point(int x, int y);
+    private readonly record struct Point(int x, int y);
 }

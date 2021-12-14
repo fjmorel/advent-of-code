@@ -2,7 +2,7 @@
 
 public class WorkInProgressTests
 {
-    private static readonly SolutionRunner _runner = new(typeof(Solution01).Assembly);
+    private static readonly SolutionTester _runner = new(typeof(Solution01).Assembly);
 
     private const string _day = "01";
 

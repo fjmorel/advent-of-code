@@ -13,7 +13,7 @@ public class Solution05 : ISolution
 
     public ValueTask<long> GetPart2() => Compute(5);
 
-    async ValueTask<long> Compute(long input)
+    private async ValueTask<long> Compute(long input)
     {
         var intCode = new IntCodeComputer(_opCodes);
 

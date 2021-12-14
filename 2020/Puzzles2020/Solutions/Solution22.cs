@@ -28,10 +28,10 @@ public class Solution22 : ISolution
         return GetScore(p1Deck, p2Deck);
     }
 
-    long GetScore(IEnumerable<int> p1, IEnumerable<int> p2)
+    private long GetScore(IEnumerable<int> p1, IEnumerable<int> p2)
         => p1.Concat(p2).Reverse().Select((x, i) => x * (i + 1)).Sum();
 
-    (Queue<int> p1Deck, Queue<int> p2Deck) PlayRecursive(Queue<int> p1Deck, Queue<int> p2Deck)
+    private (Queue<int> p1Deck, Queue<int> p2Deck) PlayRecursive(Queue<int> p1Deck, Queue<int> p2Deck)
     {
         var states = new HashSet<string>();
 
@@ -57,9 +57,9 @@ public class Solution22 : ISolution
         return (p1Deck, p2Deck);
     }
 
-    int GetWinner(int p1Value, int p2Value) => p1Value > p2Value ? 1 : p2Value > p1Value ? 2 : 0;
+    private int GetWinner(int p1Value, int p2Value) => p1Value > p2Value ? 1 : p2Value > p1Value ? 2 : 0;
 
-    void AddCardsToWinner(Queue<int> p1Deck, Queue<int> p2Deck, int p1Card, int p2Card, int winner)
+    private void AddCardsToWinner(Queue<int> p1Deck, Queue<int> p2Deck, int p1Card, int p2Card, int winner)
     {
         switch (winner)
         {
@@ -78,7 +78,7 @@ public class Solution22 : ISolution
         }
     }
 
-    (Queue<int> p1Deck, Queue<int> p2Deck) GetOriginalDecks()
+    private (Queue<int> p1Deck, Queue<int> p2Deck) GetOriginalDecks()
     {
         Queue<int> p1deck = new(), p2deck = new();
         var i = 1;
@@ -91,6 +91,4 @@ public class Solution22 : ISolution
             p2deck.Enqueue(int.Parse(list[i]));
         return (p1deck, p2deck);
     }
-
-    record Memory(int[] p1, int[] p2);
 }

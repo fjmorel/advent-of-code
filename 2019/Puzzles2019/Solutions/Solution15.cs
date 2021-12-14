@@ -34,7 +34,7 @@ public class Solution15 : ISolution
         return 0;
     }
 
-    async Task FindSystem(ChannelReader<long> reports, ChannelWriter<long> movements)
+    private async Task FindSystem(ChannelReader<long> reports, ChannelWriter<long> movements)
     {
         long steps = 0;
         var area = new Dictionary<Point, PointState>();

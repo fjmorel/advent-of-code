@@ -40,7 +40,7 @@ public class Solution05 : ISolution
     }
 
 
-    record Seat(int rowMin, int rowMax, int colMin, int colMax)
+    private record Seat(int rowMin, int rowMax, int colMin, int colMax)
     {
         public int Id => rowMax * 8 + colMax;
     }

@@ -50,7 +50,7 @@ public class Solution11 : ISolution
         return -1;
     }
 
-    async Task<Dictionary<Point, long>> RunPaintJob(long startColor)
+    private async Task<Dictionary<Point, long>> RunPaintJob(long startColor)
     {
         var sensorChannel = Channel.CreateUnbounded<long>();
         var botChannel = Channel.CreateUnbounded<long>();
@@ -65,7 +65,7 @@ public class Solution11 : ISolution
         return await paint;
     }
 
-    async Task<Dictionary<Point, long>> Paint(ChannelReader<long> reader, ChannelWriter<long> writer, long startColor)
+    private async Task<Dictionary<Point, long>> Paint(ChannelReader<long> reader, ChannelWriter<long> writer, long startColor)
     {
         var grid = new Dictionary<Point, long>();
 

@@ -13,7 +13,7 @@ public class Solution05 : ISolution
 
 	public async ValueTask<long> GetPart2() => _vents.SelectMany(v => v.GetPoints()).Aggregate(new Dictionary<Point, int>(), MapPoint).Count(x => x.Value > 1);
 
-	Dictionary<Point, int> MapPoint(Dictionary<Point, int> map, Point pt)
+    private Dictionary<Point, int> MapPoint(Dictionary<Point, int> map, Point pt)
 	{
 		map[pt] = map.GetValueOrDefault(pt, 0) + 1;
 		return map;

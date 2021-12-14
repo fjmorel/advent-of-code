@@ -95,5 +95,5 @@ public class Solution14 : ISolution
         return memory.Sum(x => x.Value);
     }
 
-    record Mask(long and, long or);
+    private record Mask(long and, long or);
 }

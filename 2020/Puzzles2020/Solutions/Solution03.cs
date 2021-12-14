@@ -25,7 +25,7 @@ public class Solution03 : ISolution
         }.Aggregate((long)1, (acc, x) => acc * x);
     }
 
-    long HowManyHits(int right, int down)
+    private long HowManyHits(int right, int down)
     {
         var treesHit = 0;
         for (var i = 0; (i * down) < _lines.Length; i++)

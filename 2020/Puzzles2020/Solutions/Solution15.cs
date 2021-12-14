@@ -15,7 +15,7 @@ public class Solution15 : ISolution
 
     public async ValueTask<long> GetPart2() => FindNth(30_000_000);
 
-    int FindNth(int limit)
+    private int FindNth(int limit)
     {
         var dict = list.SkipLast(1).ToDictionary(x => x.num, x => x.i + 1);
         var last = list.Last().num;

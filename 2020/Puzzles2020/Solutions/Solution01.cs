@@ -14,7 +14,7 @@ public class Solution01 : ISolution
 
     public async ValueTask<long> GetPart2() => FindProduct(3);
 
-    long FindProduct(int numValues)
+    private long FindProduct(int numValues)
     {
         IEnumerable<IEnumerable<int>> combinations = _nums;
         for (var i = 2; i <= numValues; i++)

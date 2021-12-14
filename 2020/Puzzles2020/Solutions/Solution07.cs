@@ -9,13 +9,13 @@ public class Solution07 : ISolution
         _rules = lines.Select(ParseLine).ToDictionary(x => x.color, x => x.contents);
     }
 
-    public async ValueTask<long> GetPart1() => FindColorsContainingColor("shiny gold", new()).Count();
+    public async ValueTask<long> GetPart1() => FindColorsContainingColor("shiny gold", new()).Count;
 
     public async ValueTask<long> GetPart2() => CountContents("shiny gold") - 1;
 
-    HashSet<string> FindColorsContainingColor(string color, HashSet<string> matches)
+    private HashSet<string> FindColorsContainingColor(string color, HashSet<string> matches)
     {
-        var newMatches = _rules.Where(x => x.Value.Any(x => x.Key == color)).Select(x => x.Key).Except(matches).ToHashSet();
+        var newMatches = _rules.Where(x => x.Value.Any(y => y.Key == color)).Select(x => x.Key).Except(matches).ToHashSet();
         matches.UnionWith(newMatches);
         foreach (var match in newMatches)
             FindColorsContainingColor(match, matches);
@@ -23,9 +23,9 @@ public class Solution07 : ISolution
         return matches;
     }
 
-    int CountContents(string color) => 1 + _rules[color].Sum(sub => sub.Value * CountContents(sub.Key));
+    private int CountContents(string color) => 1 + _rules[color].Sum(sub => sub.Value * CountContents(sub.Key));
 
-    (string color, Dictionary<string, int> contents) ParseLine(string line)
+    private static (string color, Dictionary<string, int> contents) ParseLine(string line)
     {
         var main = Regex.Match(line, @"(?<main>\w+ \w+) bags contain (?<contents>.+)");
         var primary = main.Groups["main"].Value;

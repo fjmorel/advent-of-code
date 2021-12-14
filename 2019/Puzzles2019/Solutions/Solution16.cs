@@ -75,9 +75,9 @@ public class Solution16 : ISolution
         return GetMessage(digits, offset);
     }
 
-    int[] ParseLine(string line) => line.Select(x => int.Parse(new string(x, 1))).ToArray();
+    private int[] ParseLine(string line) => line.Select(x => int.Parse(new string(x, 1))).ToArray();
 
-    long GetMessage(int[] final, int offset)
+    private long GetMessage(int[] final, int offset)
     {
         return long.Parse(string.Join("", final.Skip(offset).Take(8).Select(x => x.ToString())));
     }

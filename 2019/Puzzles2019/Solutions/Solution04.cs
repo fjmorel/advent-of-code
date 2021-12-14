@@ -17,7 +17,7 @@ public class Solution04 : ISolution
     public async ValueTask<long> GetPart2() => Enumerable.Range(MIN, MAX - MIN).Count(x => IsPossible(x, true));
 
 
-    bool IsPossible(int num, bool streakLimit)
+    private bool IsPossible(int num, bool streakLimit)
     {
         // Within range
         if (num < MIN || num > MAX)
@@ -50,7 +50,7 @@ public class Solution04 : ISolution
         return streaks.Any(x => streakLimit ? x == 2 : x >= 2);
     }
 
-    IEnumerable<int> GetDigits(int num)
+    private IEnumerable<int> GetDigits(int num)
     {
         while (num > 0)
         {

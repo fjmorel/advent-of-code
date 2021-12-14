@@ -2,8 +2,8 @@ namespace Puzzles2020.Solutions;
 
 public class Solution04 : ISolution
 {
-    private long validLoose = 0;
-    private long validStrict = 0;
+    private long validLoose;
+    private long validStrict;
     private readonly HashSet<string> validEyes = new() { "amb", "blu", "brn", "gry", "grn", "hzl", "oth", "amb" };
 
     public Solution04(string[] lines)
@@ -34,7 +34,7 @@ public class Solution04 : ISolution
 
     public async ValueTask<long> GetPart2() => validStrict;
 
-    void CheckPassport(Dictionary<string, string> info)
+    private void CheckPassport(IReadOnlyDictionary<string, string> info)
     {
         var loose = info.ContainsKey("byr")
                     && info.ContainsKey("iyr")
@@ -51,18 +51,18 @@ public class Solution04 : ISolution
         var iyr = int.Parse(info["iyr"]);
         var eyr = int.Parse(info["eyr"]);
 
-        var strict = byr >= 1920 && byr <= 2002 &&
-                     iyr >= 2010 && iyr <= 2020 &&
-                     eyr >= 2020 && eyr <= 2030 &&
-                     ValidHeight(info["hgt"]) &&
-                     Regex.IsMatch(info["hcl"], "^#([0-9a-f]{6,6})$") &&
-                     validEyes.Contains(info["ecl"]) &&
-                     Regex.IsMatch(info["pid"], "^[0-9]{9,9}$");
+        var strict = byr is >= 1920 and <= 2002
+                     && iyr is >= 2010 and <= 2020
+                     && eyr is >= 2020 and <= 2030
+                     && ValidHeight(info["hgt"])
+                     && Regex.IsMatch(info["hcl"], "^#([0-9a-f]{6,6})$")
+                     && validEyes.Contains(info["ecl"])
+                     && Regex.IsMatch(info["pid"], "^[0-9]{9,9}$");
         if (strict)
             validStrict++;
     }
 
-    bool ValidHeight(string value)
+    private static bool ValidHeight(string value)
     {
         var unit = value[^2..];
         var num = int.Parse(value[..^2]);

@@ -29,7 +29,7 @@ public class Solution10 : ISolution
         .Select(GetValidCombosForGroup)
         .Aggregate((long)1, (acc, value) => acc * value);
 
-    static long GetValidCombosForGroup(List<long> group)
+    private static long GetValidCombosForGroup(List<long> group)
     {
         var max = group.Last();
         var min = group.First();
@@ -37,14 +37,14 @@ public class Solution10 : ISolution
         var numValid = 1L;
         for (var select = 0; select < middle.Length; select++)
         {
-            var checks = middle.Select(x => false).ToArray();
+            var checks = middle.Select(_ => false).ToArray();
             CheckCombos(ref middle, select, 0, 0, ref checks, min, max, ref numValid);
         }
 
         return numValid;
     }
 
-    static void CheckCombos(ref long[] list, long request, long s, long currLen, ref bool[] check, long min, long max, ref long numValid)
+    private static void CheckCombos(ref long[] list, long request, long s, long currLen, ref bool[] check, long min, long max, ref long numValid)
     {
         if (currLen > request)
             return;
@@ -58,7 +58,7 @@ public class Solution10 : ISolution
                 if (cur > previous + 3)
                     break;
 
-                if (check[i] == true)
+                if (check[i])
                     previous = cur;
             }
 
@@ -78,7 +78,7 @@ public class Solution10 : ISolution
         // recursively call Combi() with only incremented value of ‘s’.
     }
 
-    static List<List<long>> GroupBy3(IEnumerable<long> items)
+    private static List<List<long>> GroupBy3(IEnumerable<long> items)
     {
         var list = items.Prepend(0).ToList();// Make sure to include 0 in first group
         var groups = new List<List<long>>();

@@ -65,7 +65,7 @@ public class Solution16 : ISolution
             .Aggregate(1L, (acc, x) => acc * myTicket[x.Key]);
     }
 
-    record Rule(string name, int aMin, int aMax, int bMin, int bMax)
+    private record Rule(string name, int aMin, int aMax, int bMin, int bMax)
     {
         public bool Matches(int num) => (num >= aMin && num <= aMax) || (num >= bMin && num <= bMax);
     }

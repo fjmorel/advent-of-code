@@ -49,7 +49,7 @@ public class Solution17 : ISolution
         return alive.Count;
     }
 
-    record Cube(int x, int y, int z)
+    private record Cube(int x, int y, int z)
     {
         public IEnumerable<Cube> GetAdjacent(bool includeItself = false)
         {
@@ -61,7 +61,7 @@ public class Solution17 : ISolution
         }
     }
 
-    record Hypercube(int w, int x, int y, int z)
+    private record Hypercube(int w, int x, int y, int z)
     {
         public IEnumerable<Hypercube> GetAdjacent(bool includeItself = false)
         {

@@ -20,14 +20,15 @@ public class Solution04 : ISolution
 
 	public async ValueTask<long> GetPart2() => GetScore(cards.MaxBy(CountNeededToWin)!);
 
-	long GetScore(int[] card)
+    private long GetScore(int[] card)
 	{
 		var needed = CountNeededToWin(card);
 		return card.Except(numbers[0..needed]).Sum() * numbers[needed - 1];
 	}
-	int CountNeededToWin(int[] card) => Enumerable.Range(1, numbers.Length).FirstOrDefault(i => HasWinningLine(card, i), -1);
 
-	bool HasWinningLine(int[] card, int numDrawn) =>
+    private int CountNeededToWin(int[] card) => Enumerable.Range(1, numbers.Length).FirstOrDefault(i => HasWinningLine(card, i), -1);
+
+    private bool HasWinningLine(int[] card, int numDrawn) =>
 		Enumerable.Range(0, 5).Any(i =>
 			Enumerable.Range(0, 5).All(j => lookup[card[(i * 5) + j]] < numDrawn)
 			|| Enumerable.Range(0, 5).All(j => lookup[card[(j * 5) + i]] < numDrawn)

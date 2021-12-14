@@ -23,7 +23,7 @@ public class Solution03 : ISolution
 		return ConvertNum(o2) * ConvertNum(co2);
 	}
 
-	string GetRating(string[] lines, bool useMost)
+    private string GetRating(string[] lines, bool useMost)
 	{
 		var i = 0;
 		do
@@ -35,8 +35,8 @@ public class Solution03 : ISolution
 		return lines[0];
 	}
 
-	long ConvertNum(string digits) => Convert.ToInt64(digits, 2);
+    private long ConvertNum(string digits) => Convert.ToInt64(digits, 2);
 
-	long GetSurpulusOnes(string[] lines, int index) => lines.Aggregate(0, (sum, x) => x[index] == '1' ? ++sum : --sum);
+    private long GetSurpulusOnes(string[] lines, int index) => lines.Aggregate(0, (sum, x) => x[index] == '1' ? ++sum : --sum);
 }
 

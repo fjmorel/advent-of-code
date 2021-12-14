@@ -34,7 +34,7 @@ public class Solution08 : ISolution
         return -1;
     }
 
-    (bool finished, int sum) Run()
+    private (bool finished, int sum) Run()
     {
         var ran = new HashSet<int>();
         var sum = 0;
@@ -59,15 +59,15 @@ public class Solution08 : ISolution
         return (true, sum);
     }
 
-    void SwitchInstruction(int i)
+    private void SwitchInstruction(int i)
     {
         _instructions[i] = _instructions[i] with { act = _instructions[i].act == nop ? jmp : nop };
     }
 
-    record Instruction(Action act, int value);
+    private record Instruction(Action act, int value);
 }
 
-enum Action
+internal enum Action
 {
     nop,
     jmp,

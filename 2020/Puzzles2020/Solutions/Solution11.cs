@@ -2,23 +2,23 @@ namespace Puzzles2020.Solutions;
 
 public class Solution11 : ISolution
 {
-    const char FLOOR = '.', EMPTY = 'L', OCCUPIED = '#';
+    private const char FLOOR = '.', EMPTY = 'L', OCCUPIED = '#';
     private readonly char[][] read;
-    private readonly Position size;
+    private readonly Point size;
 
     public Solution11(string[] lines)
     {
         read = lines.Select(x => x.ToCharArray()).ToArray();
-        size = new Position(read.Length, read[0].Length);
+        size = new Point(read.Length, read[0].Length);
     }
 
     public async ValueTask<long> GetPart1() => FindSteadyState(read, size, 4, false);
 
     public async ValueTask<long> GetPart2() => FindSteadyState(read, size, 5, true);
 
-    static int FindSteadyState(char[][] read, Position size, int threshold, bool lineOfSight)
+    private static int FindSteadyState(char[][] read, Point size, int threshold, bool lineOfSight)
     {
-        var positions = read.Select((x, i) => x.Select((y, j) => GetSurroundingPositions(new(i, j), size, read, lineOfSight)).ToArray()).ToArray();
+        var positions = read.Select((x, i) => x.Select((_, j) => GetSurroundingPositions(new(i, j), size, read, lineOfSight)).ToArray()).ToArray();
         var write = Iterate(read, threshold, positions);
         while (!read.SelectMany(x => x).SequenceEqual(write.SelectMany(x => x)))
         {
@@ -29,29 +29,23 @@ public class Solution11 : ISolution
         return write.Sum(x => x.Count(y => y == OCCUPIED));
     }
 
-    static char[][] Iterate(char[][] read, int threshold, Position[][][] positions)
+    private static char[][] Iterate(char[][] read, int threshold, Point[][][] positions)
         => read.Select((row, i) => row.Select((_, j) => FindNewState(i, j, read, threshold, positions[i][j])).ToArray()).ToArray();
 
-    static char FindNewState(int i, int j, char[][] read, int threshold, Position[] positions)
+    private static char FindNewState(int i, int j, char[][] read, int threshold, Point[] positions)
         => read[i][j] switch
         {
             FLOOR => FLOOR,
-            EMPTY => positions.Any(adj => read[adj.i][adj.j] == OCCUPIED) ? EMPTY : OCCUPIED,
-            OCCUPIED => positions.Where(adj => read[adj.i][adj.j] == OCCUPIED).Count() >= threshold ? EMPTY : OCCUPIED,
+            EMPTY => positions.Any(adj => read[adj.x][adj.y] == OCCUPIED) ? EMPTY : OCCUPIED,
+            OCCUPIED => positions.Count(adj => read[adj.x][adj.y] == OCCUPIED) >= threshold ? EMPTY : OCCUPIED,
             _ => throw new NotSupportedException(),
         };
 
-    static Position[] GetSurroundingPositions(Position coord, Position size, char[][] read, bool lineOfSight)
-        => new Position[] { new(-1, -1), new(-1, 0), new(-1, 1), new(0, -1), new(0, 1), new(1, -1), new(1, 0), new(1, 1) }
+    private static Point[] GetSurroundingPositions(Point coord, Point size, char[][] read, bool lineOfSight)
+        => new Point[] { new(-1, -1), new(-1, 0), new(-1, 1), new(0, -1), new(0, 1), new(1, -1), new(1, 0), new(1, 1) }
             .Select(inc => lineOfSight ? FindLineOfSight(coord + inc, size, read, inc) : coord + inc)
             .Where(x => x.IsWithin(size)).ToArray();
 
-    static Position FindLineOfSight(Position adj, Position size, char[][] read, Position inc)
-        => (adj.IsWithin(size) && read[adj.i][adj.j] == FLOOR) ? FindLineOfSight(adj + inc, size, read, inc) : adj;
-
-    record Position(int i, int j)
-    {
-        public static Position operator +(Position a, Position b) => new(a.i + b.i, a.j + b.j);
-        public bool IsWithin(Position size) => i >= 0 && i < size.i && j >= 0 && j < size.j;
-    }
+    private static Point FindLineOfSight(Point adj, Point size, char[][] read, Point inc)
+        => (adj.IsWithin(size) && read[adj.x][adj.y] == FLOOR) ? FindLineOfSight(adj + inc, size, read, inc) : adj;
 }

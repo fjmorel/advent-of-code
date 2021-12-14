@@ -17,6 +17,6 @@ public class Solution07 : ISolution
 
 	public async ValueTask<long> GetPart2() => GetBestPosition(i => nums.Select(x => Math.Abs(x - i)).Select(x => x * (x + 1) / 2).Sum());
 
-	long GetBestPosition(Func<int, long> calculator) => Enumerable.Range(min, max - min + 1).Min(calculator);
+    private long GetBestPosition(Func<int, long> calculator) => Enumerable.Range(min, max - min + 1).Min(calculator);
 }
 

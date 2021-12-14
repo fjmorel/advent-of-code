@@ -45,7 +45,7 @@ public class Solution10 : ISolution
         return theOne.x * 100 + theOne.y;
     }
 
-    IEnumerable<Point> GetAsteroids()
+    private IEnumerable<Point> GetAsteroids()
     {
         for (var x = 0; x < width; x++)
         {
@@ -58,7 +58,7 @@ public class Solution10 : ISolution
         }
     }
 
-    IEnumerable<Point> GetSlopes(int width, int height)
+    private static IEnumerable<Point> GetSlopes(int width, int height)
     {
         yield return new(0, 1);
         yield return new(0, -1);
@@ -105,7 +105,7 @@ public class Solution10 : ISolution
         }
     }
 
-    readonly record struct Point(int x, int y)
+    private readonly record struct Point(int x, int y)
     {
         public static Point operator +(Point a) => a;
         public static Point operator -(Point a) => new(-a.x, -a.y);
@@ -118,7 +118,7 @@ public class Solution10 : ISolution
             fromOrigin = fromOrigin with { y = -fromOrigin.y };// invert y to fix above/below
             var hypotenuse = Math.Sqrt(Math.Pow(fromOrigin.x, 2) + Math.Pow(fromOrigin.y, 2));
 
-            double theta = 0;
+            double theta;
             if (fromOrigin.y == 0)
             {
                 var ah = fromOrigin.x / hypotenuse;

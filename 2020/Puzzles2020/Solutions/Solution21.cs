@@ -6,16 +6,16 @@ public class Solution21 : ISolution
     private readonly Dictionary<string, string?> allergens;
 
     public Solution21(string[] lines)
-	{
+    {
         foods = lines
             .Select(x => x.Split(" (contains "))
             .Select(x => new Food(x[0].Split(' ').ToHashSet(), x[1][0..^1].Split(", ").ToHashSet()))
             .ToList();
-        allergens = foods.SelectMany(x => x.Allergens).Distinct().ToDictionary(x => x, x => (string)null);
-	}
+        allergens = foods.SelectMany(x => x.Allergens).Distinct().ToDictionary(x => x, _ => (string?)null);
+    }
 
-	public async ValueTask<long> GetPart1()
-	{
+    public async ValueTask<long> GetPart1()
+    {
         while (allergens.Values.Any(x => x == null))
         {
             foreach (var allergen in allergens.Keys)
@@ -38,13 +38,12 @@ public class Solution21 : ISolution
         }
 
         return foods.SelectMany(x => x.Ingredients).Count();
-	}
+    }
 
-	public async ValueTask<string> GetPart2String()
-	{
+    public async ValueTask<string> GetPart2String()
+    {
         return string.Join(',', allergens.OrderBy(x => x.Key).Select(x => x.Value));
-	}
+    }
 
-    record Food(HashSet<string> Ingredients, HashSet<string> Allergens);
-
+    private record Food(HashSet<string> Ingredients, HashSet<string> Allergens);
 }

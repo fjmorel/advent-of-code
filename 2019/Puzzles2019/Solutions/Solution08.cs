@@ -4,7 +4,7 @@ namespace Puzzles2019.Solutions;
 
 public class Solution08 : ISolution
 {
-    const int layerSize = 25 * 6;
+    private const int layerSize = 25 * 6;
     private readonly List<int[]> layers;
 
     public Solution08(string[] lines)
@@ -36,7 +36,7 @@ public class Solution08 : ISolution
     {
         AnsiConsole.WriteLine();
         // set up transparent image
-        var image = Enumerable.Range(1, 6).Select(x => Enumerable.Range(1, 25).Select(y => 2).ToArray()).ToArray();
+        var image = Enumerable.Range(1, 6).Select(_ => Enumerable.Range(1, 25).Select(_ => 2).ToArray()).ToArray();
         foreach (var layer in layers)
         {
             var rows = layer.Chunk(25).ToList();

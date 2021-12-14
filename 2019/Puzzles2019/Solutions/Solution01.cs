@@ -12,9 +12,9 @@ public class Solution01 : ISolution
     public async ValueTask<long> GetPart1() => _nums.Select(GetFuel).Sum();
     public async ValueTask<long> GetPart2() => _nums.Select(GetFuel).Select(GetFuelForFuel).Sum();
 
-    long GetFuel(long mass) => mass / 3 - 2;
+    private long GetFuel(long mass) => mass / 3 - 2;
 
-    long GetFuelForFuel(long original)
+    private long GetFuelForFuel(long original)
     {
         var addedFuel = GetFuel(original);
         var totalFuel = original;

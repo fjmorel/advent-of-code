@@ -28,7 +28,7 @@ public class Solution11 : ISolution
         return Enumerable.Range(1, int.MaxValue).First(i => Iterate(grid) == grid.Count);
     }
 
-    long Iterate(Dictionary<Point, long> grid)
+    private long Iterate(Dictionary<Point, long> grid)
     {
         foreach (var pt in grid.Keys)
             grid[pt]++;
@@ -41,7 +41,7 @@ public class Solution11 : ISolution
         return flashes;
     }
 
-    long Flash(Dictionary<Point, long> grid)
+    private long Flash(Dictionary<Point, long> grid)
     {
         var toFlash = new Queue<Point>();
         var flashed = new HashSet<Point>();

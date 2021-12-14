@@ -29,7 +29,7 @@ public class Solution25 : ISolution
         return 0;
     }
 
-    long PublicToEncryptionKey(long publicKey, long loopSize)
+    private long PublicToEncryptionKey(long publicKey, long loopSize)
     {
         long subject = publicKey, current = 1;
         for (var i = 1; i <= loopSize; i++)
@@ -40,7 +40,7 @@ public class Solution25 : ISolution
         return current;
     }
 
-    long GetLoopSizeFromPublicKey(long publicKey)
+    private long GetLoopSizeFromPublicKey(long publicKey)
     {
         int subject = 7, loopSize = 0, current = 1;
         while (current != publicKey)

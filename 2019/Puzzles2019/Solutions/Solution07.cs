@@ -33,7 +33,7 @@ public class Solution07 : ISolution
         return max;
     }
 
-    IEnumerable<int[]> GetSettings(int start, int end)
+    private IEnumerable<int[]> GetSettings(int start, int end)
     {
         for (var i = start; i <= end; i++)
         {
@@ -62,7 +62,7 @@ public class Solution07 : ISolution
         }
     }
 
-    async Task<long> GetSelfThrust(int[] settings)
+    private async Task<long> GetSelfThrust(int[] settings)
     {
         var computer = new IntCodeComputer(_opCodes);
         long output = 0;
@@ -80,12 +80,12 @@ public class Solution07 : ISolution
         return output;
     }
 
-    async Task<long> GetFeedbackThrust(int[] settings)
+    private async Task<long> GetFeedbackThrust(int[] settings)
     {
         var count = settings.Length;
 
         // Set up initial data
-        var channels = Enumerable.Range(1, count).Select(x => Channel.CreateUnbounded<long>()).ToList();
+        var channels = Enumerable.Range(1, count).Select(_ => Channel.CreateUnbounded<long>()).ToList();
         channels.Add(channels[0]);// for easier logic in for loop
         for (var i = 0; i < count; i++)
         {

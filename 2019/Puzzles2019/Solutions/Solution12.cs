@@ -70,7 +70,7 @@ public class Solution12 : ISolution
         return LeastCommonMultiple(LeastCommonMultiple(sorted[0], sorted[1]), sorted[2]);
     }
 
-    long GreatestCommonDivisor(long greater, long lesser)
+    private static long GreatestCommonDivisor(long greater, long lesser)
     {
         greater = Math.Abs(greater);
         lesser = Math.Abs(lesser);
@@ -81,13 +81,11 @@ public class Solution12 : ISolution
             greater = lesser;
             lesser = remainder;
         }
-
-        ;
     }
 
-    long LeastCommonMultiple(long greater, long lesser) => greater * lesser / GreatestCommonDivisor(greater, lesser);
+    private static long LeastCommonMultiple(long greater, long lesser) => greater * lesser / GreatestCommonDivisor(greater, lesser);
 
-    void MoveOneStep(MoonWithInfluencingBodies[] linked)
+    private static void MoveOneStep(MoonWithInfluencingBodies[] linked)
     {
         // adjust velocities based on other bodies
         foreach (var (moon, bodies) in linked)
@@ -121,19 +119,19 @@ public class Solution12 : ISolution
         }
     }
 
-    readonly record struct Coordinates(long x, long y, long z)
+    private readonly record struct Coordinates(long x, long y, long z)
     {
         public static Coordinates operator +(Coordinates a, Coordinates b) => new(a.x + b.x, a.y + b.y, a.z + b.z);
         public long GetEnergy() => Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
     }
 
-// not a struct so we can modify its coordinates while still keeping references in MoonWithInfluencingBodies
-    record Moon
+    // not a struct so we can modify its coordinates while still keeping references in MoonWithInfluencingBodies
+    private record Moon
     {
         public Coordinates Position { get; set; }
         public Coordinates Velocity { get; set; }
         public long GetEnergy() => Position.GetEnergy() * Velocity.GetEnergy();
     }
 
-    record MoonWithInfluencingBodies(Moon moon, Moon[] bodies);
+    private record MoonWithInfluencingBodies(Moon moon, Moon[] bodies);
 }

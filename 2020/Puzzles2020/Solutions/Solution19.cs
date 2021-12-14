@@ -87,7 +87,7 @@ public class Solution19 : ISolution
         return valid;
     }
 
-    (bool valid, int handled) IsValid(Dictionary<int, Rule> rules, ReadOnlySpan<char> substring, Rule rule)
+    private static (bool valid, int handled) IsValid(IReadOnlyDictionary<int, Rule> rules, ReadOnlySpan<char> substring, Rule rule)
     {
         if (substring.IsEmpty)
             return (true, 0);
@@ -120,12 +120,12 @@ public class Solution19 : ISolution
         return (false, 0);
     }
 
-    HashSet<string> GeneratePossibilities(Dictionary<int, Rule> rules, Rule rule)
+    private static HashSet<string> GeneratePossibilities(IReadOnlyDictionary<int, Rule> rules, Rule rule)
     {
         if (rule.letter.HasValue)
             return new() { rule.letter.Value.ToString() };
 
-        var lines = new HashSet<string>() { };
+        var lines = new HashSet<string>();
         foreach (var alternate in rule.options ?? Enumerable.Empty<List<int>>())
         {
             var sublist = new HashSet<string>() { "" };
@@ -141,5 +141,5 @@ public class Solution19 : ISolution
         return lines;
     }
 
-    record Rule(char? letter, List<List<int>>? options);
+    private record Rule(char? letter, List<List<int>>? options);
 }

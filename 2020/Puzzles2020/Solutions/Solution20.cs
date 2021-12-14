@@ -97,7 +97,7 @@ public class Solution20 : ISolution
         return 0;
     }
 
-    bool[][] BuildSea()
+    private bool[][] BuildSea()
     {
         var tileGridSize = (int)Math.Sqrt(tiles.Count);
         var tileGrid = Enumerable.Range(0, tileGridSize).Select(x => new int[tileGridSize]).ToArray();
@@ -133,7 +133,7 @@ public class Solution20 : ISolution
         return sea.ToArray();
     }
 
-    T[][] ApplyTransforms<T>(T[][] original, params Transformation[] transformations)
+    private T[][] ApplyTransforms<T>(T[][] original, params Transformation[] transformations)
     {
         var adj = original;
         foreach (var transform in transformations)
@@ -141,7 +141,7 @@ public class Solution20 : ISolution
         return adj;
     }
 
-    T[][] ApplyTransform<T>(T[][] original, Transformation transform) => (transform switch
+    private T[][] ApplyTransform<T>(T[][] original, Transformation transform) => (transform switch
     {
         Transformation.None => original,
         Transformation.FlipVertical => original.Reverse(),
@@ -151,16 +151,16 @@ public class Solution20 : ISolution
         _ => throw new NotSupportedException(),
     }).ToArray();
 
-    record Tile(int Id, bool[][] contents, bool Transformed = false)
+    private record Tile(int Id, bool[][] contents, bool Transformed = false)
     {
-        IEnumerable<bool> Top => contents.First();
-        IEnumerable<bool> Right => contents.Select(x => x.Last());
-        IEnumerable<bool> Bottom => contents.Last();
-        IEnumerable<bool> Left => contents.Select(x => x.First());
-        IEnumerable<bool> ReverseTop => Top.Reverse();
-        IEnumerable<bool> ReverseRight => Right.Reverse();
-        IEnumerable<bool> ReverseBottom => Bottom.Reverse();
-        IEnumerable<bool> ReverseLeft => Left.Reverse();
+        private IEnumerable<bool> Top => contents.First();
+        private IEnumerable<bool> Right => contents.Select(x => x.Last());
+        private IEnumerable<bool> Bottom => contents.Last();
+        private IEnumerable<bool> Left => contents.Select(x => x.First());
+        private IEnumerable<bool> ReverseTop => Top.Reverse();
+        private IEnumerable<bool> ReverseRight => Right.Reverse();
+        private IEnumerable<bool> ReverseBottom => Bottom.Reverse();
+        private IEnumerable<bool> ReverseLeft => Left.Reverse();
 
         public Match MatchWith(Tile second)
         {
@@ -236,9 +236,9 @@ public class Solution20 : ISolution
         }
     }
 
-    record Match(Side side, params Transformation[] transforms);
+    private record Match(Side side, params Transformation[] transforms);
 
-    enum Side
+    private enum Side
     {
         None,
         Left,
@@ -247,7 +247,7 @@ public class Solution20 : ISolution
         Bottom,
     }
 
-    enum Transformation
+    private enum Transformation
     {
         None,
         FlipVertical,

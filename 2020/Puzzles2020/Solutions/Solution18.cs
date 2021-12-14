@@ -19,7 +19,7 @@ public class Solution18 : ISolution
         return list.Sum(x => CalcLine(x, AddFirst));
     }
 
-    long CalcLine(string line, Func<string, long> calculator)
+    private long CalcLine(string line, Func<string, long> calculator)
     {
         var open = line.LastIndexOf('(');
         if (open > -1)
@@ -31,7 +31,7 @@ public class Solution18 : ISolution
         return calculator(line);
     }
 
-    long NoPrecedence(string line)
+    private long NoPrecedence(string line)
     {
         var items = line.Split(' ').ToList();
         var num = long.Parse(items[0]);
@@ -44,7 +44,7 @@ public class Solution18 : ISolution
         return num;
     }
 
-    long AddFirst(string line) => line.Split(" * ")
+    private long AddFirst(string line) => line.Split(" * ")
         .Select(sub => sub.Split(" + ").Sum(long.Parse))
         .Aggregate(1L, (acc, value) => acc * value);
 }

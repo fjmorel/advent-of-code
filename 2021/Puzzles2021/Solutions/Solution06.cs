@@ -13,7 +13,7 @@ public class Solution06 : ISolution
 
 	public async ValueTask<long> GetPart2() => Enumerable.Range(1, 256).Aggregate(initial, RunDay).Sum(x => x.count);
 
-	IEnumerable<Fish> RunDay(IEnumerable<Fish> list, int i)
+    private IEnumerable<Fish> RunDay(IEnumerable<Fish> list, int i)
 		=> list
 				.SelectMany(fish =>
 				{

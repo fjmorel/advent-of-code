@@ -2,7 +2,7 @@ namespace Tests2019;
 
 public class SolutionTests
 {
-    private static readonly SolutionRunner _runner = new(typeof(Solution01).Assembly);
+    private static readonly SolutionTester _runner = new(typeof(Solution01).Assembly);
 
     [Theory]
     [InlineData("01", 33583, 50346)]
@@ -18,7 +18,6 @@ public class SolutionTests
     //[InlineData("11", 0, 0)]// Intcode puzzle (returns console output)
     [InlineData("12", 14645, 4686774924)]
     //[InlineData("13", 0, 0)]// Intcode puzzle
-    [InlineData("14", 2210736, 460664)]
     //[InlineData("15", 0, 0)]// Intcode puzzle
     [InlineData("16", 24465799, 84462026)]// Example data from part 2
     [InlineData("17", 0, 0)]
@@ -49,7 +48,6 @@ public class SolutionTests
     [InlineData("11", 2021, -1)]// LBJHEKLH
     [InlineData("12", 10028, 314610635824376)]
     [InlineData("13", 369, 19210)]
-    [InlineData("14", 532506, 2595245)]
     //[InlineData("15", 0, 0)]// not done
     [InlineData("16", 40921727, 89950138)]
     [InlineData("17", 0, 0)]
@@ -64,5 +62,14 @@ public class SolutionTests
     public async Task RunInput(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "inputs", part1, part2);
+    }
+
+    [Theory]
+    [InlineData("examples", "14", 2210736, 460664)]
+    [InlineData("inputs", "14", 532506, 2595245)]
+    public async Task RunSlowDays(string folder, string day, long part1, long part2)
+    {
+        await _runner.RunDay(day, folder, part1, part2);
+
     }
 }
