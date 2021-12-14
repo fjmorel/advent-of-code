@@ -78,25 +78,22 @@ public class Solution10 : ISolution
         // recursively call Combi() with only incremented value of ‘s’.
     }
 
-    private static List<List<long>> GroupBy3(IEnumerable<long> items)
+    private static IEnumerable<List<long>> GroupBy3(IEnumerable<long> items)
     {
         var list = items.Prepend(0).ToList();// Make sure to include 0 in first group
-        var groups = new List<List<long>>();
 
         var cur = new List<long>() { list.First() };
-        for (var i = 1; i < list.Count(); i++)
+        for (var i = 1; i < list.Count; i++)
         {
             if (list[i] - list[i - 1] == 3)
             {
-                groups.Add(cur);
+                yield return cur;
                 cur = new List<long>();
             }
 
             cur.Add(list[i]);
         }
 
-        groups.Add(cur);
-
-        return groups;
+        yield return cur;
     }
 }

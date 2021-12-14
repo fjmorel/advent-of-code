@@ -53,7 +53,7 @@ public class Solution16 : ISolution
                 var matches = Enumerable.Range(0, tickets[0].Count)
                     .Where(x => !matched.ContainsKey(x) && tickets.All(ticket => rule.Matches(ticket[x])))
                     .ToList();
-                if (matches.Count() == 1)
+                if (matches.Count == 1)
                     matched[matches[0]] = rule.name;
                 else
                     unmatched.Add(rule);

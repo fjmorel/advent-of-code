@@ -31,7 +31,7 @@ public class Solution18 : ISolution
         return calculator(line);
     }
 
-    private long NoPrecedence(string line)
+    private static long NoPrecedence(string line)
     {
         var items = line.Split(' ').ToList();
         var num = long.Parse(items[0]);
@@ -44,7 +44,7 @@ public class Solution18 : ISolution
         return num;
     }
 
-    private long AddFirst(string line) => line.Split(" * ")
+    private static long AddFirst(string line) => line.Split(" * ")
         .Select(sub => sub.Split(" + ").Sum(long.Parse))
         .Aggregate(1L, (acc, value) => acc * value);
 }

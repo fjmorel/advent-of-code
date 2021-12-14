@@ -17,8 +17,8 @@ public class Solution06 : ISolution
             foreach (var ch in line)
                 charAnswers[ch] = charAnswers.GetValueOrDefault(ch) + 1;
 
-            part1 += charAnswers.Count();
-            part2 += charAnswers.Count(x => x.Value == group.Count());
+            part1 += charAnswers.Count;
+            part2 += charAnswers.Count(x => x.Value == group.Length);
         }
     }
 

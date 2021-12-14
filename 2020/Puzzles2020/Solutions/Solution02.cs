@@ -11,6 +11,7 @@ public class Solution02 : ISolution
         reallyValid = 0;
         foreach (var line in lines)
         {
+            // todo: convert to Regex to parse object
             var pieces = line.Split(' ');
             var nums = pieces[0].Split('-');
             var a = int.Parse(nums[0]);

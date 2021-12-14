@@ -3,7 +3,7 @@ namespace Puzzles2020.Solutions;
 public class Solution24 : ISolution
 {
     private readonly string[] _lines;
-    private readonly Dictionary<Coordinate, bool> tiles = new();
+    private readonly Dictionary<HexCoordinate, bool> tiles = new();
 
     public Solution24(string[] lines)
     {
@@ -14,7 +14,7 @@ public class Solution24 : ISolution
     {
         foreach (var line in _lines)
         {
-            var position = ParseLine(line).Aggregate(Coordinate.Origin, (pos, dir) => pos.WithMove(dir));
+            var position = ParseLine(line).Aggregate(HexCoordinate.Origin, (pos, dir) => pos.WithMove(dir));
             tiles[position] = !tiles.GetValueOrDefault(position, false);
         }
 
@@ -64,11 +64,11 @@ public class Solution24 : ISolution
 
     // X = W<-->E, Y = NW<-->SE, Z = NE<-->SW. x+y+z==0
     // https://www.redblobgames.com/grids/hexagons/ Cube coordinates
-    private record Coordinate(int X, int Y, int Z)
+    private record HexCoordinate(int X, int Y, int Z)
     {
-        public static readonly Coordinate Origin = new(0, 0, 0);
+        public static readonly HexCoordinate Origin = new(0, 0, 0);
 
-        public Coordinate WithMove(Direction direction) => direction switch
+        public HexCoordinate WithMove(Direction direction) => direction switch
         {
             Direction.E => this with { X = X + 1, Y = Y - 1 },
             Direction.W => this with { X = X - 1, Y = Y + 1 },
@@ -82,7 +82,7 @@ public class Solution24 : ISolution
             _ => throw new NotSupportedException(),
         };
 
-        public IEnumerable<Coordinate> GetNeighbors()
+        public IEnumerable<HexCoordinate> GetNeighbors()
         {
             yield return WithMove(Direction.E);
             yield return WithMove(Direction.SE);
@@ -92,7 +92,7 @@ public class Solution24 : ISolution
             yield return WithMove(Direction.NW);
         }
 
-        public bool ShouldBeBlack(HashSet<Coordinate> allCurrentlyBlack)
+        public bool ShouldBeBlack(HashSet<HexCoordinate> allCurrentlyBlack)
         {
             var blackNeighbors = GetNeighbors().Count(x => allCurrentlyBlack.Contains(x));
             return (blackNeighbors == 2 || (blackNeighbors == 1 && allCurrentlyBlack.Contains(this)));

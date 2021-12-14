@@ -99,9 +99,9 @@ public class Solution19 : ISolution
         {
             var isValid = true;
             var counted = 0;
-            foreach (var subrule in alternative.Select(x => rules[x]))
+            foreach (var subRule in alternative.Select(x => rules[x]))
             {
-                var (valid, handled) = IsValid(rules, substring[counted..], subrule);
+                var (valid, handled) = IsValid(rules, substring[counted..], subRule);
                 if (!valid)
                 {
                     isValid = false;
@@ -129,9 +129,9 @@ public class Solution19 : ISolution
         foreach (var alternate in rule.options ?? Enumerable.Empty<List<int>>())
         {
             var sublist = new HashSet<string>() { "" };
-            foreach (var subrule in alternate.Select(x => rules[x]))
+            foreach (var subRule in alternate.Select(x => rules[x]))
             {
-                var subtrees = GeneratePossibilities(rules, subrule);
+                var subtrees = GeneratePossibilities(rules, subRule);
                 sublist = sublist.SelectMany(x => subtrees.Select(y => x + y)).ToHashSet();
             }
 

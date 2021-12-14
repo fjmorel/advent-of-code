@@ -18,8 +18,8 @@ public class Solution15 : ISolution
     private int FindNth(int limit)
     {
         var dict = list.SkipLast(1).ToDictionary(x => x.num, x => x.i + 1);
-        var last = list.Last().num;
-        for (var i = list.Count(); i < limit; i++)
+        var last = list[^1].num;
+        for (var i = list.Count; i < limit; i++)
         {
             var pos = dict.GetValueOrDefault(last, i);
             dict[last] = i;

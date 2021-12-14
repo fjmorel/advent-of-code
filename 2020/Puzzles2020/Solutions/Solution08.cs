@@ -1,7 +1,5 @@
 namespace Puzzles2020.Solutions;
 
-using static Action;
-
 public class Solution08 : ISolution
 {
     private readonly List<Instruction> _instructions;
@@ -17,7 +15,7 @@ public class Solution08 : ISolution
 
     public async ValueTask<long> GetPart2()
     {
-        var indexesToSwitch = new Queue<int>(_instructions.Select((rule, i) => (rule, i)).Where(x => x.rule.act == nop || x.rule.act == jmp).Select(x => x.i));
+        var indexesToSwitch = new Queue<int>(_instructions.Select((rule, i) => (rule, i)).Where(x => x.rule.act is Action.nop or Action.jmp).Select(x => x.i));
         while (indexesToSwitch.Any())
         {
             var toSwitch = indexesToSwitch.Dequeue();
@@ -46,9 +44,9 @@ public class Solution08 : ISolution
 
             var (jump, add) = _instructions[index].act switch
             {
-                acc => (1, _instructions[index].value),
-                jmp => (_instructions[index].value, 0),
-                nop => (1, 0),
+                Action.acc => (1, _instructions[index].value),
+                Action.jmp => (_instructions[index].value, 0),
+                Action.nop => (1, 0),
                 _ => throw new NotImplementedException(),
             };
             ran.Add(index);
@@ -61,15 +59,15 @@ public class Solution08 : ISolution
 
     private void SwitchInstruction(int i)
     {
-        _instructions[i] = _instructions[i] with { act = _instructions[i].act == nop ? jmp : nop };
+        _instructions[i] = _instructions[i] with { act = _instructions[i].act == Action.nop ? Action.jmp : Action.nop };
     }
 
     private record Instruction(Action act, int value);
-}
 
-internal enum Action
-{
-    nop,
-    jmp,
-    acc,
+    internal enum Action
+    {
+        nop,
+        jmp,
+        acc,
+    }
 }

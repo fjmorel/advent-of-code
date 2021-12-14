@@ -57,7 +57,7 @@ public class Solution17 : ISolution
             foreach (var j in Enumerable.Range(-1, 3))
             foreach (var k in Enumerable.Range(-1, 3))
                 if (!(i == 0 && j == 0 && k == 0 && !includeItself))
-                    yield return new Cube(this.x + i, this.y + j, this.z + k);
+                    yield return new Cube(x + i, y + j, z + k);
         }
     }
 
@@ -70,7 +70,7 @@ public class Solution17 : ISolution
             foreach (var j in Enumerable.Range(-1, 3))
             foreach (var k in Enumerable.Range(-1, 3))
                 if (!(h == 0 && i == 0 && j == 0 && k == 0 && !includeItself))
-                    yield return new Hypercube(this.w + h, this.x + i, this.y + j, this.z + k);
+                    yield return new Hypercube(w + h, x + i, y + j, z + k);
         }
     }
 }
