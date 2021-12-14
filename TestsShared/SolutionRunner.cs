@@ -8,22 +8,22 @@ public record SolutionRunner(Assembly _assembly)
     public async Task RunDay(string day, string folder, long part1, long part2)
     {
         var job = GetJob(day, folder);
-        var actual1 = await job.GetPart1();
-        Assert.Equal(part1, actual1);
-        var actual2 = await job.GetPart2();
-        Assert.Equal(part2, actual2);
+        var actual1 = await job.GetPart1String();
+        Assert.Equal<object>(part1.ToString(), actual1);
+        var actual2 = await job.GetPart2String();
+        Assert.Equal<object>(part2.ToString(), actual2);
     }
 
     public async Task RunPart1(string day, string folder, long solution)
     {
         var job = GetJob(day, folder);
-        Assert.Equal(solution, await job.GetPart1());
+        Assert.Equal<object>(solution.ToString(), await job.GetPart1String());
     }
 
     public async Task RunPart2(string day, string folder, long solution)
     {
         var job = GetJob(day, folder);
-        Assert.Equal(solution, await job.GetPart2());
+        Assert.Equal<object>(solution.ToString(), await job.GetPart2String());
     }
 
     private ISolution GetJob(string day, string folder)

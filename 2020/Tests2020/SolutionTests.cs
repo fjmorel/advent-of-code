@@ -20,16 +20,17 @@ public class SolutionTests
     [InlineData("13", 295, 1068781)]
     [InlineData("14", 165, 404)]
     [InlineData("15", 436, 175594)]
-    [InlineData("16", 0000, 0000)]
-    [InlineData("17", 0000, 0000)]
-    [InlineData("18", 0000, 0000)]
-    [InlineData("19", 0000, 0000)]
-    [InlineData("20", 0000, 0000)]
-    [InlineData("21", 0000, 0000)]
-    [InlineData("22", 0000, 0000)]
-    [InlineData("23", 0000, 0000)]
-    [InlineData("24", 0000, 0000)]
-    //[InlineData("25", 0000, 0000)]
+    [InlineData("16", 71, 1)]
+    [InlineData("17", 112, 848)]
+    [InlineData("18", 71, 231)]
+    //[InlineData("19", 0000, 0000)]// Different examples for Parts 1 and 2
+    [InlineData("20", 20899048083289, 273)]
+    // todo: handle testing days with text solutions
+    //[InlineData("21", 5, -1)]// mxmxvkd,sqjhc,fvjkl
+    [InlineData("22", 306, 291)]
+    [InlineData("23", 67384529, 149245887792)]
+    [InlineData("24", 10, 2208)]
+    [InlineData("25", 14897079, 0000)]
     public async Task RunExample(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "examples", part1, part2);
@@ -51,19 +52,19 @@ public class SolutionTests
     [InlineData("13", 205, 803025030761664)]
     [InlineData("14", 13727901897109, 5579916171823)]
     [InlineData("15", 211, 2159626)]
-    [InlineData("16", 0000, 0000)]
-    [InlineData("17", 0000, 0000)]
-    [InlineData("18", 0000, 0000)]
-    [InlineData("19", 0000, 0000)]
-    [InlineData("20", 0000, 0000)]
-    [InlineData("21", 0000, 0000)]
-    [InlineData("22", 0000, 0000)]
-    [InlineData("23", 0000, 0000)]
-    [InlineData("24", 0000, 0000)]
+    [InlineData("16", 28882, 1429779530273)]
+    [InlineData("17", 448, 2400)]
+    [InlineData("18", 131076645626, 109418509151782)]
+    [InlineData("19", 299, 414)]
+    [InlineData("20", 7492183537913, 2323)]
+    // todo: handle testing days with text solutions
+    //[InlineData("21", 2573, -1)]// "bjpkhx,nsnqf,snhph,zmfqpn,qrbnjtj,dbhfd,thn,sthnsg"
+    [InlineData("22", 33694, 31835)]
+    [InlineData("23", 25468379, 474747880250)]
+    [InlineData("24", 549, 4147)]
     [InlineData("25", 9714832, 0000)]
     public async Task RunInput(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "inputs", part1, part2);
     }
-
 }
