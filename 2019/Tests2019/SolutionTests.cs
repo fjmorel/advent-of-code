@@ -42,10 +42,8 @@ public class SolutionTests
     [InlineData("05", 16225258, 2808771)]
     [InlineData("06", 147223, 340)]
     [InlineData("07", 422858, 14897241)]
-    [InlineData("08", 1703, -1)]// HCGFE
     [InlineData("09", 3780860499, 33343)]
     [InlineData("10", 326, 1623)]
-    [InlineData("11", 2021, -1)]// LBJHEKLH
     [InlineData("12", 10028, 314610635824376)]
     [InlineData("13", 369, 19210)]
     //[InlineData("15", 0, 0)]// not done
@@ -70,6 +68,47 @@ public class SolutionTests
     public async Task RunSlowDays(string folder, string day, long part1, long part2)
     {
         await _runner.RunDay(day, folder, part1, part2);
+    }
 
+    public static object[][] RunStrings_Data => new[]
+    {
+        new object[]
+        {
+            "inputs",
+            "08",
+            "1703",
+            string.Join(Environment.NewLine, new string[]
+            {
+                "█  █  ██   ██  ████ ████ ",
+                "█  █ █  █ █  █ █    █    ",
+                "████ █    █    ███  ███  ",
+                "█  █ █    █ ██ █    █    ",
+                "█  █ █  █ █  █ █    █    ",
+                "█  █  ██   ███ █    ████ ",
+                "",
+            }),
+        },
+        new object[]
+        {
+            "inputs",
+            "11",
+            "2021",
+            string.Join(Environment.NewLine, new string[]
+            {
+                " █    ███    ██ █  █ ████ █  █ █    █  █   ",
+                " █    █  █    █ █  █ █    █ █  █    █  █   ",
+                " █    ███     █ ████ ███  ██   █    ████   ",
+                " █    █  █    █ █  █ █    █ █  █    █  █   ",
+                " █    █  █ █  █ █  █ █    █ █  █    █  █   ",
+                " ████ ███   ██  █  █ ████ █  █ ████ █  █   ",
+                "",
+            }),
+        },
+    };
+
+    [Theory, MemberData(nameof(RunStrings_Data))]
+    public async Task RunStrings(string folder, string day, string part1, string part2)
+    {
+        await _runner.RunDay(day, folder, part1, part2);
     }
 }

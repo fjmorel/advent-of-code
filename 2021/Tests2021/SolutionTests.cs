@@ -17,9 +17,8 @@ public class SolutionTests
     [InlineData("10", 26397, 288957)]
     [InlineData("11", 1656, 195)]
     [InlineData("12", 19, 103)]
-    [InlineData("13", 17, -1)]
     [InlineData("14", 1588, 2188189693529)]
-    [InlineData("15", 0000, 0000)]
+    [InlineData("15", 40, 315)]
     [InlineData("16", 0000, 0000)]
     [InlineData("17", 0000, 0000)]
     [InlineData("18", 0000, 0000)]
@@ -48,9 +47,8 @@ public class SolutionTests
     [InlineData("10", 299793, 3654963618)]
     [InlineData("11", 1665, 235)]
     [InlineData("12", 5874, 153592)]
-    [InlineData("13", 720, -1)]// Console output: AHPRPAUZ
     [InlineData("14", 3143, 4110215602456)]
-    [InlineData("15", 0000, 0000)]
+    [InlineData("15", 456, 2831)]
     [InlineData("16", 0000, 0000)]
     [InlineData("17", 0000, 0000)]
     [InlineData("18", 0000, 0000)]
@@ -64,6 +62,48 @@ public class SolutionTests
     public async Task RunInput(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "inputs", part1, part2);
+    }
+
+    public static object[][] RunStrings_Data => new[]
+    {
+        new object[]
+        {
+            "examples",
+            "13",
+            "17",
+            string.Join(Environment.NewLine, new string[]
+            {
+                "█████",
+                "█   █",
+                "█   █",
+                "█   █",
+                "█████",
+                "",
+            }),
+        },
+        new object[]
+        {
+            "inputs",
+            "13",
+            "720",
+            // AHPRPAUZ
+            string.Join(Environment.NewLine, new string[]
+            {
+                " ██  █  █ ███  ███  ███   ██  █  █ ████",
+                "█  █ █  █ █  █ █  █ █  █ █  █ █  █    █",
+                "█  █ ████ █  █ █  █ █  █ █  █ █  █   █ ",
+                "████ █  █ ███  ███  ███  ████ █  █  █  ",
+                "█  █ █  █ █    █ █  █    █  █ █  █ █   ",
+                "█  █ █  █ █    █  █ █    █  █  ██  ████",
+                "",
+            }),
+        },
+    };
+
+    [Theory, MemberData(nameof(RunStrings_Data))]
+    public async Task RunStrings(string folder, string day, string part1, string part2)
+    {
+        await _runner.RunDay(day, folder, part1, part2);
     }
 
 }

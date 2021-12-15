@@ -15,8 +15,9 @@ public class Solution11 : ISolution
         return grid.Count;
     }
 
-    public async ValueTask<long> GetPart2()
+    public async ValueTask<string> GetPart2String()
     {
+        var output = new StringBuilder();
         var grid = await RunPaintJob(1);
 
         var minX = grid.Keys.MinBy(p => p.x).x;
@@ -32,20 +33,13 @@ public class Solution11 : ISolution
             for (var x = minX; x <= maxX; x++)
             {
                 var color = grid.GetValueOrDefault(new Point(x, y));
-                AnsiConsole.Write(color == 1 ? '#' : ' ');
+                output.Append(color == 1 ? '█' : ' ');
             }
 
-            AnsiConsole.WriteLine();
+            output.AppendLine();
         }
-        AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine();
 
-        return -1;
+        return output.ToString();
     }
 
     private async Task<Dictionary<Point, long>> RunPaintJob(long startColor)

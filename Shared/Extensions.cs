@@ -51,4 +51,31 @@ public static class Extensions
 
         AnsiConsole.WriteLine();
     }
+
+    /// <summary>
+    /// Output a set of coordinates to a string
+    /// </summary>
+    /// <param name="points">List/Set of points</param>
+    /// <param name="characterSelector">Determine what to print for a given Point</param>
+    public static string ToString(this IReadOnlyCollection<Point> points, Func<Point, char> characterSelector)
+    {
+        var output = new StringBuilder(points.Count + 10);
+        var minX = points.Min(pt => pt.x);
+        var minY = points.Min(pt => pt.y);
+        var maxX = points.Max(pt => pt.x);
+        var maxY = points.Max(pt => pt.y);
+
+
+        for (var y = minY; y <= maxY; y++)
+        {
+            for (var x = minX; x <= maxX; x++)
+            {
+                output.Append(characterSelector(new(x, y)));
+            }
+
+            output.AppendLine();
+        }
+
+        return output.ToString();
+    }
 }

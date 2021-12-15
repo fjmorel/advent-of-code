@@ -27,11 +27,10 @@ public class Solution13 : ISolution
 
     public async ValueTask<long> GetPart1() => FoldPaper(_points, _folds[0]).Count;
 
-    public async ValueTask<long> GetPart2()
+    public async ValueTask<string> GetPart2String()
     {
         var dots = _folds.Aggregate(_points, FoldPaper);
-        dots.Print(pt => dots.Contains(pt) ? '#' : ' ');
-        return -1;
+        return dots.ToString(pt => dots.Contains(pt) ? '█' : ' ');
     }
 
     private HashSet<Point> FoldPaper(HashSet<Point> dots, Fold fold)

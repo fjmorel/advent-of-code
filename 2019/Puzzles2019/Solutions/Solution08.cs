@@ -30,9 +30,9 @@ public class Solution08 : ISolution
         return ones * twos;
     }
 
-    public async ValueTask<long> GetPart2()
+    public async ValueTask<string> GetPart2String()
     {
-        AnsiConsole.WriteLine();
+        var sb = new StringBuilder();
         // set up transparent image
         var image = Enumerable.Range(1, 6).Select(_ => Enumerable.Range(1, 25).Select(_ => 2).ToArray()).ToArray();
         foreach (var layer in layers)
@@ -51,26 +51,22 @@ public class Solution08 : ISolution
             }
         }
 
-        const char block = '\u2588';
-        AnsiConsole.Background = Color.White;
         foreach (var row in image)
         {
             foreach (var pixel in row)
             {
-                var color = pixel switch
+                var symbol = pixel switch
                 {
-                    0 => Color.Black,
-                    1 => Color.White,
+                    0 => ' ',
+                    1 => '\u2588',
                     _ => throw new ArgumentException($"Unexpected pixel value: [{pixel}]"),
                 };
-                AnsiConsole.Foreground = color;
-                AnsiConsole.Write(block);
+                sb.Append(symbol);
             }
 
-            AnsiConsole.WriteLine();
+            sb.AppendLine();
         }
 
-        AnsiConsole.ResetColors();
-        return -1;
+        return sb.ToString();
     }
 }
