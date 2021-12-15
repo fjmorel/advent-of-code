@@ -20,9 +20,9 @@ public class SolutionTests
     //[InlineData("13", 0, 0)]// Intcode puzzle
     //[InlineData("15", 0, 0)]// Intcode puzzle
     [InlineData("16", 24465799, 84462026)]// Example data from part 2
-    [InlineData("17", 0, 0)]
+    // [InlineData("17", 0, 0)]// Intcode puzzle
     [InlineData("18", 0, 0)]
-    [InlineData("19", 0, 0)]
+    // [InlineData("19", 0, 0)]// Intcode puzzle
     [InlineData("20", 0, 0)]
     [InlineData("21", 0, 0)]
     [InlineData("22", 0, 0)]
@@ -50,9 +50,9 @@ public class SolutionTests
     [InlineData("13", 369, 19210)]
     //[InlineData("15", 0, 0)]// not done
     [InlineData("16", 40921727, 89950138)]
-    [InlineData("17", 0, 0)]
+    [InlineData("17", 2660, 0)]
     [InlineData("18", 0, 0)]
-    [InlineData("19", 0, 0)]
+    [InlineData("19", 234, 9290812)]
     [InlineData("20", 0, 0)]
     [InlineData("21", 0, 0)]
     [InlineData("22", 0, 0)]

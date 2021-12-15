@@ -2,19 +2,67 @@ namespace Puzzles2019.Solutions;
 
 public class Solution17 : ISolution
 {
+    private readonly long[] _opCodes;
 
-	public Solution17(string[] lines)
-	{
-	}
+    public Solution17(string[] lines)
+    {
+        _opCodes = lines[0].ParseCsvLongs();
+    }
 
-	public async ValueTask<long> GetPart1()
-	{
-		return 0;
-	}
+    public async ValueTask<long> GetPart1()
+    {
+        var cameraChannel = Channel.CreateUnbounded<long>(new()
+        {
+            SingleReader = true,
+            SingleWriter = true,
+        });
+        var robotChannel = Channel.CreateUnbounded<long>(new()
+        {
+            SingleReader = true,
+            SingleWriter = true,
+        });
+        var computer = new IntCodeComputer(_opCodes);
+        var compute = computer.Run(robotChannel.Reader, cameraChannel.Writer);
 
-	public async ValueTask<long> GetPart2()
-	{
-		return 0;
-	}
+        await compute;
 
+        var view = await MakeView(cameraChannel.Reader);
+
+
+        var intersections = view.Keys
+            .Where(x => view[x] == '#' && x.GetOrthogonal().All(y => view.GetValueOrDefault(y, '.') != '.'))
+            .Select<Point, long>(pt => pt.x * pt.y)
+            .Sum();
+
+        return intersections;
+    }
+
+    private async Task<Dictionary<Point, char>> MakeView(ChannelReader<long> reader)
+    {
+        var grid = new Dictionary<Point, char>();
+        int x = 0, y = 0;
+        await foreach (var symbol in reader.ReadAllAsync())
+        {
+            switch (symbol)
+            {
+                case '\n':
+                    y++;
+                    x = 0;
+                    break;
+                default:
+                    grid[new(x, y)] = (char)symbol;
+                    x++;
+                    break;
+            }
+        }
+
+        // grid.Keys.Print(pt => grid[pt]);
+
+        return grid;
+    }
+
+    public async ValueTask<long> GetPart2()
+    {
+        return 0;
+    }
 }
