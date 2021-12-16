@@ -4,12 +4,12 @@ public class WorkInProgressTests
 {
     private static readonly SolutionTester _runner = new(typeof(Solution01).Assembly);
 
-    private const string _day = "15";
-    private const long _example1 = 40;
-    private const long _example2 = 315;
+    private const string _day = "16";
+    private const long _example1 = 0000;
+    private const long _example2 = 0000;
 
-    private const long _input1 = 456;
-    private const long _input2 = 2831;
+    private const long _input1 = 0000;
+    private const long _input2 = 0000;
 
     [Fact]
     public Task DailyExample1() => _runner.RunPart1(_day, "examples", _example1);
