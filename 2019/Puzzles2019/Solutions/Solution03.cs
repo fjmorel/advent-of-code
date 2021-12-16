@@ -61,6 +61,4 @@ public class Solution03 : ISolution
     }
 
     private readonly record struct Instruction(char dir, int magnitude);
-
-    private readonly record struct Point(int x, int y);
 }

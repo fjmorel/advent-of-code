@@ -77,8 +77,8 @@ public class Solution13 : ISolution
         await input.WriteAsync(0);
         while (await output.WaitToReadAsync())
         {
-            var x = await output.ReadAsync();
-            var y = await output.ReadAsync();
+            var x = (int)await output.ReadAsync();
+            var y = (int)await output.ReadAsync();
             var state = await output.ReadAsync();
 
             if (x == -1 && y == 0)
@@ -98,8 +98,7 @@ public class Solution13 : ISolution
                     paddleX = x;
                     paddleY = y;
                 }
-
-                if (tile == TileState.Ball)
+                else if (tile == TileState.Ball)
                 {
                     var num = 0;
                     if (x > paddleX)
@@ -113,7 +112,7 @@ public class Solution13 : ISolution
 
                 if (enableOutput)
                 {
-                    AnsiConsole.Cursor.SetPosition((int)x, (int)y + 1);
+                    AnsiConsole.Cursor.SetPosition(x, y + 1);
                     var ch = tile switch
                     {
                         TileState.Empty => " ",
@@ -132,7 +131,6 @@ public class Solution13 : ISolution
             AnsiConsole.Cursor.SetPosition(0, (int)paddleY + 3);
         return score;
     }
-    public readonly record struct Point(long x, long y);
 
     public enum TileState
     {

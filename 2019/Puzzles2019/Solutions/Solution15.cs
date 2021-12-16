@@ -48,7 +48,7 @@ public class Solution15 : ISolution
         {
             var report = (PointState)await reports.ReadAsync();
             steps++;
-            var expectedLocation = location.Move(nextMove);
+            var expectedLocation = Move(location, nextMove);
             area[expectedLocation] = report;
             if (report == PointState.Wall)
             {
@@ -88,17 +88,14 @@ public class Solution15 : ISolution
         }
     }
 
-    public readonly record struct Point(long x, long y)
+    public static Point Move(Point pt, Direction direction) => direction switch
     {
-        public Point Move(Direction direction) => direction switch
-        {
-            Direction.North => this with { y = this.y - 1 },
-            Direction.South => this with { y = this.y + 1 },
-            Direction.West => this with { x = this.x - 1 },
-            Direction.East => this with { x = this.x + 1 },
-            _ => throw new NotSupportedException("Unexpected value"),
-        };
-    }
+        Direction.North => pt with { y = pt.y - 1 },
+        Direction.South => pt with { y = pt.y + 1 },
+        Direction.West => pt with { x = pt.x - 1 },
+        Direction.East => pt with { x = pt.x + 1 },
+        _ => throw new NotSupportedException("Unexpected value"),
+    };
 
     public enum PointState
     {

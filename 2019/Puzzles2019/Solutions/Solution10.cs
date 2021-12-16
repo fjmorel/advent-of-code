@@ -16,7 +16,7 @@ public class Solution10 : ISolution
         width = grid[0].Length;
         slopes = GetSlopes(width, height).ToHashSet();
         asteroids = GetAsteroids().ToHashSet();
-        var visiblePerAsteroid = asteroids.ToDictionary(x => x, x => x.GetVisibleAsteroids(asteroids, slopes, width, height));
+        var visiblePerAsteroid = asteroids.ToDictionary(x => x, x => GetVisibleAsteroids(x, asteroids, slopes, width, height));
         best = visiblePerAsteroid.MaxBy(x => x.Value.Count);
     }
 
@@ -36,9 +36,9 @@ public class Solution10 : ISolution
         while (leftover.Count > 1 && destroyed.Count < 200)
         {
             // Destroy the visible asteroids, then find new ones to destroy
-            destroyed.AddRange(visible.OrderBy(x => x.GetAngleFrom(station)));
+            destroyed.AddRange(visible.OrderBy(x => GetAngle(station, x)));
             leftover.ExceptWith(visible);
-            visible = station.GetVisibleAsteroids(leftover, slopes, width, height);
+            visible = GetVisibleAsteroids(station, leftover, slopes, width, height);
         }
 
         var theOne = destroyed[199];
@@ -53,7 +53,6 @@ public class Solution10 : ISolution
             {
                 if (grid[y][x])
                     yield return new(x, y);
-
             }
         }
     }
@@ -105,85 +104,77 @@ public class Solution10 : ISolution
         }
     }
 
-    private readonly record struct Point(int x, int y)
+    public static double GetAngle(Point station, Point somewhere)
     {
-        public static Point operator +(Point a) => a;
-        public static Point operator -(Point a) => new(-a.x, -a.y);
-        public static Point operator +(Point a, Point b) => new(a.x + b.x, a.y + b.y);
-        public static Point operator -(Point a, Point b) => a + (-b);
+        var fromOrigin = somewhere - station;
+        fromOrigin = fromOrigin with { y = -fromOrigin.y };// invert y to fix above/below
+        var hypotenuse = Math.Sqrt(Math.Pow(fromOrigin.x, 2) + Math.Pow(fromOrigin.y, 2));
 
-        public double GetAngleFrom(Point origin)
+        double theta;
+        if (fromOrigin.y == 0)
         {
-            var fromOrigin = this - origin;
-            fromOrigin = fromOrigin with { y = -fromOrigin.y };// invert y to fix above/below
-            var hypotenuse = Math.Sqrt(Math.Pow(fromOrigin.x, 2) + Math.Pow(fromOrigin.y, 2));
+            var ah = fromOrigin.x / hypotenuse;
+            theta = Math.Acos(ah);
+        }
+        else
+        {
+            var oh = fromOrigin.y / hypotenuse;
+            theta = Math.Asin(oh);
 
-            double theta;
-            if (fromOrigin.y == 0)
+            // Make sure to correctly convert -x to left side of circle
+            if (fromOrigin.x < 0)
             {
-                var ah = fromOrigin.x / hypotenuse;
-                theta = Math.Acos(ah);
+                // top-right to top-left
+                if (theta > 0)
+                    theta = Math.PI - theta;
+                // bottom-right to bottom-left
+                else if (theta < 0)
+                    theta = -Math.PI - theta;
             }
-            else
-            {
-                var oh = fromOrigin.y / hypotenuse;
-                theta = Math.Asin(oh);
-
-                // Make sure to correctly convert -x to left side of circle
-                if (fromOrigin.x < 0)
-                {
-                    // top-right to top-left
-                    if (theta > 0)
-                        theta = Math.PI - theta;
-                    // bottom-right to bottom-left
-                    else if (theta < 0)
-                        theta = -Math.PI - theta;
-                }
-            }
-
-            var degrees = (180 / Math.PI) * theta;
-
-            // turn normal unit circle into 0 at top going clockwise
-            var adj = degrees switch
-            {
-                90 => 0,
-                0 => 90,
-                -90 => 180,
-                -180 => 270,
-                180 => 270,
-
-                > 0 and < 90 => (90 - degrees),// reverse it
-                > 90 and < 180 => (180 - degrees + 270),// reverse it and bump it up to last quadrant
-
-                > -180 and < -90 => (-degrees + 90),// right order, make it positive and bump up to 3rd quadrant
-                > -90 and < 0 => (-degrees + 90),// right order, make it positive and bump up to 2nd quadrant
-
-                _ => throw new NotSupportedException("Unexpected degree value: " + degrees),
-            };
-
-            return adj;
         }
 
-        public HashSet<Point> GetVisibleAsteroids(HashSet<Point> asteroids, HashSet<Point> slopes, int width, int height)
+        var degrees = (180 / Math.PI) * theta;
+
+        // turn normal unit circle into 0 at top going clockwise
+        var adj = degrees switch
         {
-            var detected = new HashSet<Point>();
-            // Explore along each possible line to find an asteroid within the grid
-            foreach (var slope in slopes)
+            90 => 0,
+            0 => 90,
+            -90 => 180,
+            -180 => 270,
+            180 => 270,
+
+            > 0 and < 90 => (90 - degrees),// reverse it
+            > 90 and < 180 => (180 - degrees + 270),// reverse it and bump it up to last quadrant
+
+            > -180 and < -90 => (-degrees + 90),// right order, make it positive and bump up to 3rd quadrant
+            > -90 and < 0 => (-degrees + 90),// right order, make it positive and bump up to 2nd quadrant
+
+            _ => throw new NotSupportedException("Unexpected degree value: " + degrees),
+        };
+
+        return adj;
+    }
+
+    public static HashSet<Point> GetVisibleAsteroids(Point station, HashSet<Point> asteroids, HashSet<Point> slopes, int width, int height)
+    {
+        var detected = new HashSet<Point>();
+        // Explore along each possible line to find an asteroid within the grid
+        foreach (var slope in slopes)
+        {
+            var pt = station + slope;
+            while (pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height)
             {
-                var pt = this + slope;
-                while (pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height)
+                if (asteroids.Contains(pt))
                 {
-                    if (asteroids.Contains(pt))
-                    {
-                        detected.Add(pt);
-                        break;
-                    }
-
-                    pt += slope;
+                    detected.Add(pt);
+                    break;
                 }
-            }
 
-            return detected;
+                pt += slope;
+            }
         }
+
+        return detected;
     }
 }
