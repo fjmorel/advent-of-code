@@ -15,7 +15,7 @@ public class Solution14 : ISolution
     public async ValueTask<long> GetPart1()
     {
         var state = GetInitialState();
-        Produce(new(1, FUEL), state);
+        ProduceReagent(FUEL, 1, state);
         return state.OreNeeded;
     }
 
@@ -27,7 +27,7 @@ public class Solution14 : ISolution
         // Run once to find out ore per run
         // Then run what's left divided by max ore per run to eliminate most of it
         long step = 1;
-        Produce(new(step, FUEL), state);
+        ProduceReagent(FUEL, step, state);
         long produced = step;
         var maxOrePerFuel = TRILLION - state.Supply[ORE];
 
@@ -35,7 +35,7 @@ public class Solution14 : ISolution
         {
             // As long as it produced the fuel, keep running
             step = Math.Max(state.Supply[ORE] / maxOrePerFuel, 1);
-            Produce(new(step, FUEL), state);
+            ProduceReagent(FUEL, step, state);
             if (state.OreNeeded == 0)
                 produced += step;
             else
@@ -53,17 +53,6 @@ public class Solution14 : ISolution
             lookup[reagent] = 0;
 
         return new State(lookup);
-    }
-
-    private void Produce(Reagent initialNeed, State state)
-    {
-        var needs = new Queue<Reagent>();
-        needs.Enqueue(initialNeed);
-        while (needs.Count > 0)
-        {
-            var reagent = needs.Dequeue();
-            ProduceReagent(reagent.chemical, reagent.quantity, state);
-        }
     }
 
     private void ProduceReagent(string chemical, long quantityNeeded, State state)
