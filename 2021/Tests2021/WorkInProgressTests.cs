@@ -5,11 +5,11 @@ public class WorkInProgressTests
     private static readonly SolutionTester _runner = new(typeof(Solution01).Assembly);
 
     private const string _day = "18";
-    private const long _example1 = 0000;
-    private const long _example2 = 0000;
+    private const long _example1 = 4140;
+    private const long _example2 = 3993;
 
-    private const long _input1 = 0000;
-    private const long _input2 = 0000;
+    private const long _input1 = 3305;
+    private const long _input2 = 4563;
 
     [Fact]
     public Task DailyExample1() => _runner.RunPart1(_day, "examples", _example1);
@@ -23,7 +23,8 @@ public class WorkInProgressTests
     [Fact]
     public Task DailyInput2() => _runner.RunPart2(_day, "inputs", _input2);
 
-
+/*
+ */
     // [Theory]
     // [InlineData("D2FE28", 2021)]
     // [InlineData("C200B40A82", 3)]
