@@ -4,7 +4,7 @@ public class WorkInProgressTests
 {
     private static readonly SolutionTester _runner = new(typeof(Solution01).Assembly);
 
-    private const string _day = "16";
+    private const string _day = "18";
     private const long _example1 = 0000;
     private const long _example2 = 0000;
 
