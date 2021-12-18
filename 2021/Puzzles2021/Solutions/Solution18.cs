@@ -13,25 +13,14 @@ public class Solution18 : ISolution
 
     public async ValueTask<long> GetPart1()
     {
-        var pairs = _lines.Select(Convert).ToList();
-        foreach (var pair in pairs)
-        {
-            //AnsiConsole.WriteLine("New Pair");
-            //Print(pair);
-            Simplify(pair);
-            //AnsiConsole.WriteLine("Simplified");
-            //Print(pair);
-        }
-
+        var pairs = _lines.Select(Convert).Select(Simplify).ToList();
         var final = pairs.Skip(1).Aggregate(pairs[0], (left, right) => Simplify(new Pair(left, right)));
-        //AnsiConsole.WriteLine("Final");
-        //Print(final);
         return GetMagnitude(final);
     }
 
     public async ValueTask<long> GetPart2()
     {
-        var max = 0L;
+        var max = 0;
         var lineCount = _lines.Length;
         var pairs = Enumerable.Range(0, lineCount).SelectMany(a => Enumerable.Range(0, lineCount).Select(b => (a, b)));
         foreach (var (a, b) in pairs)
@@ -57,35 +46,38 @@ public class Solution18 : ISolution
         return max;
     }
 
-    private static void Print(Pair pair, int level = 0)
+    private static void Print(INode node, int level = 0)
     {
-        if (pair.left is Pair left)
-            Print(left, level + 1);
-        else
-            AnsiConsole.WriteLine(new string('-', level) + (pair.left as Value)!.value);
-        if (pair.right is Pair right)
-            Print(right, level + 1);
-        else
-            AnsiConsole.WriteLine(new string('-', level) + (pair.right as Value)!.value);
+        switch (node)
+        {
+            case Pair pair:
+                Print(pair.left, level + 1);
+                Print(pair.right, level + 1);
+                break;
+            case Value val:
+                AnsiConsole.WriteLine(new string('-', level) + val.value);
+                break;
+        }
     }
 
-    private static long GetMagnitude(Pair pair)
+    private static int GetMagnitude(INode node)
     {
-        var left = pair.left is Value lVal ? lVal.value : GetMagnitude((Pair)pair.left);
-        var right = pair.right is Value rVal ? rVal.value : GetMagnitude((Pair)pair.right);
-
-        return 3 * left + 2 * right;
+        var value = node switch
+        {
+            Value leaf => leaf.value,
+            Pair pair => GetMagnitude(pair.left) + GetMagnitude(pair.right),
+            _ => throw new ArgumentOutOfRangeException(nameof(node), node, null),
+        };
+        return ((!node.IsRight && !node.IsLeft) ? 1 : node.IsLeft ? 3 : 2) * value;
     }
 
     private static Pair Simplify(Pair pair)
     {
-        var didSomething = true;
-        while (didSomething)
-        {
-            didSomething = TryExplode(pair, 1);
-            if (!didSomething)
-                didSomething = TrySplit(pair);
-        }
+        // AnsiConsole.WriteLine("Before");
+        // Print(pair);
+        while (TryExplode(pair, 1) || TrySplit(pair)) { }
+        // AnsiConsole.WriteLine("After");
+        // Print(pair);
 
         return pair;
     }
@@ -95,16 +87,15 @@ public class Solution18 : ISolution
         // Explode, or keep searching
         if (level > 4 && pair.left is Value lValue && pair.right is Value rValue)
         {
+            var isRight = (pair as INode).IsRight;
             var parent = pair.Parent!;
-            ExplodeLeft(lValue.value, pair.IsRight, parent);
-            ExplodeRight(rValue.value, pair.IsRight, parent);
+            ExplodeLeft(lValue.value, isRight, parent);
+            ExplodeRight(rValue.value, isRight, parent);
             // Then replace the exploded pair with 0
-            if (pair.IsRight)
-                parent.right = new Value(0) { Parent = parent, IsRight = true };
+            if (isRight)
+                parent.right = new Value(0) { Parent = parent };
             else
-                parent.left = new Value(0) { Parent = parent, IsRight = false };
-            //AnsiConsole.WriteLine("Explode");
-            //Print(pair.GetTopNode());
+                parent.left = new Value(0) { Parent = parent };
             return true;
         }
 
@@ -118,7 +109,7 @@ public class Solution18 : ISolution
         // As long as the parent is on the right side, keep going up /
         if (isRight)
         {
-            while (parent is { IsRight: true })
+            while (parent is INode { IsRight: true })
                 parent = parent.Parent;
             // If no further to go, then the pair was right-most
             // Then do nothing
@@ -150,7 +141,7 @@ public class Solution18 : ISolution
         // As long as the parent is on the left side, keep going up /
         if (!isRight)
         {
-            while (parent is { IsRight: false })
+            while (parent is INode { IsLeft: true })
                 parent = parent.Parent;
             // If no further to go, then the pair was left-most
             // Then do nothing
@@ -164,7 +155,7 @@ public class Solution18 : ISolution
         var node = parent!.left;
         if (node is Value lValue)
         {
-            parent.left = lValue! with { value = lValue.value + num };
+            parent.left = lValue with { value = lValue.value + num };
             return;
         }
 
@@ -183,15 +174,7 @@ public class Solution18 : ISolution
         {
             if (left.value >= 10)
             {
-                // Left is rounded down
-                // Right is rounded up (so see if it's even first to see if we should add one to get the next value)
-                var newLeft = left.value / 2;
-                var newRight = (left.value + (left.value % 2 == 0 ? 0 : 1)) / 2;
-                pair.left = new Pair(newLeft, newRight);
-                pair.left.Parent = pair;
-                pair.left.IsRight = false;
-                //AnsiConsole.WriteLine("split");
-                //Print(pair.GetTopNode());
+                pair.left = left.Split(pair);
                 return true;
             }
         }
@@ -206,15 +189,7 @@ public class Solution18 : ISolution
         {
             if (right.value >= 10)
             {
-                // Left is rounded down
-                // Right is rounded up (so see if it's even first to see if we should add one to get the next value)
-                var newLeft = right.value / 2;
-                var newRight = (right.value + (right.value % 2 == 0 ? 0 : 1)) / 2;
-                pair.right = new Pair(newLeft, newRight);
-                pair.right.Parent = pair;
-                pair.right.IsRight = true;
-                //AnsiConsole.WriteLine("split");
-                //Print(pair.GetTopNode());
+                pair.right = right.Split(pair);
                 return true;
             }
         }
@@ -228,47 +203,37 @@ public class Solution18 : ISolution
         return false;
     }
 
-    private static Pair Convert(string line) => Convert(JsonNode.Parse(line)!.AsArray());
+    private static Pair Convert(string line) => (Convert(JsonNode.Parse(line)) as Pair)!;
 
-    private static Pair Convert(JsonArray jsonArray)
+    private static INode Convert(JsonNode? node) => node switch
     {
-        var left = Convert(jsonArray[0]!);
-        var right = Convert(jsonArray[1]!);
-        return new Pair(left, right);
-    }
-
-    private static INode Convert(JsonNode node)
-    {
-        if (node is JsonValue value)
-            return new Value(value.GetValue<int>());
-        return Convert(node.AsArray());
-    }
+        JsonValue value => new Value(value.GetValue<int>()),
+        JsonArray array => new Pair(Convert(array[0]!), Convert(array[1]!)),
+        _ => throw new ArgumentException("Unexpected JsonNode type"),
+    };
 
     private interface INode
     {
         Pair? Parent { get; set; }
-        bool IsRight { get; set; }
+
+        bool IsRight => Parent != null && Parent.right == this;
+        bool IsLeft => Parent != null && Parent.left == this;
     }
 
     private record Pair : INode
     {
-        public Pair(int left, int right) : this(new Value(left), new Value(right)) { }
-
         public Pair(INode left, INode right)
         {
             this.left = left;
-            this.left.IsRight = false;
             this.left.Parent = this;
 
             this.right = right;
             this.right.Parent = this;
-            this.right.IsRight = true;
         }
 
         public INode left { get; set; }
         public INode right { get; set; }
         public Pair? Parent { get; set; }
-        public bool IsRight { get; set; }
 
         public Pair GetTopNode()
         {
@@ -282,6 +247,14 @@ public class Solution18 : ISolution
     private record Value(int value) : INode
     {
         public Pair? Parent { get; set; }
-        public bool IsRight { get; set; }
+
+        public Pair Split(Pair parent)
+        {
+            // Left is rounded down
+            // Right is rounded up (so see if it's even first to see if we should add one to get the next value)
+            var newLeft = value / 2;
+            var newRight = (value + (value % 2 == 0 ? 0 : 1)) / 2;
+            return new Pair(new Value(newLeft), new Value(newRight)) { Parent = parent };
+        }
     }
 }
