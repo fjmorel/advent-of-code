@@ -22,7 +22,7 @@ public class SolutionTests
     [InlineData("16", 6, 2021)]
     [InlineData("17", 45, 112)]
     [InlineData("18", 4140, 3993)]
-    [InlineData("19", 0000, 0000)]
+    [InlineData("19", 79, 3621)]
     [InlineData("20", 0000, 0000)]
     [InlineData("21", 0000, 0000)]
     [InlineData("22", 0000, 0000)]
@@ -62,6 +62,14 @@ public class SolutionTests
     public async Task RunInput(string day, long part1, long part2)
     {
         await _runner.RunDay(day, "inputs", part1, part2);
+    }
+
+    [Theory]
+    [InlineData("examples", "19", 79, 3621)]
+    [InlineData("inputs", "19", 398, 10965)]
+    public async Task RunSlowDays(string folder, string day, long part1, long part2)
+    {
+        await _runner.RunDay(day, folder, part1, part2);
     }
 
     public static object[][] RunStrings_Data => new[]
