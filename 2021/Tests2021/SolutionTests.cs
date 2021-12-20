@@ -65,7 +65,6 @@ public class SolutionTests
     }
 
     [Theory]
-    [InlineData("examples", "19", 79, 3621)]
     [InlineData("inputs", "19", 398, 10965)]
     public async Task RunSlowDays(string folder, string day, long part1, long part2)
     {

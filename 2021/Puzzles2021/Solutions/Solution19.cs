@@ -2,11 +2,13 @@ namespace Puzzles2021.Solutions;
 
 public class Solution19 : ISolution
 {
-    private readonly List<Scanner> _scanners;
+    private readonly Scanner[] _scanners;
+    private readonly Func<Point3d, Point3d>[] _rotationFunctions;
 
     public Solution19(string[] lines)
     {
-        _scanners = ParseInput(lines).ToList();
+        _scanners = ParseInput(lines).ToArray();
+        _rotationFunctions = GetRotations().ToArray();
     }
 
     public async ValueTask<long> GetPart1()
@@ -14,12 +16,16 @@ public class Solution19 : ISolution
         _scanners[0].Adjust(default, pt => pt);
         var located = new List<Scanner>() { _scanners[0] };
         var todo = new Queue<Scanner>(_scanners.Skip(1));
+
         while (todo.Any())
         {
             var scanner = todo.Dequeue();
-            foreach (var origin in located.Reverse<Scanner>())
+            foreach (var origin in located)
             {
+                if (scanner.TriedPositions.Contains(origin.Position!.Value))
+                    continue;
                 var found = TryFindOffset3d(origin, scanner);
+                scanner.TriedPositions.Add(origin.Position.Value);
                 if (found)
                     break;
             }
@@ -40,57 +46,54 @@ public class Solution19 : ISolution
         if (_scanners[0].Position == null)
             await GetPart1();
 
-        var positions = _scanners.Select(x => x.Position.Value).ToList();
+        var positions = _scanners.Select(x => x.Position!.Value).ToList();
         var pairs = positions.SelectMany(a => positions.Select(b => (a, b))).ToList();
         return pairs.Max(tuple => (tuple.b - tuple.a).GetMagnitude());
     }
 
     public bool TryFindOffset3d(Scanner origin, Scanner other)
     {
-        if (other.Position != null)
-            return true;
-
-        HashSet<Match<Point3d>> matches = new();
-        var originPairs = origin.GetAdjustedPairs().ToList();
-        var otherPairs = other.GetPairs().ToList();
-        var rotationFunctions = GetRotations().ToList();
+        var originPairs = GetPairs(origin.adjusted).ToList();
+        var otherPairs = GetPairs(other.beacons).ToList();
 
         // For every origin beacon and other beacon,
-        foreach (var (originA, originB) in originPairs)
-        foreach (var (otherA, otherB) in otherPairs)
+        foreach (var func in _rotationFunctions)
         {
-            var offset = originB - originA;
-            // for every rotation of other, find all the matches with origin
-            for (var r = 0; r < rotationFunctions.Count; r++)
+            HashSet<Match<Point3d>> matches = new();
+            foreach (var (originA, originB) in originPairs)
             {
-                var func = rotationFunctions[r];
-                if (func(otherB) - func(otherA) == offset)
+                var offset = originB - originA;
+                foreach (var (otherA, otherB) in otherPairs)
                 {
-                    matches.Add(new(r, originA, otherA));
-                    matches.Add(new(r, originB, otherB));
+                    // for every rotation of other, find all the matches with origin
+                    {
+                        if (func(otherB) - func(otherA) == offset)
+                        {
+                            matches.Add(new(originA, otherA));
+                            matches.Add(new(originB, otherB));
+                        }
+                    }
+                    if (matches.Count > 12)
+                        break;
                 }
+
+                if (matches.Count > 12)
+                    break;
             }
-        }
 
-        var grouped = matches
-            .GroupBy(x => x.rotation)
-            .Select(x => new { Rotation = x.Key, Match = x.First(), Count = x.Count() })
-            .ToList();
-        var group = grouped.FirstOrDefault(x => x.Count == 12);
-
-        if (group != null)
-        {
-            var match = group.Match;
-            // don't include origin.Position!.Value. It's already implicit in the adjusted points
-            var position = match.origin - rotationFunctions[match.rotation](match.other);
-            other.Adjust(position, rotationFunctions[match.rotation]);
-            return true;
+            if (matches.Count == 12)
+            {
+                var match = matches.First();
+                var position = match.origin - func(match.other);
+                other.Adjust(position, func);
+                return true;
+            }
         }
 
         return false;
     }
 
-    public record Match<T>(int rotation, T origin, T other);
+    public record Match<T>(T origin, T other);
 
     public static IEnumerable<Scanner> ParseInput(string[] lines)
     {
@@ -135,7 +138,7 @@ public class Solution19 : ISolution
         yield return pt => new Point3d(-pt.y, -pt.x, -pt.z);
 
 
-        yield return pt => new Point3d(pt.x, pt.z, pt.y);//
+        yield return pt => new Point3d(pt.x, pt.z, pt.y);
         yield return pt => new Point3d(pt.x, pt.z, -pt.y);
         yield return pt => new Point3d(-pt.x, pt.z, pt.y);
         yield return pt => new Point3d(-pt.x, pt.z, -pt.y);
@@ -148,7 +151,7 @@ public class Solution19 : ISolution
         yield return pt => new Point3d(pt.x, -pt.z, pt.y);
         yield return pt => new Point3d(pt.x, -pt.z, -pt.y);
         yield return pt => new Point3d(-pt.x, -pt.z, pt.y);
-        yield return pt => new Point3d(-pt.x, -pt.z, -pt.y);//
+        yield return pt => new Point3d(-pt.x, -pt.z, -pt.y);
 
         yield return pt => new Point3d(pt.y, -pt.z, pt.x);
         yield return pt => new Point3d(pt.y, -pt.z, -pt.x);
@@ -177,21 +180,15 @@ public class Solution19 : ISolution
         yield return pt => new Point3d(-pt.z, -pt.y, -pt.x);
     }
 
+    private static IEnumerable<(T a, T b)> GetPairs<T>(IReadOnlyCollection<T> list) where T : IEquatable<T>
+        => list.SelectMany(a => list.Select(b => (a, b))).Where(tuple => !tuple.a.Equals(tuple.b));
+
     public record Scanner()
     {
         public Point3d? Position { get; private set; }
+        public HashSet<Point3d> TriedPositions { get; } = new();
         public HashSet<Point3d> beacons { get; } = new();
         public HashSet<Point3d> adjusted { get; } = new();
-
-        public IEnumerable<(Point3d a, Point3d b)> GetAdjustedPairs()
-        {
-            return adjusted.SelectMany(a => adjusted.Select(b => (a, b))).Where((tuple => tuple.a != tuple.b));
-        }
-
-        public IEnumerable<(Point3d a, Point3d b)> GetPairs()
-        {
-            return beacons.SelectMany(a => beacons.Select(b => (a, b))).Where((tuple => tuple.a != tuple.b));
-        }
 
         public void Adjust(Point3d position, Func<Point3d, Point3d> rotationFunction)
         {
