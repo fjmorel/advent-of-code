@@ -40,9 +40,10 @@ public readonly record struct Point3d(int x, int y, int z)
 
     public static Point3d operator -(Point3d a, Point3d b) => a + (-b);
 
+    public static Point3d Apply(Point3d a, Point3d b, Func<int, int, int> func) => new Point3d(func(a.x, b.x), func(a.y, b.y), func(a.z, b.z));
+    public static bool Match(Point3d a, Point3d b, Func<int, int, bool> func) => func(a.x, b.x) && func(a.y, b.y) && func(a.z, b.z);
+
     public long GetMagnitude() => (long)Math.Abs(x) + (long)Math.Abs(y) + (long)Math.Abs(z);
 
-    // todo: switch to overload by passing in Origin
-    // public bool IsWithin(Point3d size) => x >= 0 && x < size.x && y >= 0 && y < size.y;
-    // public bool IsWithinInclusive(Point3d min, Point3d max) => x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+    public bool IsWithinInclusive(Point3d min, Point3d max) => x >= min.x && x <= max.x && y >= min.y && y <= max.y && z >= min.z && z <= max.z;
 }
