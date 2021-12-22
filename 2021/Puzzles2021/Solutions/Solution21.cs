@@ -50,23 +50,20 @@ public class Solution21 : ISolution
         long p1 = 0L, p2 = 0L;
         for (var i = 3; i <= 9; i++)
         {
-            var moved = next.WithMove(i);
-            if (moved.Score >= 21)
-            {
-                if (moved.IsP1)
-                    p1 += multiplier * _probabilities[i];
-                else
-                    p2 += multiplier * _probabilities[i];
-            }
-            else
-            {
-                var wins = FindWins(previous, moved, multiplier * _probabilities[i]);
-                p1 += wins.p1;
-                p2 += wins.p2;
-            }
+            var wins = FindWinsForRoll(i, next, previous, multiplier * _probabilities[i]);
+            p1 += wins.p1;
+            p2 += wins.p2;
         }
 
         return (p1, p2);
+    }
+
+    private (long p1, long p2) FindWinsForRoll(int roll, Player next, Player previous, long multiplier)
+    {
+        var moved = next.WithMove(roll);
+        if (moved.Score >= 21)
+            return moved.IsP1 ? (multiplier, 0) : (0, multiplier);
+        return FindWins(previous, moved, multiplier);
     }
 
     public readonly record struct Player(int Position, int Score = 0, bool IsP1 = false)

@@ -6,6 +6,7 @@
     <NoWarn>CS1998</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Using Include="Shared" />
     <Using Include="Spectre.Console" />
     <Using Include="System.Collections.Concurrent" />
     <Using Include="System.Diagnostics" />

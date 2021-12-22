@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿namespace Shared;
+
+/// <summary>
 /// Basic coordinates
 /// </summary>
 public readonly record struct Point(int x, int y)

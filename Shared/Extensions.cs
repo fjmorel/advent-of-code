@@ -1,4 +1,5 @@
-﻿#pragma warning disable CA1050
+﻿namespace Shared;
+
 public static class Extensions
 {
     /// <summary>

@@ -37,7 +37,6 @@ public class Solution19 : ISolution
         }
 
         var beacons = _scanners.SelectMany(x => x.adjusted).ToHashSet();
-        // 611 too high
         return beacons.Count;
     }
 
