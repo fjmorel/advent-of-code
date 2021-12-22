@@ -79,6 +79,7 @@ public class SolutionTests
             "17",
             string.Join(Environment.NewLine, new string[]
             {
+                "",
                 "█████",
                 "█   █",
                 "█   █",
@@ -92,9 +93,9 @@ public class SolutionTests
             "inputs",
             "13",
             "720",
-            // AHPRPAUZ
             string.Join(Environment.NewLine, new string[]
             {
+                "",
                 " ██  █  █ ███  ███  ███   ██  █  █ ████",
                 "█  █ █  █ █  █ █  █ █  █ █  █ █  █    █",
                 "█  █ ████ █  █ █  █ █  █ █  █ █  █   █ ",

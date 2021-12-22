@@ -95,6 +95,7 @@ public class SolutionTests
             "2021",
             string.Join(Environment.NewLine, new string[]
             {
+                "",
                 " █    ███    ██ █  █ ████ █  █ █    █  █   ",
                 " █    █  █    █ █  █ █    █ █  █    █  █   ",
                 " █    ███     █ ████ ███  ██   █    ████   ",

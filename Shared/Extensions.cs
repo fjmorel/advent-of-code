@@ -61,6 +61,7 @@ public static class Extensions
     public static string ToString(this IReadOnlyCollection<Point> points, Func<Point, char> characterSelector)
     {
         var output = new StringBuilder(points.Count + 10);
+        output.AppendLine();
         var minX = points.Min(pt => pt.x);
         var minY = points.Min(pt => pt.y);
         var maxX = points.Max(pt => pt.x);

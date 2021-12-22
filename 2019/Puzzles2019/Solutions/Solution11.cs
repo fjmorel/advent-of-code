@@ -17,29 +17,8 @@ public class Solution11 : ISolution
 
     public async ValueTask<string> GetPart2String()
     {
-        var output = new StringBuilder();
         var grid = await RunPaintJob(1);
-
-        var minX = grid.Keys.MinBy(p => p.x).x;
-        var maxX = grid.Keys.MaxBy(p => p.x).x;
-
-        var minY = grid.Keys.MinBy(p => p.y).y;
-        var maxY = grid.Keys.MaxBy(p => p.y).y;
-
-        // still not sure why this axis was inverted
-        AnsiConsole.WriteLine();
-        for (var y = maxY; y >= minY; y--)
-        {
-            for (var x = minX; x <= maxX; x++)
-            {
-                var color = grid.GetValueOrDefault(new Point(x, y));
-                output.Append(color == 1 ? '█' : ' ');
-            }
-
-            output.AppendLine();
-        }
-
-        return output.ToString();
+        return grid.Keys.ToString(pt => grid.GetValueOrDefault(pt) == 1 ? '█' : ' ');
     }
 
     private async Task<Dictionary<Point, long>> RunPaintJob(long startColor)
@@ -86,8 +65,8 @@ public class Solution11 : ISolution
             };
             current = direction switch
             {
-                Direction.Up => current with { y = current.y + 1 },
-                Direction.Down => current with { y = current.y - 1 },
+                Direction.Up => current with { y = current.y - 1 },
+                Direction.Down => current with { y = current.y + 1 },
 
                 Direction.Right => current with { x = current.x + 1 },
                 Direction.Left => current with { x = current.x - 1 },
