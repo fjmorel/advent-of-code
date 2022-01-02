@@ -27,6 +27,50 @@ public static class Extensions
     /// </summary>
     public static int[] ParseDigits(this string line) => line.Select(c => c - 48).ToArray();
 
+    public static List<int> GetDigits(this int num, bool bigEndian)
+    {
+        var digits = GetDigits(num);
+        if (bigEndian)
+            digits.Reverse();
+
+        return digits;
+    }
+
+    private static List<int> GetDigits(int num)
+    {
+        var digits = new List<int>();
+        while (num > 0)
+        {
+            var digit = num % 10;
+            digits.Add(digit);
+            num = (num - digit) / 10;
+        }
+
+        return digits;
+    }
+
+    public static List<long> GetDigits(this long num, bool bigEndian)
+    {
+        var digits = GetDigits(num);
+        if (bigEndian)
+            digits.Reverse();
+
+        return digits;
+    }
+
+    private static List<long> GetDigits(long num)
+    {
+        var digits = new List<long>();
+        while (num > 0)
+        {
+            var digit = num % 10;
+            digits.Add(digit);
+            num = (num - digit) / 10;
+        }
+
+        return digits;
+    }
+
     /// <summary>
     /// Output a set of coordinates to the console for debugging (or sometimes viewing a solution)
     /// </summary>

@@ -23,7 +23,7 @@ public class Solution04 : ISolution
         if (num < MIN || num > MAX)
             return false;
 
-        var digits = GetDigits(num).ToList();
+        var digits = num.GetDigits(false);
 
         // Digits are ascending
         if (!digits.OrderByDescending(x => x).SequenceEqual(digits))
@@ -50,6 +50,7 @@ public class Solution04 : ISolution
         return streaks.Any(x => streakLimit ? x == 2 : x >= 2);
     }
 
+    // todo: replace with extension method
     private IEnumerable<int> GetDigits(int num)
     {
         while (num > 0)
