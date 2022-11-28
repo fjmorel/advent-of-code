@@ -28,10 +28,10 @@ public readonly record struct Point(int x, int y)
     /// </summary>
     public IEnumerable<Point> GetDiagonal()
     {
-        yield return this with { x = x + 1, y = y + 1 };
-        yield return this with { x = x + 1, y = y - 1 };
-        yield return this with { x = x - 1, y = y - 1 };
-        yield return this with { x = x - 1, y = y + 1 };
+        yield return new Point(x + 1, y + 1);
+        yield return new Point(x + 1, y - 1);
+        yield return new Point(x - 1, y - 1);
+        yield return new Point(x - 1, y + 1);
     }
 
     public static Point operator +(Point a) => a;

@@ -43,7 +43,7 @@ public readonly record struct Point3d(int x, int y, int z)
     public static Point3d Apply(Point3d a, Point3d b, Func<int, int, int> func) => new Point3d(func(a.x, b.x), func(a.y, b.y), func(a.z, b.z));
     public static bool Match(Point3d a, Point3d b, Func<int, int, bool> func) => func(a.x, b.x) && func(a.y, b.y) && func(a.z, b.z);
 
-    public long GetMagnitude() => (long)Math.Abs(x) + (long)Math.Abs(y) + (long)Math.Abs(z);
+    public long GetMagnitude() => long.Abs(x) + long.Abs(y) + long.Abs(z);
 
     public bool IsWithinInclusive(Point3d min, Point3d max) => x >= min.x && x <= max.x && y >= min.y && y <= max.y && z >= min.z && z <= max.z;
 }
