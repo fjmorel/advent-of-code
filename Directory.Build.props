@@ -1,10 +1,18 @@
 <Project>
   <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>CS1998</NoWarn>
+    <Configurations>Release;DebugExample;DebugInput</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'DebugExample' ">
+    <DefineConstants>USE_EXAMPLE</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Using Include="Shared" />
     <Using Include="Spectre.Console" />
