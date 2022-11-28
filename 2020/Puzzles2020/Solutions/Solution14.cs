@@ -79,8 +79,6 @@ public class Solution14 : ISolution
 
                     masks[entryIndex] = new Mask(andMask, orMask);
                 }
-
-                ;
             }
             else
             {

@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
         <ProjectReference Include="..\..\TestsShared\TestsShared.csproj" />
         <ProjectReference Include="..\Puzzles2020\Puzzles2020.csproj" />
         <Using Include="Xunit" />

@@ -13,7 +13,7 @@ public class Solution19 : ISolution
     {
         var bag = new ConcurrentBag<Point>();
         var points = Enumerable.Range(0, 50).SelectMany(x => Enumerable.Range(0, 50).Select(y => new Point(x, y)));
-        await Parallel.ForEachAsync(points, async (pt, token) =>
+        await Parallel.ForEachAsync(points, async (pt, _) =>
         {
             if (await IsBeamed(pt))
                 bag.Add(pt);

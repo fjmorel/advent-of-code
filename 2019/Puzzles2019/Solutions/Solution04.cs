@@ -49,15 +49,4 @@ public class Solution04 : ISolution
 
         return streaks.Any(x => streakLimit ? x == 2 : x >= 2);
     }
-
-    // todo: replace with extension method
-    private IEnumerable<int> GetDigits(int num)
-    {
-        while (num > 0)
-        {
-            var digit = num % 10;
-            yield return digit;
-            num = (num - digit) / 10;
-        }
-    }
 }

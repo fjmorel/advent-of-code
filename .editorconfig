@@ -9,3 +9,6 @@ trim_trailing_whitespace = true
 
 [*.cs]
 resharper_convert_type_check_pattern_to_null_check_highlighting = none
+resharper_nullable_warning_suppression_is_used_highlighting = none
+# there's a lot of these (1 for every unimplemented solution)
+resharper_unused_parameter_local_highlighting = none

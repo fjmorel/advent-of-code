@@ -40,8 +40,8 @@ public record SolutionTester(Assembly _assembly)
         var runner = new Runner(_assembly);
         Assert.True(runner.TryGetData(folder, day, out var lines));
         Assert.NotNull(lines);
-        Assert.True(runner.TryGetSolution(day, lines!, out var job));
+        Assert.True(runner.TryGetSolution(day, lines, out var job));
         Assert.NotNull(job);
-        return job!;
+        return job;
     }
 }

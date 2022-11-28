@@ -29,7 +29,6 @@ public class Solution25 : ISolution
         {
             steps++;
             (grid, changed) = Move(grid);
-            var str = grid.Keys.ToString(pt => grid.GetValueOrDefault(pt, EMPTY));
         }
 
         return steps;
