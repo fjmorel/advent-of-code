@@ -5,7 +5,7 @@ public class SolutionTests
     private static readonly SolutionTester _runner = new(typeof(Solution01).Assembly);
 
     [Theory]
-    [InlineData("01", 0000, 0000)]
+    [InlineData("01", 24000, 45000)]
     [InlineData("02", 0000, 0000)]
     [InlineData("03", 0000, 0000)]
     [InlineData("04", 0000, 0000)]
@@ -36,7 +36,7 @@ public class SolutionTests
     }
 
     [Theory]
-    [InlineData("01", 0000, 0000)]
+    [InlineData("01", 69693, 200945)]
     [InlineData("02", 0000, 0000)]
     [InlineData("03", 0000, 0000)]
     [InlineData("04", 0000, 0000)]
