@@ -70,9 +70,8 @@ public class SolutionTests
         await _runner.RunDay(day, folder, part1, part2);
     }
 
-    public static object[][] RunStrings_Data => new[]
+    public static TheoryData<string, string, string, string> RunStrings_Data => new()
     {
-        new object[]
         {
             "examples",
             "13",
@@ -86,9 +85,8 @@ public class SolutionTests
                 "█   █",
                 "█████",
                 "",
-            }),
+            })
         },
-        new object[]
         {
             "inputs",
             "13",
@@ -103,7 +101,7 @@ public class SolutionTests
                 "█  █ █  █ █    █ █  █    █  █ █  █ █   ",
                 "█  █ █  █ █    █  █ █    █  █  ██  ████",
                 "",
-            }),
+            })
         },
     };
 

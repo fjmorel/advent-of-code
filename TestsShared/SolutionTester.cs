@@ -2,6 +2,8 @@
 
 namespace TestsShared;
 
+// use Assert.Equal<object> to force xunit to output the entire string for easy comparison
+
 public record SolutionTester(Assembly _assembly)
 {
     public async Task RunDay(string day, string folder, string part1, string part2)
