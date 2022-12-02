@@ -1,23 +1,25 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution25 : ISolution
+public record Solution25(
+    Dictionary<Point, char> _start,
+    int _minX,
+    int _maxX,
+    int _minY,
+    int _maxY
+) : ISolution<Solution25>
 {
     private const char EMPTY = '.';
     private const char RIGHT = '>';
     private const char DOWN = 'v';
-    private readonly Dictionary<Point, char> _start;
-    private readonly int _maxY;
-    private readonly int _minX;
-    private readonly int _minY;
-    private readonly int _maxX;
 
-    public Solution25(string[] lines)
+    public static Solution25 Init(string[] lines)
     {
-        _start = lines.SelectMany((line, y) => line.Select((ch, x) => (ch, x, y))).ToDictionary(t => new Point(t.x, t.y), t => t.ch);
-        _minX = _start.Min(x => x.Key.x);
-        _minY = _start.Min(x => x.Key.y);
-        _maxX = _start.Max(x => x.Key.x);
-        _maxY = _start.Max(x => x.Key.y);
+        var start = lines.SelectMany((line, y) => line.Select((ch, x) => (ch, x, y))).ToDictionary(t => new Point(t.x, t.y), t => t.ch);
+        var minX = start.Min(x => x.Key.x);
+        var minY = start.Min(x => x.Key.y);
+        var maxX = start.Max(x => x.Key.x);
+        var maxY = start.Max(x => x.Key.y);
+        return new(start, minX, maxX, minY, maxY);
     }
 
     public async ValueTask<long> GetPart1()

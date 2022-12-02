@@ -2,14 +2,9 @@ using System.Text.Json.Nodes;
 
 namespace Puzzles2021.Solutions;
 
-public class Solution18 : ISolution
+public record Solution18(string[] _lines) : ISolution<Solution18>
 {
-    private readonly string[] _lines;
-
-    public Solution18(string[] lines)
-    {
-        _lines = lines;
-    }
+    public static Solution18 Init(string[] lines) => new(lines);
 
     public async ValueTask<long> GetPart1()
     {

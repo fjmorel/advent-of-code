@@ -1,14 +1,12 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution20 : ISolution
+public record Solution20(Dictionary<Point, bool> _image, bool[] _algorithm) : ISolution<Solution20>
 {
-    private readonly Dictionary<Point, bool> _image;
-    private readonly bool[] _algorithm;
-
-    public Solution20(string[] lines)
+    public static Solution20 Init(string[] lines)
     {
-        _algorithm = lines[0].Select(x => x == '#').ToArray();
-        _image = lines.Skip(2).SelectMany((line, y) => line.Select((ch, x) => (ch, x, y))).ToDictionary(tuple => new Point(tuple.x, tuple.y), tuple => tuple.ch == '#');
+        var algorithm = lines[0].Select(x => x == '#').ToArray();
+        var image = lines.Skip(2).SelectMany((line, y) => line.Select((ch, x) => (ch, x, y))).ToDictionary(tuple => new Point(tuple.x, tuple.y), tuple => tuple.ch == '#');
+        return new(image, algorithm);
     }
 
     public async ValueTask<long> GetPart1() => GetLitPixelsAfter(2);

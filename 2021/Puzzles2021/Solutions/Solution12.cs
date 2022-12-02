@@ -1,23 +1,23 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution12 : ISolution
+public record Solution12(Dictionary<string, List<string>> _connections) : ISolution<Solution12>
 {
-    private readonly Dictionary<string, List<string>> _connections;
-
-    public Solution12(string[] lines)
+    public static Solution12 Init(string[] lines)
     {
-        _connections = new();
+        var connections = new Dictionary<string, List<string>>();
         foreach (var line in lines)
         {
             var pair = line.Split('-');
-            _connections.TryAdd(pair[0], new());
-            _connections.TryAdd(pair[1], new());
+            connections.TryAdd(pair[0], new());
+            connections.TryAdd(pair[1], new());
             // don't let  anyone go back to the start
             if (pair[1] != "start")
-                _connections[pair[0]].Add(pair[1]);
+                connections[pair[0]].Add(pair[1]);
             if (pair[0] != "start")
-                _connections[pair[1]].Add(pair[0]);
+                connections[pair[1]].Add(pair[0]);
         }
+
+        return new(connections);
     }
 
     public async ValueTask<long> GetPart1()

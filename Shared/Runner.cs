@@ -103,18 +103,10 @@ public record Runner(Assembly assembly)
         }
 
         var initializer = type.GetMethod(nameof(ISolution<FakeSolution>.Init), BindingFlags.Static | BindingFlags.Public);
-        var obj = initializer?.Invoke(null, BindingFlags.Static, null, new object?[] { input }, null);
+        var obj = initializer!.Invoke(null, new object?[] { input });
         if (obj is ISolution job)
         {
             solution = job;
-            return true;
-        }
-
-        // fallback to old implementation without static interface method
-        obj = Activator.CreateInstance(type, new object[] { input });
-        if (obj is ISolution jobFallback)
-        {
-            solution = jobFallback;
             return true;
         }
 
@@ -122,8 +114,9 @@ public record Runner(Assembly assembly)
         return false;
     }
 
+    // ReSharper disable once ClassNeverInstantiated.Local
     private record FakeSolution : ISolution<FakeSolution>
     {
-        public static FakeSolution Init(string[] lines) => throw new NotImplementedException();
+        public static FakeSolution Init(string[] lines) => throw new UnreachableException();
     }
 }

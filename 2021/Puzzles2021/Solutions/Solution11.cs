@@ -1,19 +1,20 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution11 : ISolution
+public record Solution11(Dictionary<Point, long> _original) : ISolution<Solution11>
 {
-    private readonly Dictionary<Point, long> _original = new();
-
-    public Solution11(string[] lines)
+    public static Solution11 Init(string[] lines)
     {
+        var original = new Dictionary<Point, long>();
         for (var y = 0; y < lines.Length; y++)
         {
             var nums = lines[y].ParseDigits();
             for (var x = 0; x < nums.Length; x++)
             {
-                _original[new(x, y)] = nums[x];
+                original[new(x, y)] = nums[x];
             }
         }
+
+        return new(original);
     }
 
     public async ValueTask<long> GetPart1()

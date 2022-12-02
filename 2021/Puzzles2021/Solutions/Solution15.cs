@@ -1,17 +1,11 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution15 : ISolution
+public record Solution15(int[][] _nums, int _width, int _height) : ISolution<Solution15>
 {
-    private readonly int[][] _nums;
-    private readonly int _width;
-    private readonly int _height;
-
-    public Solution15(string[] lines)
+    public static Solution15 Init(string[] lines)
     {
-        _nums = lines.Select(x => x.ParseDigits()).ToArray();
-
-        _width = _nums[0].Length;
-        _height = _nums.Length;
+        var nums = lines.Select(x => x.ParseDigits()).ToArray();
+        return new(nums, nums[0].Length, nums.Length);
     }
 
     public async ValueTask<long> GetPart1()

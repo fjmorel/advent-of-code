@@ -1,14 +1,12 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution19 : ISolution
+public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[] _rotationFunctions) : ISolution<Solution19>
 {
-    private readonly Scanner[] _scanners;
-    private readonly Func<Point3d, Point3d>[] _rotationFunctions;
-
-    public Solution19(string[] lines)
+    public static Solution19 Init(string[] lines)
     {
-        _scanners = ParseInput(lines).ToArray();
-        _rotationFunctions = GetRotations().ToArray();
+        var scanners = ParseInput(lines).ToArray();
+        var rotationFunctions = GetRotations().ToArray();
+        return new(scanners, rotationFunctions);
     }
 
     public async ValueTask<long> GetPart1()

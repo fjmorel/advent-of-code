@@ -1,22 +1,22 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution22 : ISolution
+public partial record Solution22(List<Solution22.Command> _commands) : ISolution<Solution22>
 {
-    private readonly List<Command> _commands;
-
-    public Solution22(string[] lines)
+    public static Solution22 Init(string[] lines)
     {
-        _commands = new List<Command>();
+        var commands = new List<Command>();
         foreach (var line in lines)
         {
-            var groups = Regex.Match(line, @"([a-z]+) x=([0-9\-]+)..([0-9\-]+),y=([0-9\-]+)..([0-9\-]+),z=([0-9\-]+)..([0-9\-]+)").Groups;
+            var groups = GetParser().Match(line).Groups;
 
             var on = groups[1].ValueSpan.SequenceEqual("on");
             var min = new Point3d(int.Parse(groups[2].ValueSpan), int.Parse(groups[4].ValueSpan), int.Parse(groups[6].ValueSpan));
             var max = new Point3d(int.Parse(groups[3].ValueSpan), int.Parse(groups[5].ValueSpan), int.Parse(groups[7].ValueSpan));
 
-            _commands.Add(new(on, new(min, max)));
+            commands.Add(new(on, new(min, max)));
         }
+
+        return new(commands);
     }
 
     public async ValueTask<long> GetPart1()
@@ -85,4 +85,7 @@ public class Solution22 : ISolution
     }
 
     public record Command(bool on, Cube cube);
+
+    [GeneratedRegex("([a-z]+) x=([0-9\\-]+)..([0-9\\-]+),y=([0-9\\-]+)..([0-9\\-]+),z=([0-9\\-]+)..([0-9\\-]+)")]
+    private static partial Regex GetParser();
 }

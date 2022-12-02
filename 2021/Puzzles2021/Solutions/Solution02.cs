@@ -1,16 +1,15 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution02 : ISolution
+public record Solution02(List<Solution02.Step> _data) : ISolution<Solution02>
 {
-    private readonly List<Step> _data;
-
-    public Solution02(string[] lines)
+    public static Solution02 Init(string[] lines)
     {
-        _data = lines.Select(x =>
+        var data = lines.Select(x =>
         {
             var split = x.Split(' ');
             return new Step(split[0], int.Parse(split[1]));
         }).ToList();
+        return new(data);
     }
 
     public async ValueTask<long> GetPart1()
@@ -32,6 +31,7 @@ public class Solution02 : ISolution
         "forward" => pt with { x = pt.x + step.magnitude },
         _ => throw new ArgumentException("Unexpected direction: " + step.direction),
     };
+
     public PointWithAim Move(PointWithAim pt, Step step) => step.direction switch
     {
         "down" => pt with { aim = pt.aim + step.magnitude },
@@ -39,7 +39,8 @@ public class Solution02 : ISolution
         "forward" => pt with { x = pt.x + step.magnitude, y = pt.y + step.magnitude * pt.aim },
         _ => throw new ArgumentException("Unexpected direction: " + step.direction),
     };
+
     public readonly record struct PointWithAim(int x, int y, int aim);
+
     public readonly record struct Step(string direction, int magnitude);
 }
-

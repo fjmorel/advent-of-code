@@ -1,19 +1,17 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution21 : ISolution
+public record Solution21(Solution21.Player _p1, Solution21.Player _p2) : ISolution<Solution21>
 {
-    private readonly int[] _probabilities = { 0, 0, 0, 1, 3, 6, 7, 6, 3, 1 };//3-9
-    private readonly Player _p1;
-    private readonly Player _p2;
+    private static readonly int[] _probabilities = { 0, 0, 0, 1, 3, 6, 7, 6, 3, 1 };//3-9
 
-
-    public Solution21(string[] lines)
+    public static Solution21 Init(string[] lines)
     {
         var position1 = int.Parse(new string(lines[0][^1], 1));
-        _p1 = new Player(position1, IsP1: true);
+        var p1 = new Player(position1, IsP1: true);
 
         var position2 = int.Parse(new string(lines[1][^1], 1));
-        _p2 = new Player(position2);
+        var p2 = new Player(position2);
+        return new(p1, p2);
     }
 
     public async ValueTask<long> GetPart1()

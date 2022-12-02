@@ -2,11 +2,9 @@ using System.Globalization;
 
 namespace Puzzles2021.Solutions;
 
-public class Solution16 : ISolution
+public record Solution16(Solution16.IPacket _parsed) : ISolution<Solution16>
 {
-    private readonly IPacket _parsed;
-
-    public Solution16(string[] lines)
+    public static Solution16 Init(string[] lines)
     {
         var bits = lines[0]
             .SelectMany(static symbol => Convert.ToString(int.Parse(symbol.ToString(), NumberStyles.HexNumber), 2)
@@ -14,7 +12,8 @@ public class Solution16 : ISolution
                 .Select(x => x == '1'))
             .ToArray().AsSpan();
         var offset = 0;
-        _parsed = ParsePacket(bits, ref offset);
+        var parsed = ParsePacket(bits, ref offset);
+        return new(parsed);
     }
 
     public async ValueTask<long> GetPart1() => _parsed.GetTotalVersion();

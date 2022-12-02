@@ -1,20 +1,20 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution09 : ISolution
+public record Solution09(Dictionary<Point, int> _points) : ISolution<Solution09>
 {
-    private readonly Dictionary<Point, int> _points;
-
-    public Solution09(string[] lines)
+    public static Solution09 Init(string[] lines)
     {
-        _points = new Dictionary<Point, int>();
+        var points = new Dictionary<Point, int>();
         for (var y = 0; y < lines.Length; y++)
         {
             var nums = lines[y].AsSpan();
             for (var x = 0; x < nums.Length; x++)
             {
-                _points[new(x, y)] = int.Parse(nums[x..(x + 1)]);
+                points[new(x, y)] = int.Parse(nums[x..(x + 1)]);
             }
         }
+
+        return new(points);
     }
 
     public async ValueTask<long> GetPart1() => GetLowestPoints().Select(pt => _points[pt] + 1).Sum();

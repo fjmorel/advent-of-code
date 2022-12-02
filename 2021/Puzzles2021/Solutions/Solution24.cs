@@ -1,15 +1,12 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution24 : ISolution
+public record Solution24(long _lowest, long _highest) : ISolution<Solution24>
 {
-    private readonly List<Group> _groups;
-    private readonly long _lowest;
-    private readonly long _highest;
-
-    public Solution24(string[] lines)
+    public static Solution24 Init(string[] lines)
     {
-        _groups = lines.Chunk(18).Select(ParseGroup).ToList();
-        (_lowest, _highest) = FindLimits();
+        var groups = lines.Chunk(18).Select(ParseGroup).ToList();
+        var (lowest, highest) = FindLimits(groups);
+        return new(lowest, highest);
     }
 
     private static Group ParseGroup(string[] lines) => new(GetValue(lines[4]), GetValue(lines[5]), GetValue(lines[15]));
@@ -19,7 +16,7 @@ public class Solution24 : ISolution
 
     public async ValueTask<long> GetPart2() => _lowest;
 
-    public (long lowest, long highest) FindLimits()
+    public static (long lowest, long highest) FindLimits(List<Group> groups)
     {
         (long lowest, long highest) = (long.MaxValue, long.MinValue);
         for (long model = 11_111_111_111_111; model <= 99_999_999_999_999; model++)
@@ -28,7 +25,7 @@ public class Solution24 : ISolution
             int step = 0;
             long output = 0;
 
-            foreach ((int line5, int line6, int line16) in _groups)
+            foreach ((int line5, int line6, int line16) in groups)
             {
                 var input = digits[step];
                 var test = (output % 26) + line6 == input;

@@ -1,10 +1,14 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution08 : ISolution
+public record Solution08(
+    List<Solution08.Line> _lines,
+    HashSet<char> _sharedFives,
+    HashSet<char> _sharedSixes
+) : ISolution<Solution08>
 {
     private const string ALL = "abcdefg";
 
-    private readonly string[] _real = new[]
+    private static readonly string[] _real =
     {
         "abcefg",// 0, 6 segments
         "cf",// 1, 2 segments
@@ -18,15 +22,13 @@ public class Solution08 : ISolution
         "abcdfg",// 9, 6 segments
     };
 
-    private readonly List<Line> _lines;
-    private readonly HashSet<char> _sharedFives;
-    private readonly HashSet<char> _sharedSixes;
 
-    public Solution08(string[] lines)
+    public static Solution08 Init(string[] lines)
     {
-        _lines = lines.Select(ParseLine).ToList();
-        _sharedFives = GetSharedLetters(_real, 5);
-        _sharedSixes = GetSharedLetters(_real, 6);
+        var parsed = lines.Select(ParseLine).ToList();
+        var sharedFives = GetSharedLetters(_real, 5);
+        var sharedSixes = GetSharedLetters(_real, 6);
+        return new(parsed, sharedFives, sharedSixes);
     }
 
     public async ValueTask<long> GetPart1() => _lines.Sum(x => x.GetUniqueCounts());
@@ -44,7 +46,7 @@ public class Solution08 : ISolution
     private static HashSet<char> GetSharedLetters(string[] patterns, int segmentCount)
         => patterns.Where(x => x.Length == segmentCount).Aggregate(ALL.ToHashSet(), (a, b) => a.Intersect(b).ToHashSet());
 
-    private readonly record struct Line(string[] patterns, string[] digits)
+    public readonly record struct Line(string[] patterns, string[] digits)
     {
         public long GetUniqueCounts() => digits.Count(digit => digit.Length is 2 or 4 or 3 or 7);
 

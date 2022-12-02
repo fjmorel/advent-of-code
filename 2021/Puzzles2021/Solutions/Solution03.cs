@@ -1,15 +1,10 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution03 : ISolution
+public record Solution03(string[] _data) : ISolution<Solution03>
 {
-	private readonly string[] _data;
+    public static Solution03 Init(string[] lines) => new(lines);
 
-	public Solution03(string[] lines)
-	{
-		_data = lines;
-	}
-
-	public async ValueTask<long> GetPart1()
+    public async ValueTask<long> GetPart1()
 	{
 		var gamma = string.Join("", _data[0].Select((_, i) => GetSurpulusOnes(_data, i) >= 0 ? '1' : '0'));
 		var epsilon = string.Join("", gamma.Select(x => x == '0' ? '1' : '0'));

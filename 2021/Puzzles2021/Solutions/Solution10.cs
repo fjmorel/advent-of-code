@@ -1,15 +1,11 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution10 : ISolution
+public record Solution10(string[] _lines) : ISolution<Solution10>
 {
+    public static Solution10 Init(string[] lines) => new(lines);
+
     private static readonly char[] OPEN = "([{<".ToCharArray();
     private static readonly char[] CLOSE = ")]}>".ToCharArray();
-    private readonly string[] _lines;
-
-    public Solution10(string[] lines)
-    {
-        _lines = lines;
-    }
 
     public async ValueTask<long> GetPart1()
     {

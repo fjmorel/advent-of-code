@@ -1,14 +1,12 @@
 namespace Puzzles2021.Solutions;
 
-public class Solution14 : ISolution
+public record Solution14(string _template, Dictionary<(char before, char after), char> _rules) : ISolution<Solution14>
 {
-    private readonly Dictionary<(char before, char after), char> _rules;
-    private readonly string _template;
-
-    public Solution14(string[] lines)
+    public static Solution14 Init(string[] lines)
     {
-        _template = lines[0];
-        _rules = lines.Skip(2).ToDictionary(x => (x[0], x[1]), x => x[^1]);
+        var template = lines[0];
+        var rules = lines.Skip(2).ToDictionary(x => (x[0], x[1]), x => x[^1]);
+        return new(template, rules);
     }
 
     public async ValueTask<long> GetPart1() => Run(10);
