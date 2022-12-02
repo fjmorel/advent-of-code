@@ -1,11 +1,11 @@
 namespace Puzzles2022.Solutions;
 
-public class Solution15 : ISolution
+public record Solution15(string[] _lines) : ISolution<Solution15>
 {
-
-	public Solution15(string[] lines)
-	{
-	}
+    public static Solution15 Init(string[] lines)
+    {
+        return new(lines);
+    }
 
 	public async ValueTask<long> GetPart1()
 	{

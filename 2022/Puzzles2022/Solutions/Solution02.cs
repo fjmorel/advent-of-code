@@ -1,8 +1,10 @@
 namespace Puzzles2022.Solutions;
 
-public record Solution02(string[] lines) : ISolution
+public record Solution02(string[] _lines) : ISolution<Solution02>
 {
-    public async ValueTask<long> GetPart1() => lines.Aggregate(0L, (score, line) =>
+    public static Solution02 Init(string[] lines) => new(lines);
+
+    public async ValueTask<long> GetPart1() => _lines.Aggregate(0L, (score, line) =>
     {
         var p1 = line[0] - 'A';
         var p2 = line[2] - 'X';
@@ -10,7 +12,7 @@ public record Solution02(string[] lines) : ISolution
         return score + (p2 + 1) + outcome;
     });
 
-    public async ValueTask<long> GetPart2() => lines.Aggregate(0L, (score, line) =>
+    public async ValueTask<long> GetPart2() => _lines.Aggregate(0L, (score, line) =>
     {
         var p1 = line[0] - 'A';
         var outcome = line[2] - 'X';

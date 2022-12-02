@@ -1,17 +1,16 @@
 namespace Puzzles2022.Solutions;
 
-public class Solution01 : ISolution
+public record Solution01(List<long> _elves) : ISolution<Solution01>
 {
-    private readonly List<long> _elves = new();
-
-    public Solution01(string[] lines)
+    public static Solution01 Init(string[] lines)
     {
+        var elves = new List<long>();
         var current = 0L;
         foreach (var line in lines)
         {
             if (string.IsNullOrEmpty(line))
             {
-                _elves.Add(current);
+                elves.Add(current);
                 current = 0;
             }
             else
@@ -20,7 +19,8 @@ public class Solution01 : ISolution
             }
         }
 
-        _elves.Add(current);
+        elves.Add(current);
+        return new Solution01(elves);
     }
 
     public async ValueTask<long> GetPart1()

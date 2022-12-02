@@ -95,24 +95,35 @@ public record Runner(Assembly assembly)
 
     public bool TryGetSolution(string day, string[] input, [NotNullWhen(true)] out ISolution? solution)
     {
-        var assemblyName = assembly.GetName().Name;
-        var type = assembly.GetType($"{assemblyName}.Solutions.Solution{day}");
+        var type = assembly.GetTypes().FirstOrDefault(x => x.Name.EndsWith(day));
         if (type == null)
         {
             solution = null;
             return false;
         }
 
-        var obj = Activator.CreateInstance(type, new object[] { input });
+        var initializer = type.GetMethod(nameof(ISolution<FakeSolution>.Init), BindingFlags.Static | BindingFlags.Public);
+        var obj = initializer?.Invoke(null, BindingFlags.Static, null, new object?[] { input }, null);
         if (obj is ISolution job)
         {
             solution = job;
             return true;
         }
-        else
+
+        // fallback to old implementation without static interface method
+        obj = Activator.CreateInstance(type, new object[] { input });
+        if (obj is ISolution jobFallback)
         {
-            solution = null;
-            return false;
+            solution = jobFallback;
+            return true;
         }
+
+        solution = null;
+        return false;
+    }
+
+    private record FakeSolution : ISolution<FakeSolution>
+    {
+        public static FakeSolution Init(string[] lines) => throw new NotImplementedException();
     }
 }
