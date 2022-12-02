@@ -1,15 +1,10 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution02 : ISolution
+public record Solution02(long[] _opCodes) : ISolution<Solution02>
 {
-    private readonly long[] _opCodes;
-    private readonly Channel<long> _channel;
+    private readonly Channel<long> _channel = Channel.CreateUnbounded<long>();
 
-    public Solution02(string[] lines)
-    {
-        _opCodes = lines[0].ParseCsvLongs();
-        _channel = Channel.CreateUnbounded<long>();
-    }
+    public static Solution02 Init(string[] lines) => new(lines[0].ParseCsvLongs());
 
     public async ValueTask<long> GetPart1()
     {

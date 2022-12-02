@@ -1,14 +1,7 @@
 ﻿namespace Puzzles2019;
 
-public class IntCodeComputer
+public record IntCodeComputer(long[] _opCodes)
 {
-    private readonly long[] _opCodes;
-
-    public IntCodeComputer(long[] opCodes)
-    {
-        _opCodes = opCodes;
-    }
-
     public async Task<Dictionary<long, long>> Run(ChannelReader<long> reader, ChannelWriter<long> writer)
     {
         var memory = _opCodes.Select((value, i) => (value, (long)i)).ToDictionary(x => x.Item2, x => x.value);
@@ -169,7 +162,7 @@ public class IntCodeComputer
 
     private record ComputerState(Dictionary<long, long> memory, ChannelReader<long> input, ChannelWriter<long> output)
     {
-        public long RelativeBase = 0;
+        public long RelativeBase;
 
         public void Set(long index, Mode mode, long value)
         {

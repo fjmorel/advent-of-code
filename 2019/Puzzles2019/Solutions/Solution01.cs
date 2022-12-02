@@ -1,13 +1,8 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution01 : ISolution
+public record Solution01(List<long> _nums) : ISolution<Solution01>
 {
-    private readonly List<long> _nums;
-
-    public Solution01(string[] lines)
-    {
-        _nums = lines.ParseLongs();
-    }
+    public static Solution01 Init(string[] lines) => new(lines.ParseLongs());
 
     public async ValueTask<long> GetPart1() => _nums.Select(GetFuel).Sum();
     public async ValueTask<long> GetPart2() => _nums.Select(GetFuel).Select(GetFuelForFuel).Sum();
@@ -23,6 +18,7 @@ public class Solution01 : ISolution
             totalFuel += addedFuel;
             addedFuel = GetFuel(addedFuel);
         }
+
         return totalFuel;
     }
 }

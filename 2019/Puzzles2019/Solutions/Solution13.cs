@@ -1,13 +1,8 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution13 : ISolution
+public record Solution13(long[] _opCodes) : ISolution<Solution13>
 {
-    private readonly long[] _opCodes;
-
-    public Solution13(string[] lines)
-    {
-        _opCodes = lines[0].ParseCsvLongs();
-    }
+    public static Solution13 Init(string[] lines) => new(lines[0].ParseCsvLongs());
 
     public async ValueTask<long> GetPart1()
     {

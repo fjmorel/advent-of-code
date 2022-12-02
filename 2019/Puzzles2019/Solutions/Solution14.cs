@@ -1,16 +1,12 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution14 : ISolution
+public partial record Solution14(Dictionary<string, Solution14.Formula> reactions) : ISolution<Solution14>
 {
-    private readonly Dictionary<string, Formula> reactions;
     private const string ORE = "ORE";
     private const string FUEL = "FUEL";
     private const long TRILLION = 1_000_000_000_000;
 
-    public Solution14(string[] lines)
-    {
-        reactions = ParseReactions(lines);
-    }
+    public static Solution14 Init(string[] lines) => new(ParseReactions(lines));
 
     public async ValueTask<long> GetPart1()
     {
@@ -94,10 +90,10 @@ public class Solution14 : ISolution
         }
     }
 
-    private Dictionary<string, Formula> ParseReactions(string[] lines)
+    private static Dictionary<string, Formula> ParseReactions(string[] lines)
     {
         var output = new Dictionary<string, Formula>();
-        var regex = new Regex("(((?<reagent_count>[0-9]+) (?<reagent_name>[A-Za-z]+),? )+)=> (?<product>(?<product_count>[0-9]+) (?<product_name>[A-Za-z]+))");
+        var regex = GetParseRegex();
         foreach (var line in lines)
         {
             var match = regex.Match(line);
@@ -119,4 +115,7 @@ public class Solution14 : ISolution
     public readonly record struct Formula(long output, Reagent[] reagents);
 
     public readonly record struct Reagent(long quantity, string chemical);
+
+    [GeneratedRegex("(((?<reagent_count>[0-9]+) (?<reagent_name>[A-Za-z]+),? )+)=> (?<product>(?<product_count>[0-9]+) (?<product_name>[A-Za-z]+))")]
+    private static partial Regex GetParseRegex();
 }

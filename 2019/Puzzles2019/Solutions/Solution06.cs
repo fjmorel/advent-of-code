@@ -1,19 +1,18 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution06 : ISolution
+public record Solution06(Dictionary<string, string> keyOrbitsValue) : ISolution<Solution06>
 {
-    private readonly Dictionary<string, string> keyOrbitsValue;
-
     private const string CENTER = "COM";
 
-    public Solution06(string[] lines)
+    public static Solution06 Init(string[] lines)
     {
-        keyOrbitsValue = lines.Aggregate(new Dictionary<string, string>(), (dict, line) =>
+        var keyOrbitsValue = lines.Aggregate(new Dictionary<string, string>(), (dict, line) =>
         {
             var paren = line.IndexOf(')');
             dict[line[(paren + 1)..]] = line[0..(paren)];
             return dict;
         });
+        return new(keyOrbitsValue);
     }
 
     public async ValueTask<long> GetPart1()

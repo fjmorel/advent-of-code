@@ -1,15 +1,13 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution04 : ISolution
+public record Solution04(int MIN, int MAX) : ISolution<Solution04>
 {
-    private readonly int MIN;
-    private readonly int MAX;
-
-    public Solution04(string[] lines)
+    public static Solution04 Init(string[] lines)
     {
         var nums = lines[0].Split('-').Select(int.Parse).ToList();
-        MIN = nums.First();
-        MAX = nums.Last();
+        var min = nums.First();
+        var max = nums.Last();
+        return new(min, max);
     }
 
     public async ValueTask<long> GetPart1() => Enumerable.Range(MIN, MAX - MIN).Count(x => IsPossible(x, false));

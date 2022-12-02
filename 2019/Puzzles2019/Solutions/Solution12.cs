@@ -1,16 +1,16 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution12 : ISolution
+public partial record Solution12(List<Solution12.Coordinates> initialPositions) : ISolution<Solution12>
 {
-    private readonly List<Coordinates> initialPositions;
-
-    public Solution12(string[] lines)
+    public static Solution12 Init(string[] lines)
     {
-        initialPositions = lines.Select(line =>
+        var regex = GetLineRegex();
+        var initialPositions = lines.Select(line =>
         {
-            var nums = Regex.Matches(line, "(-?[0-9]+)+").Select(x => long.Parse(x.ValueSpan)).ToList();
+            var nums = regex.Matches(line).Select(x => long.Parse(x.ValueSpan)).ToList();
             return new Coordinates(nums[0], nums[1], nums[2]);
         }).ToList();
+        return new(initialPositions);
     }
 
     public async ValueTask<long> GetPart1()
@@ -119,7 +119,7 @@ public class Solution12 : ISolution
         }
     }
 
-    private readonly record struct Coordinates(long x, long y, long z)
+    public readonly record struct Coordinates(long x, long y, long z)
     {
         public static Coordinates operator +(Coordinates a, Coordinates b) => new(a.x + b.x, a.y + b.y, a.z + b.z);
         public long GetEnergy() => Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
@@ -134,4 +134,7 @@ public class Solution12 : ISolution
     }
 
     private record MoonWithInfluencingBodies(Moon moon, Moon[] bodies);
+
+    [GeneratedRegex("(-?[0-9]+)+")]
+    private static partial Regex GetLineRegex();
 }

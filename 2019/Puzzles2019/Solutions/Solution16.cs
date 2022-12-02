@@ -1,14 +1,10 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution16 : ISolution
+public record Solution16(string[] _lines) : ISolution<Solution16>
 {
     private readonly int[] pattern = { 0, 1, 0, -1 };
-    private readonly string[] _lines;
 
-    public Solution16(string[] lines)
-    {
-        _lines = lines;
-    }
+    public static Solution16 Init(string[] lines) => new(lines);
 
     public async ValueTask<long> GetPart1()
     {

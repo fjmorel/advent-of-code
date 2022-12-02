@@ -1,23 +1,24 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution10 : ISolution
+public record Solution10(
+    KeyValuePair<Point, HashSet<Point>> best,
+    int height,
+    int width,
+    HashSet<Point> asteroids,
+    HashSet<Point> slopes
+) : ISolution<Solution10>
 {
-    private readonly KeyValuePair<Point, HashSet<Point>> best;
-    private readonly bool[][] grid;
-    private readonly int height;
-    private readonly int width;
-    private readonly HashSet<Point> asteroids;
-    private readonly HashSet<Point> slopes;
-
-    public Solution10(string[] lines)
+    public static Solution10 Init(string[] lines)
     {
-        grid = lines.Select(line => line.Select(x => x == '#').ToArray()).ToArray();
-        height = grid.Length;
-        width = grid[0].Length;
-        slopes = GetSlopes(width, height).ToHashSet();
-        asteroids = GetAsteroids().ToHashSet();
+        var grid = lines.Select(line => line.Select(x => x == '#').ToArray()).ToArray();
+        var height = grid.Length;
+        var width = grid[0].Length;
+        var slopes = GetSlopes(width, height).ToHashSet();
+        var asteroids = GetAsteroids(grid, width, height).ToHashSet();
         var visiblePerAsteroid = asteroids.ToDictionary(x => x, x => GetVisibleAsteroids(x, asteroids, slopes, width, height));
-        best = visiblePerAsteroid.MaxBy(x => x.Value.Count);
+        var best = visiblePerAsteroid.MaxBy(x => x.Value.Count);
+
+        return new(best, height, width, asteroids, slopes);
     }
 
     public async ValueTask<long> GetPart1()
@@ -45,7 +46,7 @@ public class Solution10 : ISolution
         return theOne.x * 100 + theOne.y;
     }
 
-    private IEnumerable<Point> GetAsteroids()
+    private static IEnumerable<Point> GetAsteroids(bool[][] grid, int width, int height)
     {
         for (var x = 0; x < width; x++)
         {

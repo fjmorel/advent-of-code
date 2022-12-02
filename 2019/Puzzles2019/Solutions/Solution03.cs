@@ -1,17 +1,18 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution03 : ISolution
+public record Solution03(
+    List<Point> firstPositions,
+    List<Point> secondPositions,
+    HashSet<Point> intersections
+) : ISolution<Solution03>
 {
-    private readonly List<Point> firstPositions;
-    private readonly List<Point> secondPositions;
-    private readonly HashSet<Point> intersections;
-
-    public Solution03(string[] lines)
+    public static Solution03 Init(string[] lines)
     {
         var wires = lines.Select(ParseInstructions).ToArray();
-        firstPositions = GetPositions(wires[0]);
-        secondPositions = GetPositions(wires[1]);
-        intersections = firstPositions.Intersect(secondPositions).ToHashSet();
+        var firstPositions = GetPositions(wires[0]);
+        var secondPositions = GetPositions(wires[1]);
+        var intersections = firstPositions.Intersect(secondPositions).ToHashSet();
+        return new Solution03(firstPositions, secondPositions, intersections);
     }
 
     public async ValueTask<long> GetPart1()
@@ -29,7 +30,7 @@ public class Solution03 : ISolution
         });
     }
 
-    private List<Point> GetPositions(List<Instruction> instructions)
+    private static List<Point> GetPositions(List<Instruction> instructions)
     {
         return instructions.Aggregate(new List<Point>() { default }, (list, instruction) =>
         {
@@ -40,7 +41,7 @@ public class Solution03 : ISolution
         });
     }
 
-    private List<Instruction> ParseInstructions(string line)
+    private static List<Instruction> ParseInstructions(string line)
     {
         return line
             .Split(',')
@@ -48,7 +49,7 @@ public class Solution03 : ISolution
             .ToList();
     }
 
-    private Point Move(Point start, Instruction move)
+    private static Point Move(Point start, Instruction move)
     {
         return move.dir switch
         {

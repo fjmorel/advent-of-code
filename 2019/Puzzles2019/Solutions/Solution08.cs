@@ -1,14 +1,14 @@
 namespace Puzzles2019.Solutions;
 
-public class Solution08 : ISolution
+public record Solution08(List<int[]> layers) : ISolution<Solution08>
 {
     private const int layerSize = 25 * 6;
-    private readonly List<int[]> layers;
 
-    public Solution08(string[] lines)
+    public static Solution08 Init(string[] lines)
     {
         var values = lines[0].ParseDigits();
-        layers = values.Chunk(layerSize).ToList();
+        var layers = values.Chunk(layerSize).ToList();
+        return new(layers);
     }
 
     public async ValueTask<long> GetPart1()
