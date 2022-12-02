@@ -66,6 +66,7 @@ public class SolutionTests
         await _runner.RunDay(day, "inputs", part1, part2);
     }
 
+    // [Trait("Slow", "true")]
     // [Theory]
     // [InlineData("inputs", "01", 0000, 0000)]
     // public async Task RunSlowDays(string folder, string day, long part1, long part2)

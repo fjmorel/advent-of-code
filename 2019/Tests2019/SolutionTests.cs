@@ -62,6 +62,7 @@ public class SolutionTests
         await _runner.RunDay(day, "inputs", part1, part2);
     }
 
+    [Trait("Slow", "true")]
     [Theory]
     [InlineData("examples", "14", 2210736, 460664)]
     [InlineData("inputs", "14", 532506, 2595245)]
