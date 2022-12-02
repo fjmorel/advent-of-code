@@ -1,12 +1,11 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution23 : ISolution
+public record Solution23(int[] startingCups) : ISolution<Solution23>
 {
-    private readonly int[] startingCups;
-
-    public Solution23(string[] lines)
+    public static Solution23 Init(string[] lines)
     {
-        startingCups = lines[0].Select(ch => int.Parse(ch.ToString())).ToArray();
+        var startingCups = lines[0].Select(ch => int.Parse(ch.ToString())).ToArray();
+        return new(startingCups);
     }
 
     public async ValueTask<long> GetPart1()

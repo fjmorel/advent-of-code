@@ -1,13 +1,8 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution18 : ISolution
+public record Solution18(string[] list) : ISolution<Solution18>
 {
-    private readonly string[] list;
-
-    public Solution18(string[] lines)
-    {
-        list = lines;
-    }
+    public static Solution18 Init(string[] lines) => new(lines);
 
     public async ValueTask<long> GetPart1()
     {

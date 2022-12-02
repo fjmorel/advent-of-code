@@ -1,17 +1,15 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution21 : ISolution
+public record Solution21(List<Solution21.Food> foods, Dictionary<string, string?> allergens) : ISolution<Solution21>
 {
-    private readonly List<Food> foods;
-    private readonly Dictionary<string, string?> allergens;
-
-    public Solution21(string[] lines)
+    public static Solution21 Init(string[] lines)
     {
-        foods = lines
+        var foods = lines
             .Select(x => x.Split(" (contains "))
             .Select(x => new Food(x[0].Split(' ').ToHashSet(), x[1][0..^1].Split(", ").ToHashSet()))
             .ToList();
-        allergens = foods.SelectMany(x => x.Allergens).Distinct().ToDictionary(x => x, _ => (string?)null);
+        var allergens = foods.SelectMany(x => x.Allergens).Distinct().ToDictionary(x => x, _ => (string?)null);
+        return new(foods, allergens);
     }
 
     public async ValueTask<long> GetPart1()
@@ -45,5 +43,5 @@ public class Solution21 : ISolution
         return string.Join(',', allergens.OrderBy(x => x.Key).Select(x => x.Value));
     }
 
-    private record Food(HashSet<string> Ingredients, HashSet<string> Allergens);
+    public record Food(HashSet<string> Ingredients, HashSet<string> Allergens);
 }

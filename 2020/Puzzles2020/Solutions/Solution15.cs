@@ -1,14 +1,13 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution15 : ISolution
+public record Solution15(List<(int num, int i)> list) : ISolution<Solution15>
 {
-    private readonly List<(int num, int i)> list;
-
-    public Solution15(string[] lines)
+    public static Solution15 Init(string[] lines)
     {
-        list = lines[0].Split(',')
+        var list = lines[0].Split(',')
             .Select((x, i) => (num: int.Parse(x), i))
             .ToList();
+        return new(list);
     }
 
     public async ValueTask<long> GetPart1() => FindNth(2020);

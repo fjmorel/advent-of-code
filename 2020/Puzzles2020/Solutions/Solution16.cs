@@ -1,15 +1,15 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution16 : ISolution
+public record Solution16(
+    List<Solution16.Rule> rules,
+    List<int> allInvalid,
+    List<int> myTicket,
+    List<List<int>> tickets
+) : ISolution<Solution16>
 {
-    private readonly List<Rule> rules;
-    private readonly List<int> allInvalid;
-    private readonly List<int> myTicket;
-    private readonly List<List<int>> tickets;
-
-    public Solution16(string[] lines)
+    public static Solution16 Init(string[] lines)
     {
-        rules = new List<Rule>();
+        var rules = new List<Rule>();
         var i = 0;
         for (; !string.IsNullOrEmpty(lines[i]); i++)
         {
@@ -19,10 +19,10 @@ public class Solution16 : ISolution
         }
 
         // skip empty and "your ticket:"
-        myTicket = lines[i + 2].Split(',').Select(int.Parse).ToList();
+        var myTicket = lines[i + 2].Split(',').Select(int.Parse).ToList();
 
-        allInvalid = new List<int>();
-        tickets = new List<List<int>>();
+        var allInvalid = new List<int>();
+        var tickets = new List<List<int>>();
         // skip my ticket, empty, and "nearby tickets:"
         foreach (var line in lines.Skip(i + 5))
         {
@@ -33,6 +33,8 @@ public class Solution16 : ISolution
             else
                 tickets.Add(nums);
         }
+
+        return new(rules, allInvalid, myTicket, tickets);
     }
 
     public async ValueTask<long> GetPart1()
@@ -65,7 +67,7 @@ public class Solution16 : ISolution
             .Aggregate(1L, (acc, x) => acc * myTicket[x.Key]);
     }
 
-    private record Rule(string name, int aMin, int aMax, int bMin, int bMax)
+    public record Rule(string name, int aMin, int aMax, int bMin, int bMax)
     {
         public bool Matches(int num) => (num >= aMin && num <= aMax) || (num >= bMin && num <= bMax);
     }

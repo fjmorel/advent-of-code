@@ -1,15 +1,12 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution10 : ISolution
+public record Solution10(List<long> nums, long device) : ISolution<Solution10>
 {
-    private readonly List<long> nums;
-    private readonly long device;
-
-    public Solution10(string[] lines)
+    public static Solution10 Init(string[] lines)
     {
-        nums = lines.ParseLongs();
+        var nums = lines.ParseLongs();
         nums.Sort();
-        device = nums.Last() + 3;
+        return new(nums, nums.Last() + 3);
     }
 
     public async ValueTask<long> GetPart1()

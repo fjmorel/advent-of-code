@@ -1,14 +1,9 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution24 : ISolution
+public record Solution24(string[] _lines) : ISolution<Solution24>
 {
-    private readonly string[] _lines;
     private readonly Dictionary<HexCoordinate, bool> tiles = new();
-
-    public Solution24(string[] lines)
-    {
-        _lines = lines;
-    }
+    public static Solution24 Init(string[] lines) => new(lines);
 
     public async ValueTask<long> GetPart1()
     {

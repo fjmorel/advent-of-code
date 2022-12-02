@@ -1,15 +1,8 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution03 : ISolution
+public record Solution03(string[] _lines, int _width) : ISolution<Solution03>
 {
-    private readonly string[] _lines;
-    private readonly int _width;
-
-    public Solution03(string[] lines)
-    {
-        _lines = lines;
-        _width = lines[0].Length;
-    }
+    public static Solution03 Init(string[] lines) => new(lines, lines[0].Length);
 
     public async ValueTask<long> GetPart1() => HowManyHits(3, 1);
 

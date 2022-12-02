@@ -1,14 +1,11 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution19 : ISolution
+public record Solution19(string[] _lines, Dictionary<int, Solution19.Rule> rules, int i) : ISolution<Solution19>
 {
-    private readonly string[] _lines;
-    private readonly Dictionary<int, Rule> rules = new();
-    private int i = 0;
-
-    public Solution19(string[] lines)
+    public static Solution19 Init(string[] lines)
     {
-        _lines = lines;
+        var i = 0;
+        var rules = new Dictionary<int, Rule>();
         for (; lines[i] != ""; i++)
         {
             var pieces = lines[i].Split(": ");
@@ -20,6 +17,7 @@ public class Solution19 : ISolution
         }
 
         i++;
+        return new(lines, rules, i);
     }
 
     public async ValueTask<long> GetPart1()
@@ -141,5 +139,5 @@ public class Solution19 : ISolution
         return lines;
     }
 
-    private record Rule(char? letter, List<List<int>>? options);
+    public record Rule(char? letter, List<List<int>>? options);
 }

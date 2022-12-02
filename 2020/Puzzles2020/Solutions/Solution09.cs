@@ -1,15 +1,10 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution09 : ISolution
+public record Solution09(List<long> _nums) : ISolution<Solution09>
 {
-    private readonly List<long> _nums;
-    private long invalid = 0;
+    private long invalid;
 
-    public Solution09(string[] lines)
-    {
-        _nums = lines.ParseLongs();
-
-    }
+    public static Solution09 Init(string[] lines) => new(lines.ParseLongs());
 
     public async ValueTask<long> GetPart1()
     {
@@ -41,6 +36,7 @@ public class Solution09 : ISolution
                 sum += _nums[(int)i + j];
                 j++;
             }
+
             if (sum == invalid)
             {
                 var range = _nums.Skip((int)i).Take(j).ToList();
@@ -50,5 +46,4 @@ public class Solution09 : ISolution
         });
         return solution;
     }
-
 }

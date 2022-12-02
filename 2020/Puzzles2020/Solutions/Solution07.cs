@@ -1,12 +1,11 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution07 : ISolution
+public record Solution07(Dictionary<string, Dictionary<string, int>> _rules) : ISolution<Solution07>
 {
-    private readonly Dictionary<string, Dictionary<string, int>> _rules;
-
-    public Solution07(string[] lines)
+    public static Solution07 Init(string[] lines)
     {
-        _rules = lines.Select(ParseLine).ToDictionary(x => x.color, x => x.contents);
+        var rules = lines.Select(ParseLine).ToDictionary(x => x.color, x => x.contents);
+        return new(rules);
     }
 
     public async ValueTask<long> GetPart1() => FindColorsContainingColor("shiny gold", new()).Count;

@@ -1,12 +1,10 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution06 : ISolution
+public record Solution06(long part1, long part2) : ISolution<Solution06>
 {
-    private readonly long part1;
-    private readonly long part2;
-
-    public Solution06(string[] lines)
+    public static Solution06 Init(string[] lines)
     {
+        long part1 = 0, part2 = 0;
         var data = string.Join('\n', lines)
             .Split("\n\n")
             .Select(x => x.Split('\n'));
@@ -20,6 +18,8 @@ public class Solution06 : ISolution
             part1 += charAnswers.Count;
             part2 += charAnswers.Count(x => x.Value == group.Length);
         }
+
+        return new(part1, part2);
     }
 
     public async ValueTask<long> GetPart1() => part1;

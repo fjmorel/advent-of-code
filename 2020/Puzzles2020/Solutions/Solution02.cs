@@ -1,14 +1,11 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution02 : ISolution
+public record Solution02(long oldValid, long reallyValid) : ISolution<Solution02>
 {
-    private readonly long oldValid;
-    private readonly long reallyValid;
-
-    public Solution02(string[] lines)
+    public static Solution02 Init(string[] lines)
     {
-        oldValid = 0;
-        reallyValid = 0;
+        var oldValid = 0;
+        var reallyValid = 0;
         foreach (var line in lines)
         {
             // todo: convert to Regex to parse object
@@ -28,6 +25,8 @@ public class Solution02 : ISolution
             if (first != second && (first == letter || second == letter))
                 reallyValid++;
         }
+
+        return new(oldValid, reallyValid);
     }
 
     public async ValueTask<long> GetPart1() => oldValid;

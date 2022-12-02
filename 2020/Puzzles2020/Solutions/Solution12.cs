@@ -1,13 +1,8 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution12 : ISolution
+public record Solution12(List<(char, int)> read) : ISolution<Solution12>
 {
-    private readonly List<(char, int)> read;
-
-    public Solution12(string[] lines)
-    {
-        read = lines.Select(x => (x[0], int.Parse(x.AsSpan()[1..]))).ToList();
-    }
+    public static Solution12 Init(string[] lines) => new(lines.Select(x => (x[0], int.Parse(x.AsSpan()[1..]))).ToList());
 
     public async ValueTask<long> GetPart1()
     {

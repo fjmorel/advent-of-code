@@ -1,13 +1,8 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution13 : ISolution
+public record Solution13(string[] _lines) : ISolution<Solution13>
 {
-    private readonly string[] _lines;
-
-    public Solution13(string[] lines)
-    {
-        _lines = lines;
-    }
+    public static Solution13 Init(string[] lines) => new(lines);
 
     public async ValueTask<long> GetPart1()
     {
@@ -17,8 +12,7 @@ public class Solution13 : ISolution
             .Where(x => x != "x")
             .Select(x => int.Parse(x))
             .Select(x => (id: x, delay: (earliest / x + 1) * x))
-            .OrderBy(x => x.delay)
-            .First();
+            .MinBy(x => x.delay);
         return (firstBus.id * (firstBus.delay - earliest));
     }
 

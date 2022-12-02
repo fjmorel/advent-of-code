@@ -1,16 +1,20 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution20 : ISolution
+public record Solution20(List<Solution20.Tile> tiles) : ISolution<Solution20>
 {
-    private readonly List<Tile> tiles;
-    private readonly Dictionary<int, Dictionary<Side, int>> adjacent;
+    private readonly Dictionary<int, Dictionary<Side, int>> adjacent = new();
 
-    public Solution20(string[] lines)
+    public static Solution20 Init(string[] lines)
     {
-        tiles = new List<Tile>();
-        adjacent = new Dictionary<int, Dictionary<Side, int>>();
+        var tiles = new List<Tile>();
         for (var i = 0; i < lines.Length; i += 12)
-            tiles.Add(new(int.Parse(lines[i][5..^1]), lines[(i + 1)..(i + 11)].Select(x => x.Select(x => x == '#').ToArray()).ToArray()));
+        {
+            var id = int.Parse(lines[i][5..^1]);
+            var contents = lines[(i + 1)..(i + 11)].Select(text => text.Select(ch => ch == '#').ToArray()).ToArray();
+            tiles.Add(new(id, contents));
+        }
+
+        return new(tiles);
     }
 
     public async ValueTask<long> GetPart1()
@@ -118,7 +122,7 @@ public class Solution20 : ISolution
             }
         }
 
-        var dict = tiles.ToDictionary(x => x.Id, x => x.contents[1..^1].Select(x => x[1..^1].ToArray()).ToArray());
+        var dict = tiles.ToDictionary(x => x.Id, tile => tile.contents[1..^1].Select(flags => flags[1..^1].ToArray()).ToArray());
         var sea = new List<bool[]>();
 
         for (var i = 0; i < tileGrid.Length; i++)
@@ -151,7 +155,7 @@ public class Solution20 : ISolution
         _ => throw new NotSupportedException(),
     }).ToArray();
 
-    private record Tile(int Id, bool[][] contents, bool Transformed = false)
+    public record Tile(int Id, bool[][] contents, bool Transformed = false)
     {
         private IEnumerable<bool> Top => contents.First();
         private IEnumerable<bool> Right => contents.Select(x => x.Last());
@@ -236,9 +240,9 @@ public class Solution20 : ISolution
         }
     }
 
-    private record Match(Side side, params Transformation[] transforms);
+    public record Match(Side side, params Transformation[] transforms);
 
-    private enum Side
+    public enum Side
     {
         None,
         Left,
@@ -247,7 +251,7 @@ public class Solution20 : ISolution
         Bottom,
     }
 
-    private enum Transformation
+    public enum Transformation
     {
         None,
         FlipVertical,

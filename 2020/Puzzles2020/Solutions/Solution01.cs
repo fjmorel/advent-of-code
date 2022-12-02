@@ -1,14 +1,8 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution01 : ISolution
+public record Solution01(List<int[]> _nums) : ISolution<Solution01>
 {
-    private readonly List<int[]> _nums;
-
-    public Solution01(string[] lines)
-    {
-        _nums = lines.ParseInts().Select(x => new int[] { x }).ToList();
-
-    }
+    public static Solution01 Init(string[] lines) => new(lines.ParseInts().Select(x => new int[] { x }).ToList());
 
     public async ValueTask<long> GetPart1() => FindProduct(2);
 

@@ -1,19 +1,18 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution04 : ISolution
+public partial record Solution04(long validLoose, long validStrict) : ISolution<Solution04>
 {
-    private long validLoose;
-    private long validStrict;
-    private readonly HashSet<string> validEyes = new() { "amb", "blu", "brn", "gry", "grn", "hzl", "oth", "amb" };
+    private static readonly HashSet<string> validEyes = new() { "amb", "blu", "brn", "gry", "grn", "hzl", "oth", "amb" };
 
-    public Solution04(string[] lines)
+    public static Solution04 Init(string[] lines)
     {
+        long validLoose = 0, validStrict = 0;
         Dictionary<string, string> current = new();
         foreach (var line in lines)
         {
             if (string.IsNullOrEmpty(line) && current.Any())
             {
-                CheckPassport(current);
+                CheckPassport(current, ref validLoose, ref validStrict);
                 current = new();
             }
             else
@@ -27,14 +26,15 @@ public class Solution04 : ISolution
             }
         }
 
-        CheckPassport(current);
+        CheckPassport(current, ref validLoose, ref validStrict);
+        return new(validLoose, validStrict);
     }
 
     public async ValueTask<long> GetPart1() => validLoose;
 
     public async ValueTask<long> GetPart2() => validStrict;
 
-    private void CheckPassport(IReadOnlyDictionary<string, string> info)
+    private static void CheckPassport(IReadOnlyDictionary<string, string> info, ref long validLoose, ref long validStrict)
     {
         var loose = info.ContainsKey("byr")
                     && info.ContainsKey("iyr")
@@ -55,9 +55,9 @@ public class Solution04 : ISolution
                      && iyr is >= 2010 and <= 2020
                      && eyr is >= 2020 and <= 2030
                      && ValidHeight(info["hgt"])
-                     && Regex.IsMatch(info["hcl"], "^#([0-9a-f]{6,6})$")
+                     && GetHairRegex().IsMatch(info["hcl"])
                      && validEyes.Contains(info["ecl"])
-                     && Regex.IsMatch(info["pid"], "^[0-9]{9,9}$");
+                     && GetPassportIdRegex().IsMatch(info["pid"]);
         if (strict)
             validStrict++;
     }
@@ -73,4 +73,10 @@ public class Solution04 : ISolution
             _ => false,
         };
     }
+
+    [GeneratedRegex("^#([0-9a-f]{6,6})$")]
+    private static partial Regex GetHairRegex();
+
+    [GeneratedRegex("^[0-9]{9,9}$")]
+    private static partial Regex GetPassportIdRegex();
 }

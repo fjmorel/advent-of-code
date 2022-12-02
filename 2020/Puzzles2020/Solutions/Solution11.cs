@@ -1,15 +1,14 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution11 : ISolution
+public record Solution11(char[][] read, Point size) : ISolution<Solution11>
 {
     private const char FLOOR = '.', EMPTY = 'L', OCCUPIED = '#';
-    private readonly char[][] read;
-    private readonly Point size;
 
-    public Solution11(string[] lines)
+    public static Solution11 Init(string[] lines)
     {
-        read = lines.Select(x => x.ToCharArray()).ToArray();
-        size = new Point(read.Length, read[0].Length);
+        var read = lines.Select(x => x.ToCharArray()).ToArray();
+        var size = new Point(read.Length, read[0].Length);
+        return new(read, size);
     }
 
     public async ValueTask<long> GetPart1() => FindSteadyState(read, size, 4, false);

@@ -1,14 +1,13 @@
 namespace Puzzles2020.Solutions;
 
-public class Solution08 : ISolution
+public record Solution08(List<Solution08.Instruction> _instructions) : ISolution<Solution08>
 {
-    private readonly List<Instruction> _instructions;
-
-    public Solution08(string[] lines)
+    public static Solution08 Init(string[] lines)
     {
-        _instructions = lines.Select(x => x.Split(' '))
+        var instructions = lines.Select(x => x.Split(' '))
             .Select(x => new Instruction(Enum.Parse<Action>(x[0]), int.Parse(x[1])))
             .ToList();
+        return new(instructions);
     }
 
     public async ValueTask<long> GetPart1() => Run().sum;
@@ -47,7 +46,7 @@ public class Solution08 : ISolution
                 Action.acc => (1, _instructions[index].value),
                 Action.jmp => (_instructions[index].value, 0),
                 Action.nop => (1, 0),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             };
             ran.Add(index);
             index += jump;
@@ -62,9 +61,9 @@ public class Solution08 : ISolution
         _instructions[i] = _instructions[i] with { act = _instructions[i].act == Action.nop ? Action.jmp : Action.nop };
     }
 
-    private record Instruction(Action act, int value);
+    public record Instruction(Action act, int value);
 
-    internal enum Action
+    public enum Action
     {
         nop,
         jmp,
