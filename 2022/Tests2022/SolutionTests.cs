@@ -66,4 +66,18 @@ public class SolutionTests
         await _runner.RunDay(day, "inputs", part1, part2);
     }
 
+    // [Theory]
+    // [InlineData("inputs", "01", 0000, 0000)]
+    // public async Task RunSlowDays(string folder, string day, long part1, long part2)
+    // {
+    //     await _runner.RunDay(day, folder, part1, part2);
+    // }
+    //
+    // public static TheoryData<string, string, string, string> RunStrings_Data => new();
+    //
+    // [Theory, MemberData(nameof(RunStrings_Data))]
+    // public async Task RunStrings(string folder, string day, string part1, string part2)
+    // {
+    //     await _runner.RunDay(day, folder, part1, part2);
+    // }
 }
