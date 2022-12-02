@@ -6,7 +6,7 @@ public class SolutionTests
 
     [Theory]
     [InlineData("01", 24000, 45000)]
-    [InlineData("02", 0000, 0000)]
+    [InlineData("02", 15, 12)]
     [InlineData("03", 0000, 0000)]
     [InlineData("04", 0000, 0000)]
     [InlineData("05", 0000, 0000)]
@@ -37,7 +37,7 @@ public class SolutionTests
 
     [Theory]
     [InlineData("01", 69693, 200945)]
-    [InlineData("02", 0000, 0000)]
+    [InlineData("02", 10718, 14652)]
     [InlineData("03", 0000, 0000)]
     [InlineData("04", 0000, 0000)]
     [InlineData("05", 0000, 0000)]
