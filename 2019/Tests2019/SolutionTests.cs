@@ -2,7 +2,7 @@ namespace Tests2019;
 
 public class SolutionTests
 {
-    private static readonly SolutionTester _runner = new(typeof(Solution01).Assembly);
+    private static readonly SolutionTester _runner = new(typeof(Puzzles2019.Solutions.Solution01).Assembly);
 
     [Theory]
     [InlineData("01", 33583, 50346)]

@@ -1,29 +1,50 @@
 <Project>
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <NoWarn>CS1998</NoWarn>
-    <Configurations>Release;DebugExample;DebugInput</Configurations>
-    <Platforms>AnyCPU</Platforms>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <NoWarn>CS1998</NoWarn>
+        <Configurations>Release;DebugExample;DebugInput</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'DebugExample' ">
-    <DefineConstants>USE_EXAMPLE;DEBUG</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'DebugExample' ">
+        <DefineConstants>USE_EXAMPLE;DEBUG</DefineConstants>
+    </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'DebugInput' ">
-    <DefineConstants>DEBUG</DefineConstants>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <Using Include="Shared" />
-    <Using Include="Spectre.Console" />
-    <Using Include="System.Collections.Concurrent" />
-    <Using Include="System.Diagnostics" />
-    <Using Include="System.Text" />
-    <Using Include="System.Text.RegularExpressions" />
-    <Using Include="System.Threading.Channels" />
-  </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'DebugInput' ">
+        <DefineConstants>DEBUG</DefineConstants>
+    </PropertyGroup>
+
+    <!-- Puzzle projects -->
+    <PropertyGroup Condition="$(MSBuildProjectName.StartsWith('Puzzles'))">
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup Condition="$(MSBuildProjectName.StartsWith('Puzzles'))">
+        <ProjectReference Include="..\..\Shared\Shared.csproj"/>
+    </ItemGroup>
+
+    <!-- Test projects -->
+    <PropertyGroup Condition="$(MSBuildProjectName.StartsWith('Tests2')) or $(MSBuildProjectName.Equals('TestsTemplate'))">
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup Condition="$(MSBuildProjectName.StartsWith('Tests2')) or $(MSBuildProjectName.Equals('TestsTemplate'))">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+        <ProjectReference Include="..\..\TestsShared\TestsShared.csproj"/>
+        <Using Include="TestsShared"/>
+        <Using Include="Xunit"/>
+    </ItemGroup>
+
+    <!-- All projects -->
+    <ItemGroup>
+        <Using Include="Shared"/>
+        <Using Include="Spectre.Console"/>
+        <Using Include="System.Collections.Concurrent"/>
+        <Using Include="System.Diagnostics"/>
+        <Using Include="System.Text"/>
+        <Using Include="System.Text.RegularExpressions"/>
+        <Using Include="System.Threading.Channels"/>
+    </ItemGroup>
+
 </Project>

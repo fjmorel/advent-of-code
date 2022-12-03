@@ -1,17 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
-        <ProjectReference Include="..\..\TestsShared\TestsShared.csproj" />
         <ProjectReference Include="..\Puzzles2019\Puzzles2019.csproj" />
-        <Using Include="Xunit" />
-        <Using Include="TestsShared" />
-        <Using Include="Puzzles2019" />
-        <Using Include="Puzzles2019.Solutions" />
     </ItemGroup>
 
 </Project>
