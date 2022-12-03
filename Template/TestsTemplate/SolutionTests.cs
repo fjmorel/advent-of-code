@@ -2,7 +2,7 @@ namespace TestsTemplate;
 
 public class SolutionTests
 {
-    private static readonly SolutionTester _runner = new(typeof(PuzzlesTemplate.Solutions.Solution01).Assembly);
+    private static readonly SolutionTester _runner = new(typeof(PuzzlesTemplate.Day01.Solution).Assembly);
 
     [Theory]
     [InlineData("01", 0000, 0000)]
