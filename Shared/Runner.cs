@@ -84,6 +84,9 @@ public record Runner(Assembly assembly)
     {
         var inputPath = Path.Combine(Path.GetDirectoryName(assembly.Location)!, folder, $"{day}.txt");
         if (!File.Exists(inputPath))
+            inputPath = Path.Combine(Path.GetDirectoryName(assembly.Location)!, $"Day{day}", $"{folder}.txt");
+
+        if (!File.Exists(inputPath))
         {
             lines = null;
             return false;
@@ -95,7 +98,10 @@ public record Runner(Assembly assembly)
 
     public bool TryGetSolution(string day, string[] input, [NotNullWhen(true)] out ISolution? solution)
     {
-        var type = assembly.GetTypes().FirstOrDefault(x => x.Name.EndsWith(day));
+        var dayName = "Day" + day;
+        var solutionName = "Solution" + day;
+        var type = assembly.GetTypes().FirstOrDefault(type => type.Name == solutionName || (type.Namespace?.Contains(dayName) ?? false));
+
         if (type == null)
         {
             solution = null;
