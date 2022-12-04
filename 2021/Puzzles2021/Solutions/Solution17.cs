@@ -5,8 +5,8 @@ public partial record Solution17(List<int> _heights) : ISolution<Solution17>
     public static Solution17 Init(string[] lines)
     {
         var groups = GetParser().Match(lines[0]).Groups;
-        var min = new Point(groups[1].ValueSpan, groups[3].ValueSpan);
-        var max = new Point(groups[2].ValueSpan, groups[4].ValueSpan);
+        var min = new Point(groups[1], groups[3]);
+        var max = new Point(groups[2], groups[4]);
         var heights = FindMaximumHeights(min, max).ToList();
         return new(heights);
     }

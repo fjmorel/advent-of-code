@@ -2,25 +2,25 @@
 
 public class WorkInProgressTests
 {
-    private static readonly SolutionTester _runner = new(typeof(Puzzles2022.Day01.Solution).Assembly);
+    private static readonly SolutionTester _tester = new(typeof(Puzzles2022.Day01.Solution).Assembly);
 
-    private const string _day = "04";
+    private const string _day = "05";
 
-    private const long _example1 = 00000;
-    private const long _example2 = 00000;
+    private const long _example1 = 0000;
+    private const long _example2 = 0000;
 
-    private const long _input1 = 00000;
-    private const long _input2 = 00000;
-
-    [Fact]
-    public Task DailyExample1() => _runner.RunPart1(_day, "examples", _example1);
+    private const long _input1 = 0000;
+    private const long _input2 = 0000;
 
     [Fact]
-    public Task DailyExample2() => _runner.RunPart2(_day, "examples", _example2);
+    public Task Example1() => _tester.Part1(_day, "examples", _example1);
 
     [Fact]
-    public Task DailyInput1() => _runner.RunPart1(_day, "inputs", _input1);
+    public Task Example2() => _tester.Part2(_day, "examples", _example2);
 
     [Fact]
-    public Task DailyInput2() => _runner.RunPart2(_day, "inputs", _input2);
+    public Task Input1() => _tester.Part1(_day, "inputs", _input1);
+
+    [Fact]
+    public Task Input2() => _tester.Part2(_day, "inputs", _input2);
 }

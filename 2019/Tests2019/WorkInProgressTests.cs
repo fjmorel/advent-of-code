@@ -12,14 +12,14 @@ public class WorkInProgressTests
     private const long _input2 = 00000;
 
     [Fact]
-    public Task DailyExample1() => _runner.RunPart1(_day, "examples", _example1);
+    public Task DailyExample1() => _runner.Part1(_day, "examples", _example1);
 
     [Fact]
-    public Task DailyExample2() => _runner.RunPart2(_day, "examples", _example2);
+    public Task DailyExample2() => _runner.Part2(_day, "examples", _example2);
 
     [Fact]
-    public Task DailyInput1() => _runner.RunPart1(_day, "inputs", _input1);
+    public Task DailyInput1() => _runner.Part1(_day, "inputs", _input1);
 
     [Fact]
-    public Task DailyInput2() => _runner.RunPart2(_day, "inputs", _input2);
+    public Task DailyInput2() => _runner.Part2(_day, "inputs", _input2);
 }

@@ -2,7 +2,7 @@ namespace TestsTemplate;
 
 public class SolutionTests
 {
-    private static readonly SolutionTester _runner = new(typeof(PuzzlesTemplate.Day01.Solution).Assembly);
+    private static readonly SolutionTester _tester = new(typeof(PuzzlesTemplate.Day01.Solution).Assembly);
 
     [Theory]
     [InlineData("01", 0000, 0000)]
@@ -30,10 +30,7 @@ public class SolutionTests
     [InlineData("23", 0000, 0000)]
     [InlineData("24", 0000, 0000)]
     [InlineData("25", 0000, 0000)]
-    public async Task RunExample(string day, long part1, long part2)
-    {
-        await _runner.RunDay(day, "examples", part1, part2);
-    }
+    public Task RunExample(string day, long part1, long part2) => _tester.Day(day, "examples", part1, part2);
 
     [Theory]
     [InlineData("01", 0000, 0000)]
@@ -61,24 +58,15 @@ public class SolutionTests
     [InlineData("23", 0000, 0000)]
     [InlineData("24", 0000, 0000)]
     [InlineData("25", 0000, 0000)]
-    public async Task RunInput(string day, long part1, long part2)
-    {
-        await _runner.RunDay(day, "inputs", part1, part2);
-    }
+    public Task RunInput(string day, long part1, long part2) => _tester.Day(day, "inputs", part1, part2);
 
     // [Trait("Slow", "true")]
     // [Theory]
     // [InlineData("inputs", "01", 0000, 0000)]
-    // public async Task RunSlowDays(string folder, string day, long part1, long part2)
-    // {
-    //     await _runner.RunDay(day, folder, part1, part2);
-    // }
+    // public Task RunSlowDays(string folder, string day, long part1, long part2) => _tester.Day(day, folder, part1, part2);
     //
     // public static TheoryData<string, string, string, string> RunStrings_Data => new();
     //
     // [Theory, MemberData(nameof(RunStrings_Data))]
-    // public async Task RunStrings(string folder, string day, string part1, string part2)
-    // {
-    //     await _runner.RunDay(day, folder, part1, part2);
-    // }
+    // public Task RunStrings(string folder, string day, string part1, string part2) => _tester.Day(day, folder, part1, part2);
 }

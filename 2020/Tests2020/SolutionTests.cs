@@ -31,7 +31,7 @@ public class SolutionTests
     [InlineData("25", 14897079, 0000)]
     public async Task RunExample(string day, long part1, long part2)
     {
-        await _runner.RunDay(day, "examples", part1, part2);
+        await _runner.Day(day, "examples", part1, part2);
     }
 
     [Theory]
@@ -61,7 +61,7 @@ public class SolutionTests
     [InlineData("25", 9714832, 0000)]
     public async Task RunInput(string day, long part1, long part2)
     {
-        await _runner.RunDay(day, "inputs", part1, part2);
+        await _runner.Day(day, "inputs", part1, part2);
     }
 
     [Theory]
@@ -69,6 +69,6 @@ public class SolutionTests
     [InlineData("inputs", "21", "2573", "bjpkhx,nsnqf,snhph,zmfqpn,qrbnjtj,dbhfd,thn,sthnsg")]
     public async Task RunStrings(string folder, string day, string part1, string part2)
     {
-        await _runner.RunDay(day, folder, part1, part2);
+        await _runner.Day(day, folder, part1, part2);
     }
 }

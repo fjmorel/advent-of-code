@@ -6,6 +6,7 @@
 public readonly record struct Point(int x, int y)
 {
     public Point(ReadOnlySpan<char> x, ReadOnlySpan<char> y) : this(int.Parse(x), int.Parse(y)) { }
+    public Point(Capture x, Capture y) : this(x.ValueSpan, y.ValueSpan) { }
 
     /// <summary>
     /// Get all adjacent points (diagonal and orthogonal)

@@ -30,7 +30,7 @@ public class SolutionTests
     [InlineData("25", 58, -1)]
     public async Task RunExample(string day, long part1, long part2)
     {
-        await _runner.RunDay(day, "examples", part1, part2);
+        await _runner.Day(day, "examples", part1, part2);
     }
 
     [Theory]
@@ -59,7 +59,7 @@ public class SolutionTests
     [InlineData("25", 523, -1)]
     public async Task RunInput(string day, long part1, long part2)
     {
-        await _runner.RunDay(day, "inputs", part1, part2);
+        await _runner.Day(day, "inputs", part1, part2);
     }
 
     [Trait("Slow", "true")]
@@ -68,7 +68,7 @@ public class SolutionTests
     [InlineData("inputs", "19", 398, 10965)]
     public async Task RunSlowDays(string folder, string day, long part1, long part2)
     {
-        await _runner.RunDay(day, folder, part1, part2);
+        await _runner.Day(day, folder, part1, part2);
     }
 
     public static TheoryData<string, string, string, string> RunStrings_Data => new()
@@ -109,6 +109,6 @@ public class SolutionTests
     [Theory, MemberData(nameof(RunStrings_Data))]
     public async Task RunStrings(string folder, string day, string part1, string part2)
     {
-        await _runner.RunDay(day, folder, part1, part2);
+        await _runner.Day(day, folder, part1, part2);
     }
 }
