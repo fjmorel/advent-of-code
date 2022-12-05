@@ -6,11 +6,11 @@ public class WorkInProgressTests
 
     private const string _day = "01";
 
-    private const long _example1 = 00000;
-    private const long _example2 = 00000;
+    private const string _example1 = "0000";
+    private const string _example2 = "0000";
 
-    private const long _input1 = 00000;
-    private const long _input2 = 00000;
+    private const string _input1 = "0000";
+    private const string _input2 = "0000";
 
     [Fact]
     public Task DailyExample1() => _tester.Part1(_day, "examples", _example1);

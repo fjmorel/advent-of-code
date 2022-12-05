@@ -9,7 +9,6 @@ public class SolutionTests
     [InlineData("02", 15, 12)]
     [InlineData("03", 157, 70)]
     [InlineData("04", 2, 4)]
-    [InlineData("05", 0000, 0000)]
     [InlineData("06", 0000, 0000)]
     [InlineData("07", 0000, 0000)]
     [InlineData("08", 0000, 0000)]
@@ -37,7 +36,6 @@ public class SolutionTests
     [InlineData("02", 10718, 14652)]
     [InlineData("03", 7742, 2276)]
     [InlineData("04", 644, 926)]
-    [InlineData("05", 0000, 0000)]
     [InlineData("06", 0000, 0000)]
     [InlineData("07", 0000, 0000)]
     [InlineData("08", 0000, 0000)]
@@ -65,8 +63,12 @@ public class SolutionTests
     // [InlineData("inputs", "01", 0000, 0000)]
     // public Task RunSlowDays(string folder, string day, long part1, long part2) => _tester.Day(day, folder, part1, part2);
     //
-    // public static TheoryData<string, string, string, string> RunStrings_Data => new();
-    //
-    // [Theory, MemberData(nameof(RunStrings_Data))]
-    // public Task RunStrings(string folder, string day, string part1, string part2) => _tester.Day(day, folder, part1, part2);
+    public static TheoryData<string, string, string, string> RunStrings_Data => new()
+    {
+        { "examples", "05", "CMZ", "MCD" },
+        { "inputs", "05", "QNHWJVJZW", "BPCZJLFJW" },
+    };
+
+    [Theory, MemberData(nameof(RunStrings_Data))]
+    public Task RunStrings(string folder, string day, string part1, string part2) => _tester.Day(day, folder, part1, part2);
 }

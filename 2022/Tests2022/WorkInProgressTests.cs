@@ -4,13 +4,13 @@ public class WorkInProgressTests
 {
     private static readonly SolutionTester _tester = new(typeof(Puzzles2022.Day01.Solution).Assembly);
 
-    private const string _day = "05";
+    private const string _day = "06";
 
-    private const long _example1 = 0000;
-    private const long _example2 = 0000;
+    private const string _example1 = "0000";
+    private const string _example2 = "0000";
 
-    private const long _input1 = 0000;
-    private const long _input2 = 0000;
+    private const string _input1 = "0000";
+    private const string _input2 = "0000";
 
     [Fact]
     public Task Example1() => _tester.Part1(_day, "examples", _example1);
