@@ -14,12 +14,8 @@ public record Solution25(
 
     public static Solution25 Init(string[] lines)
     {
-        var start = lines.SelectMany((line, y) => line.Select((ch, x) => (ch, x, y))).ToDictionary(t => new Point(t.x, t.y), t => t.ch);
-        var minX = start.Min(x => x.Key.x);
-        var minY = start.Min(x => x.Key.y);
-        var maxX = start.Max(x => x.Key.x);
-        var maxY = start.Max(x => x.Key.y);
-        return new(start, minX, maxX, minY, maxY);
+        var start = lines.ToGrid(x => x);
+        return new(start, 0, lines[0].Length - 1, 0, lines.Length - 1);
     }
 
     public async ValueTask<long> GetPart1()

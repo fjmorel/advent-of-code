@@ -1,12 +1,8 @@
 namespace Puzzles2022.Day08;
 
-public record Solution(Dictionary<Point, long> grid, int width, int height) : ISolution<Solution>
+public record Solution(Dictionary<Point, int> grid, int width, int height) : ISolution<Solution>
 {
-    public static Solution Init(string[] lines)
-    {
-        var dict = lines.ToGrid<long>(ch => ch - '0');
-        return new Solution(dict, lines[0].Length, lines.Length);
-    }
+    public static Solution Init(string[] lines) => new(lines.ToDigitGrid(), lines[0].Length, lines.Length);
 
     public async ValueTask<long> GetPart1()
     {

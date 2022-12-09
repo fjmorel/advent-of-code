@@ -5,8 +5,7 @@ public record Solution20(Dictionary<Point, bool> _image, bool[] _algorithm) : IS
     public static Solution20 Init(string[] lines)
     {
         var algorithm = lines[0].Select(x => x == '#').ToArray();
-        var image = lines.Skip(2).SelectMany((line, y) => line.Select((ch, x) => (ch, x, y))).ToDictionary(tuple => new Point(tuple.x, tuple.y), tuple => tuple.ch == '#');
-        return new(image, algorithm);
+        return new(lines.Skip(2).ToGrid(ch => ch == '#'), algorithm);
     }
 
     public async ValueTask<long> GetPart1() => GetLitPixelsAfter(2);

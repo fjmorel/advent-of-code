@@ -1,35 +1,22 @@
 namespace Puzzles2021.Solutions;
 
-public record Solution11(Dictionary<Point, long> _original) : ISolution<Solution11>
+public record Solution11(Dictionary<Point, int> _original) : ISolution<Solution11>
 {
-    public static Solution11 Init(string[] lines)
-    {
-        var original = new Dictionary<Point, long>();
-        for (var y = 0; y < lines.Length; y++)
-        {
-            var nums = lines[y].ParseDigits();
-            for (var x = 0; x < nums.Length; x++)
-            {
-                original[new(x, y)] = nums[x];
-            }
-        }
-
-        return new(original);
-    }
+    public static Solution11 Init(string[] lines) => new(lines.ToDigitGrid());
 
     public async ValueTask<long> GetPart1()
     {
-        var grid = new Dictionary<Point, long>(_original);
+        var grid = new Dictionary<Point, int>(_original);
         return Enumerable.Range(1, 100).Aggregate(0L, (flashes, _) => flashes + Iterate(grid));
     }
 
     public async ValueTask<long> GetPart2()
     {
-        var grid = new Dictionary<Point, long>(_original);
+        var grid = new Dictionary<Point, int>(_original);
         return Enumerable.Range(1, int.MaxValue).First(i => Iterate(grid) == grid.Count);
     }
 
-    private long Iterate(Dictionary<Point, long> grid)
+    private static long Iterate(Dictionary<Point, int> grid)
     {
         foreach (var pt in grid.Keys)
             grid[pt]++;
@@ -42,7 +29,7 @@ public record Solution11(Dictionary<Point, long> _original) : ISolution<Solution
         return flashes;
     }
 
-    private long Flash(Dictionary<Point, long> grid)
+    private static long Flash(Dictionary<Point, int> grid)
     {
         var toFlash = new Queue<Point>();
         var flashed = new HashSet<Point>();

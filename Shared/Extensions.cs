@@ -1,4 +1,6 @@
-﻿namespace Shared;
+﻿using System.Numerics;
+
+namespace Shared;
 
 public static class Extensions
 {
@@ -123,5 +125,45 @@ public static class Extensions
         }
 
         return output.ToString();
+    }
+
+    /// <summary>
+    /// Convert input text into a lookup by coordinates
+    /// </summary>
+    public static Dictionary<Point, int> ToDigitGrid(this IEnumerable<string> lines)
+    {
+        var y = 0;
+        var dict = new Dictionary<Point, int>();
+        foreach (var line in lines)
+        {
+            for (var x = 0; x < line.Length; x++)
+            {
+                dict[new(x, y)] = line[x] - '0';
+            }
+
+            y++;
+        }
+
+        return dict;
+    }
+
+    /// <summary>
+    /// Convert input text into a lookup by coordinates
+    /// </summary>
+    public static Dictionary<Point, T> ToGrid<T>(this IEnumerable<string> lines, Func<char, T> converter)
+    {
+        var y = 0;
+        var dict = new Dictionary<Point, T>();
+        foreach (var line in lines)
+        {
+            for (var x = 0; x < line.Length; x++)
+            {
+                dict[new(x, y)] = converter(line[x]);
+            }
+
+            y++;
+        }
+
+        return dict;
     }
 }
