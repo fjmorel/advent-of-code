@@ -2,7 +2,8 @@ namespace Puzzles2021.Solutions;
 
 public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[] _rotationFunctions) : ISolution<Solution19>
 {
-    private readonly List<AdjustedScanner> Located = new();
+    private readonly ConcurrentBag<AdjustedScanner> Located = new();
+
     public static Solution19 Init(string[] lines)
     {
         var scanners = ParseInput(lines).ToArray();
@@ -10,30 +11,33 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
         return new(scanners, rotationFunctions);
     }
 
-
     public async ValueTask<long> GetPart1()
     {
         Located.Add(_scanners[0].Adjust(default, pt => pt));
-        var todo = new Queue<Scanner>(_scanners.Skip(1));
+        var left = new ConcurrentBag<Scanner>(_scanners.Skip(1));
 
-        while (todo.Any())
+        while (left.Any())
         {
-            var scanner = todo.Dequeue();
-            AdjustedScanner? adjusted = null;
-            foreach (var origin in Located)
+            var todo = left.ToList();
+            left.Clear();
+            Parallel.ForEach(todo, scanner =>
             {
-                if (scanner.TriedPositions.Contains(origin.position))
-                    continue;
-                adjusted = TryFindOffset3d(origin, scanner);
-                scanner.TriedPositions.Add(origin.position);
-                if (adjusted != null)
-                    break;
-            }
+                AdjustedScanner? maybeAdjusted = null;
+                foreach (var origin in Located)
+                {
+                    if (scanner.Tried.Contains(origin))
+                        continue;
+                    maybeAdjusted = TryFindOffset3d(origin, scanner);
+                    scanner.Tried.Add(origin);
+                    if (maybeAdjusted != null)
+                        break;
+                }
 
-            if (adjusted == null)
-                todo.Enqueue(scanner);
-            else
-                Located.Add(adjusted);
+                if (maybeAdjusted is AdjustedScanner adjusted)
+                    Located.Add(adjusted);
+                else
+                    left.Add(scanner);
+            });
         }
 
         return Located.SelectMany(x => x.adjusted).Distinct().Count();
@@ -51,17 +55,17 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
 
     public AdjustedScanner? TryFindOffset3d(AdjustedScanner origin, Scanner other)
     {
-        var originPairs = GetPairs(origin.adjusted).ToList();
-        var otherPairs = GetPairs(other.Beacons).ToList();
-
+        if (other.Distances.Intersect(origin.distances).Count() < 12)
+            return null;
+        
         // For every origin beacon and other beacon,
         foreach (var func in _rotationFunctions)
         {
             HashSet<Match<Point3d>> matches = new();
-            foreach (var (originA, originB) in originPairs)
+            foreach (var (originA, originB) in origin.pairs)
             {
                 var offset = originB - originA;
-                foreach (var (otherA, otherB) in otherPairs)
+                foreach (var (otherA, otherB) in other.Pairs)
                 {
                     // for every rotation of other, find all the matches with origin
                     {
@@ -90,25 +94,25 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
         return null;
     }
 
-    public record struct Match<T>(T origin, T other);
+    public readonly record struct Match<T>(T origin, T other);
 
     public static IEnumerable<Scanner> ParseInput(string[] lines)
     {
-        Scanner scanner = new();
+        var beacons = new HashSet<Point3d>();
         foreach (var line in lines)
         {
             if (line.StartsWith("---"))
-                scanner = new Scanner();
+                beacons = new();
             else if (string.IsNullOrWhiteSpace(line))
-                yield return scanner;
+                yield return new Scanner(beacons, GetPairs(beacons).ToList());
             else
             {
                 var split = line.Split(',');
-                scanner.Beacons.Add(new Point3d(split[0].AsSpan(), split[1].AsSpan(), split[2].AsSpan()));
+                beacons.Add(new Point3d(split[0].AsSpan(), split[1].AsSpan(), split[2].AsSpan()));
             }
         }
 
-        yield return scanner;
+        yield return new Scanner(beacons, GetPairs(beacons).ToList());
     }
 
     private static IEnumerable<Func<Point3d, Point3d>> GetRotations()
@@ -189,17 +193,17 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
         }
     }
 
-    public record Scanner()
+    public readonly record struct Scanner(HashSet<Point3d> beacons, List<(Point3d, Point3d)> Pairs)
     {
-        public HashSet<Point3d> TriedPositions { get; } = new();
-        public HashSet<Point3d> Beacons { get; } = new();
+        public HashSet<long> Distances { get; } = Pairs.Select(x => (x.Item1 - x.Item2).GetMagnitude()).ToHashSet();
+        public HashSet<AdjustedScanner> Tried { get; } = new();
 
         public AdjustedScanner Adjust(Point3d position, Func<Point3d, Point3d> rotationFunction)
         {
-            var adj = Beacons.Select(rotationFunction).Select(x => x + position).ToHashSet();
-            return new(position, adj);
+            var adj = beacons.Select(rotationFunction).Select(x => x + position).ToHashSet();
+            return new(position, adj, GetPairs(adj).ToList(), Distances);
         }
     }
 
-    public record AdjustedScanner(Point3d position, HashSet<Point3d> adjusted);
+    public readonly record struct AdjustedScanner(Point3d position, HashSet<Point3d> adjusted, List<(Point3d, Point3d)> pairs, HashSet<long> distances);
 }
