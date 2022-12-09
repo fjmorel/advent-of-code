@@ -6,11 +6,8 @@ public record Solution21(Solution21.Player _p1, Solution21.Player _p2) : ISoluti
 
     public static Solution21 Init(string[] lines)
     {
-        var position1 = int.Parse(new string(lines[0][^1], 1));
-        var p1 = new Player(position1, IsP1: true);
-
-        var position2 = int.Parse(new string(lines[1][^1], 1));
-        var p2 = new Player(position2);
+        var p1 = new Player(int.Parse(lines[0].AsSpan()[^1..]), IsP1: true);
+        var p2 = new Player(int.Parse(lines[1].AsSpan()[^1..]));
         return new(p1, p2);
     }
 

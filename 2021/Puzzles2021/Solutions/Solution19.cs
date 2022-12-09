@@ -1,22 +1,55 @@
 namespace Puzzles2021.Solutions;
 
-public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[] _rotationFunctions) : ISolution<Solution19>
+public record Solution19(Solution19.Scanner[] _scanners) : ISolution<Solution19>
 {
+    private static readonly Func<Point3d, Point3d>[] _rotationFunctions = GetRotations().ToArray();
     private readonly ConcurrentBag<AdjustedScanner> Located = new();
 
     public static Solution19 Init(string[] lines)
     {
-        var scanners = ParseInput(lines).ToArray();
-        var rotationFunctions = GetRotations().ToArray();
-        return new(scanners, rotationFunctions);
+        var scanners = new List<Scanner>();
+        var beacons = new HashSet<Point3d>();
+        foreach (var line in lines)
+        {
+            if (line.StartsWith("---"))
+                beacons = new();
+            else if (string.IsNullOrWhiteSpace(line))
+                scanners.Add(new Scanner(beacons));
+            else
+            {
+                var split = line.Split(',');
+                beacons.Add(new Point3d(split[0].AsSpan(), split[1].AsSpan(), split[2].AsSpan()));
+            }
+        }
+
+        scanners.Add(new Scanner(beacons));
+        return new(scanners.ToArray());
     }
 
     public async ValueTask<long> GetPart1()
     {
-        Located.Add(_scanners[0].Adjust(default, pt => pt));
-        var left = new ConcurrentBag<Scanner>(_scanners.Skip(1));
+        if (!Located.Any())
+            AlignScanners(_scanners);
 
-        while (left.Any())
+        return Located.SelectMany(x => x.adjusted).Distinct().Count();
+    }
+
+    public async ValueTask<long> GetPart2()
+    {
+        if (!Located.Any())
+            AlignScanners(_scanners);
+
+        var positions = Located.Select(x => x.position).ToList();
+        return positions.SelectMany(a => positions.Select(b => (b - a).GetMagnitude())).Max();
+    }
+
+    private void AlignScanners(Scanner[] scanners)
+    {
+        Located.Add(scanners[0].Adjust(default, pt => pt));
+        var left = new ConcurrentBag<Scanner>(scanners.Skip(1));
+
+        int tries = 0;
+        while (left.Any() && tries < scanners.Length)
         {
             var todo = left.ToList();
             left.Clear();
@@ -25,10 +58,10 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
                 AdjustedScanner? maybeAdjusted = null;
                 foreach (var origin in Located)
                 {
-                    if (scanner.Tried.Contains(origin))
+                    if (scanner.Tried.Contains(origin.position))
                         continue;
                     maybeAdjusted = TryFindOffset3d(origin, scanner);
-                    scanner.Tried.Add(origin);
+                    scanner.Tried.Add(origin.position);
                     if (maybeAdjusted != null)
                         break;
                 }
@@ -38,30 +71,22 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
                 else
                     left.Add(scanner);
             });
+            tries++;
         }
 
-        return Located.SelectMany(x => x.adjusted).Distinct().Count();
+        if (left.Any())
+            throw new UnreachableException("Stuck in infinite loop");
     }
 
-    public async ValueTask<long> GetPart2()
-    {
-        if (!Located.Any())
-            await GetPart1();
-
-        var positions = Located.Select(x => x.position).ToList();
-        var pairs = positions.SelectMany(a => positions.Select(b => (a, b))).ToList();
-        return pairs.Max(tuple => (tuple.b - tuple.a).GetMagnitude());
-    }
-
-    public AdjustedScanner? TryFindOffset3d(AdjustedScanner origin, Scanner other)
+    public static AdjustedScanner? TryFindOffset3d(AdjustedScanner origin, Scanner other)
     {
         if (other.Distances.Intersect(origin.distances).Count() < 12)
             return null;
-        
+
         // For every origin beacon and other beacon,
         foreach (var func in _rotationFunctions)
         {
-            HashSet<Match<Point3d>> matches = new();
+            HashSet<(Point3d origin, Point3d other)> matches = new();
             foreach (var (originA, originB) in origin.pairs)
             {
                 var offset = originB - originA;
@@ -71,8 +96,8 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
                     {
                         if (func(otherB) - func(otherA) == offset)
                         {
-                            matches.Add(new(originA, otherA));
-                            matches.Add(new(originB, otherB));
+                            matches.Add((originA, otherA));
+                            matches.Add((originB, otherB));
                         }
                     }
                     if (matches.Count > 12)
@@ -94,115 +119,85 @@ public record Solution19(Solution19.Scanner[] _scanners, Func<Point3d, Point3d>[
         return null;
     }
 
-    public readonly record struct Match<T>(T origin, T other);
-
-    public static IEnumerable<Scanner> ParseInput(string[] lines)
-    {
-        var beacons = new HashSet<Point3d>();
-        foreach (var line in lines)
-        {
-            if (line.StartsWith("---"))
-                beacons = new();
-            else if (string.IsNullOrWhiteSpace(line))
-                yield return new Scanner(beacons, GetPairs(beacons).ToList());
-            else
-            {
-                var split = line.Split(',');
-                beacons.Add(new Point3d(split[0].AsSpan(), split[1].AsSpan(), split[2].AsSpan()));
-            }
-        }
-
-        yield return new Scanner(beacons, GetPairs(beacons).ToList());
-    }
-
     private static IEnumerable<Func<Point3d, Point3d>> GetRotations()
     {
         yield return static pt => pt;
         yield return static pt => new Point3d(pt.x, -pt.y, pt.z);
+        yield return static pt => new Point3d(pt.x, pt.y, -pt.z);
+        yield return static pt => new Point3d(pt.x, -pt.y, -pt.z);
         yield return static pt => new Point3d(-pt.x, pt.y, pt.z);
+        yield return static pt => new Point3d(-pt.x, pt.y, -pt.z);
         yield return static pt => new Point3d(-pt.x, -pt.y, pt.z);
+        yield return static pt => new Point3d(-pt.x, -pt.y, -pt.z);
 
         yield return static pt => new Point3d(pt.y, pt.x, pt.z);
         yield return static pt => new Point3d(pt.y, -pt.x, pt.z);
-        yield return static pt => new Point3d(-pt.y, pt.x, pt.z);
-        yield return static pt => new Point3d(-pt.y, -pt.x, pt.z);
-
-        yield return static pt => new Point3d(pt.x, pt.y, -pt.z);
-        yield return static pt => new Point3d(pt.x, -pt.y, -pt.z);
-        yield return static pt => new Point3d(-pt.x, pt.y, -pt.z);
-        yield return static pt => new Point3d(-pt.x, -pt.y, -pt.z);
-
         yield return static pt => new Point3d(pt.y, pt.x, -pt.z);
         yield return static pt => new Point3d(pt.y, -pt.x, -pt.z);
+        yield return static pt => new Point3d(-pt.y, pt.x, pt.z);
         yield return static pt => new Point3d(-pt.y, pt.x, -pt.z);
+        yield return static pt => new Point3d(-pt.y, -pt.x, pt.z);
         yield return static pt => new Point3d(-pt.y, -pt.x, -pt.z);
-
 
         yield return static pt => new Point3d(pt.x, pt.z, pt.y);
         yield return static pt => new Point3d(pt.x, pt.z, -pt.y);
-        yield return static pt => new Point3d(-pt.x, pt.z, pt.y);
-        yield return static pt => new Point3d(-pt.x, pt.z, -pt.y);
-
-        yield return static pt => new Point3d(pt.y, pt.z, pt.x);
-        yield return static pt => new Point3d(pt.y, pt.z, -pt.x);
-        yield return static pt => new Point3d(-pt.y, pt.z, pt.x);
-        yield return static pt => new Point3d(-pt.y, pt.z, -pt.x);
-
         yield return static pt => new Point3d(pt.x, -pt.z, pt.y);
         yield return static pt => new Point3d(pt.x, -pt.z, -pt.y);
+        yield return static pt => new Point3d(-pt.x, pt.z, pt.y);
+        yield return static pt => new Point3d(-pt.x, pt.z, -pt.y);
         yield return static pt => new Point3d(-pt.x, -pt.z, pt.y);
         yield return static pt => new Point3d(-pt.x, -pt.z, -pt.y);
 
+        yield return static pt => new Point3d(pt.y, pt.z, pt.x);
+        yield return static pt => new Point3d(pt.y, pt.z, -pt.x);
         yield return static pt => new Point3d(pt.y, -pt.z, pt.x);
         yield return static pt => new Point3d(pt.y, -pt.z, -pt.x);
+        yield return static pt => new Point3d(-pt.y, pt.z, pt.x);
+        yield return static pt => new Point3d(-pt.y, pt.z, -pt.x);
         yield return static pt => new Point3d(-pt.y, -pt.z, pt.x);
         yield return static pt => new Point3d(-pt.y, -pt.z, -pt.x);
-
 
         yield return static pt => new Point3d(pt.z, pt.x, pt.y);
         yield return static pt => new Point3d(pt.z, pt.x, -pt.y);
         yield return static pt => new Point3d(pt.z, -pt.x, pt.y);
         yield return static pt => new Point3d(pt.z, -pt.x, -pt.y);
-
-        yield return static pt => new Point3d(pt.z, pt.y, pt.x);
-        yield return static pt => new Point3d(pt.z, pt.y, -pt.x);
-        yield return static pt => new Point3d(pt.z, -pt.y, pt.x);
-        yield return static pt => new Point3d(pt.z, -pt.y, -pt.x);
-
         yield return static pt => new Point3d(-pt.z, pt.x, pt.y);
         yield return static pt => new Point3d(-pt.z, pt.x, -pt.y);
         yield return static pt => new Point3d(-pt.z, -pt.x, pt.y);
         yield return static pt => new Point3d(-pt.z, -pt.x, -pt.y);
 
+        yield return static pt => new Point3d(pt.z, pt.y, pt.x);
+        yield return static pt => new Point3d(pt.z, pt.y, -pt.x);
+        yield return static pt => new Point3d(pt.z, -pt.y, pt.x);
+        yield return static pt => new Point3d(pt.z, -pt.y, -pt.x);
         yield return static pt => new Point3d(-pt.z, pt.y, pt.x);
         yield return static pt => new Point3d(-pt.z, pt.y, -pt.x);
         yield return static pt => new Point3d(-pt.z, -pt.y, pt.x);
         yield return static pt => new Point3d(-pt.z, -pt.y, -pt.x);
     }
 
-    private static IEnumerable<(Point3d a, Point3d b)> GetPairs(HashSet<Point3d> list)
+    public readonly record struct Scanner
     {
-        foreach (var a in list)
+        public Scanner(HashSet<Point3d> beacons)
         {
-            foreach (var b in list)
-            {
-                if (a == b)
-                    continue;
-                yield return (a, b);
-            }
+            Beacons = beacons;
+            Pairs = GetPairs(beacons).ToList();
+            Distances = Pairs.Select(x => (x.Item1 - x.Item2).GetMagnitude()).ToHashSet();
         }
-    }
 
-    public readonly record struct Scanner(HashSet<Point3d> beacons, List<(Point3d, Point3d)> Pairs)
-    {
-        public HashSet<long> Distances { get; } = Pairs.Select(x => (x.Item1 - x.Item2).GetMagnitude()).ToHashSet();
-        public HashSet<AdjustedScanner> Tried { get; } = new();
+        private HashSet<Point3d> Beacons { get; }
+        public List<(Point3d, Point3d)> Pairs { get; }
+        public HashSet<long> Distances { get; }
+        public HashSet<Point3d> Tried { get; } = new();
 
         public AdjustedScanner Adjust(Point3d position, Func<Point3d, Point3d> rotationFunction)
         {
-            var adj = beacons.Select(rotationFunction).Select(x => x + position).ToHashSet();
+            var adj = Beacons.Select(rotationFunction).Select(x => x + position).ToHashSet();
             return new(position, adj, GetPairs(adj).ToList(), Distances);
         }
+
+        private static IEnumerable<(Point3d a, Point3d b)> GetPairs(IReadOnlyCollection<Point3d> beacons) =>
+            from a in beacons from b in beacons where a != b select (a, b);
     }
 
     public readonly record struct AdjustedScanner(Point3d position, HashSet<Point3d> adjusted, List<(Point3d, Point3d)> pairs, HashSet<long> distances);
