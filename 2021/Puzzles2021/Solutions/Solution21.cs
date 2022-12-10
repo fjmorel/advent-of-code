@@ -31,13 +31,13 @@ public record Solution21(Solution21.Player _p1, Solution21.Player _p2) : ISoluti
             (next, previous) = (previous, next.WithMove(total));
         } while (previous.Score < 1000 & next.Score < 1000);
 
-        return rolls * Math.Min(previous.Score, next.Score);
+        return rolls * int.Min(previous.Score, next.Score);
     }
 
     public async ValueTask<long> GetPart2()
     {
         var wins = FindWins(_p1, _p2, 1);
-        return Math.Max(wins.p1, wins.p2);
+        return long.Max(wins.p1, wins.p2);
     }
 
     public (long p1, long p2) FindWins(Player next, Player previous, long multiplier)

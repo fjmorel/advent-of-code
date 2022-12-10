@@ -58,8 +58,8 @@ public partial record Solution22(List<Solution22.Command> _commands) : ISolution
             foreach ((Cube section, long existingValue) in sections)
             {
                 // Figure out overlap
-                var overlapMin = Point3d.Apply(newCube.min, section.min, Math.Max);
-                var overlapMax = Point3d.Apply(newCube.max, section.max, Math.Min);
+                var overlapMin = Point3d.Apply(newCube.min, section.min, int.Max);
+                var overlapMax = Point3d.Apply(newCube.max, section.max, int.Min);
                 if (Point3d.Match(overlapMin, overlapMax, (a, b) => a <= b))
                 {
                     var overlap = new Cube(overlapMin, overlapMax);

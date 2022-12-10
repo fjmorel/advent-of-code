@@ -48,10 +48,8 @@ public record Solution(List<(char direction, int magnitude)> _lines) : ISolution
             return tail with { y = head.y + 1 };
 
         // Move diagonally to keep up
-        var xMove = head.x - tail.x;
-        xMove /= Math.Max(1, Math.Abs(xMove));
-        var yMove = head.y - tail.y;
-        yMove /= Math.Max(1, Math.Abs(yMove));
+        var xMove = long.IsPositive(head.x - tail.x) ? 1 : -1;
+        var yMove = long.IsPositive(head.y - tail.y) ? 1 : -1;
         return new(tail.x + xMove, tail.y + yMove);
     }
 

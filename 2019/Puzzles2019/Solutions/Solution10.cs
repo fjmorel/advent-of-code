@@ -84,7 +84,7 @@ public record Solution10(
                 else
                 {
                     var multiple = false;
-                    for (var test = Math.Max(x, y); test > 1; test--)
+                    for (var test = int.Max(x, y); test > 1; test--)
                     {
                         if (x % test == 0 && y % test == 0)
                         {
@@ -109,32 +109,32 @@ public record Solution10(
     {
         var fromOrigin = somewhere - station;
         fromOrigin = fromOrigin with { y = -fromOrigin.y };// invert y to fix above/below
-        var hypotenuse = Math.Sqrt(Math.Pow(fromOrigin.x, 2) + Math.Pow(fromOrigin.y, 2));
+        var hypotenuse = double.Sqrt(double.Pow(fromOrigin.x, 2) + double.Pow(fromOrigin.y, 2));
 
         double theta;
         if (fromOrigin.y == 0)
         {
             var ah = fromOrigin.x / hypotenuse;
-            theta = Math.Acos(ah);
+            theta = double.Acos(ah);
         }
         else
         {
             var oh = fromOrigin.y / hypotenuse;
-            theta = Math.Asin(oh);
+            theta = double.Asin(oh);
 
             // Make sure to correctly convert -x to left side of circle
             if (fromOrigin.x < 0)
             {
                 // top-right to top-left
                 if (theta > 0)
-                    theta = Math.PI - theta;
+                    theta = double.Pi - theta;
                 // bottom-right to bottom-left
                 else if (theta < 0)
-                    theta = -Math.PI - theta;
+                    theta = -double.Pi - theta;
             }
         }
 
-        var degrees = (180 / Math.PI) * theta;
+        var degrees = (180 / double.Pi) * theta;
 
         // turn normal unit circle into 0 at top going clockwise
         var adj = degrees switch

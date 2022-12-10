@@ -27,7 +27,7 @@ public partial record Solution05(List<Solution05.Vent> _vents) : ISolution<Solut
 
         public IEnumerable<Point> GetPoints()
         {
-            var steps = Math.Max(Math.Abs(start.x - end.x), Math.Abs(start.y - end.y)) + 1;
+            var steps = int.Max(int.Abs(start.x - end.x), int.Abs(start.y - end.y)) + 1;
             var xStep = start.x == end.x ? 0 : end.x > start.x ? 1 : -1;
             var yStep = start.y == end.y ? 0 : end.y > start.y ? 1 : -1;
             for (var i = 0; i < steps; i++)

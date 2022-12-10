@@ -2,7 +2,7 @@
 
 public static class AsciiLetters
 {
-    private static readonly Dictionary<char, int> _letters = typeof(Letters)
+    private static readonly Dictionary<char, long> _letters = typeof(Letters)
         .GetFields()
         .ToDictionary(x => x.Name[0], x => ((x.GetRawConstantValue() as string)!).ToBitNumbers()[0]);
 
@@ -38,18 +38,17 @@ public static class AsciiLetters
         }
     }
 
-    private static List<int> ToBitNumbers(this string input)
+    private static List<long> ToBitNumbers(this string input)
     {
         var lines = input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-        var columns = new List<char[]>();
+        var nums = new List<long>();
         for (var i = 0; i < lines[0].Length; i++)
-            columns.Add(lines.Select(x => x[i] == '⬜' ? '1' : '0').ToArray());
+        {
+            nums.Add(lines.Select((line, index) => line[i] == '⬜' ? 1 * (long)double.Pow(2, index) : 0).Sum());
+        }
 
-        return columns
-            .Where(x => x is not ['0', '0', '0', '0', '0', '0'])
-            .Chunk(4)
-            .Select(chunk => new string(chunk.SelectMany(x => x).ToArray()))
-            .Select(x => Convert.ToInt32(x, 2))
+        return nums.Where(x => x != 0).Chunk(4)
+            .Select(chunk => chunk.Select((value, index) => value * (long)double.Pow(2, 4 * (index + 1))).Sum())
             .ToList();
     }
 }

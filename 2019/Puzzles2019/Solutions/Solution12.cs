@@ -72,8 +72,8 @@ public partial record Solution12(List<Solution12.Coordinates> initialPositions) 
 
     private static long GreatestCommonDivisor(long greater, long lesser)
     {
-        greater = Math.Abs(greater);
-        lesser = Math.Abs(lesser);
+        greater = long.Abs(greater);
+        lesser = long.Abs(lesser);
         while (true)
         {
             long remainder = greater % lesser;
@@ -122,7 +122,7 @@ public partial record Solution12(List<Solution12.Coordinates> initialPositions) 
     public readonly record struct Coordinates(long x, long y, long z)
     {
         public static Coordinates operator +(Coordinates a, Coordinates b) => new(a.x + b.x, a.y + b.y, a.z + b.z);
-        public long GetEnergy() => Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
+        public long GetEnergy() => long.Abs(x) + long.Abs(y) + long.Abs(z);
     }
 
     // not a struct so we can modify its coordinates while still keeping references in MoonWithInfluencingBodies

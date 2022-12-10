@@ -7,13 +7,13 @@ public record Solution12(List<(char, int)> read) : ISolution<Solution12>
     public async ValueTask<long> GetPart1()
     {
         var vector = read.Aggregate(new Vector(Direction.E, 0, 0), (vector, line) => vector.Move(line.Item1, line.Item2));
-        return Math.Abs(vector.X) + Math.Abs(vector.Y);
+        return int.Abs(vector.X) + int.Abs(vector.Y);
     }
 
     public async ValueTask<long> GetPart2()
     {
         var waypoint = read.Aggregate(new WaypointNav(0, 0, 10, 1), (waypoint, line) => waypoint.Move(line.Item1, line.Item2));
-        return Math.Abs(waypoint.ShipX) + Math.Abs(waypoint.ShipY);
+        return int.Abs(waypoint.ShipX) + int.Abs(waypoint.ShipY);
     }
 
     private enum Direction

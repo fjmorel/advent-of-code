@@ -30,7 +30,7 @@ public partial record Solution14(Dictionary<string, Solution14.Formula> reaction
         while (state.Supply[ORE] > 0)
         {
             // As long as it produced the fuel, keep running
-            step = Math.Max(state.Supply[ORE] / maxOrePerFuel, 1);
+            step = long.Max(state.Supply[ORE] / maxOrePerFuel, 1);
             ProduceReagent(FUEL, step, state);
             if (state.OreNeeded == 0)
                 produced += step;

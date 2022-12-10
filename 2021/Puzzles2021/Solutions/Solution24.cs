@@ -40,7 +40,7 @@ public record Solution24(long _lowest, long _highest) : ISolution<Solution24>
                 else
                 {
                     // Skip this range of numbers because this digit will not lead to a solution
-                    model += (long)Math.Pow(10, 13 - step) - 1;
+                    model += (long)double.Pow(10, 13 - step) - 1;
                     break;
                 }
 
@@ -49,7 +49,7 @@ public record Solution24(long _lowest, long _highest) : ISolution<Solution24>
 
             if (output == 0)
             {
-                (lowest, highest) = (Math.Min(model, lowest), Math.Max(model, highest));
+                (lowest, highest) = (long.Min(model, lowest), long.Max(model, highest));
             }
         }
 

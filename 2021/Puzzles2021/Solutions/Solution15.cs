@@ -74,7 +74,7 @@ public record Solution15(int[][] _nums, int _width, int _height) : ISolution<Sol
                 if (!graph.TryGetValue(adj, out var neighbor) || neighbor!.Visited)
                     continue;
 
-                neighbor.Total = Math.Min(current.Total + neighbor.Risk, neighbor.Total);
+                neighbor.Total = long.Min(current.Total + neighbor.Risk, neighbor.Total);
                 queue.Enqueue(neighbor, neighbor.Total);
             }
         }

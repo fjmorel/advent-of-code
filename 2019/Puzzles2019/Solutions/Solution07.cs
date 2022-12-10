@@ -10,7 +10,7 @@ public record Solution07(long[] _opCodes) : ISolution<Solution07>
         foreach (var settings in GetSettings(0, 4))
         {
             var output = await GetSelfThrust(settings);
-            max = Math.Max(max, output);
+            max = long.Max(max, output);
         }
 
         return max;
@@ -22,7 +22,7 @@ public record Solution07(long[] _opCodes) : ISolution<Solution07>
         foreach (var settings in GetSettings(5, 9))
         {
             var output = await GetFeedbackThrust(settings);
-            max = Math.Max(max, output);
+            max = long.Max(max, output);
         }
 
         return max;

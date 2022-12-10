@@ -32,7 +32,7 @@ public record Solution16(string[] _lines) : ISolution<Solution16>
                     }
                 }
 
-                digits[i - 1] = Math.Abs(sum % 10);
+                digits[i - 1] = int.Abs(sum % 10);
             }
         }
 

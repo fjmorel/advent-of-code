@@ -17,7 +17,7 @@ public record Solution03(
 
     public async ValueTask<long> GetPart1()
     {
-        return intersections.Skip(1).Min(point => Math.Abs(point.x) + Math.Abs(point.y));
+        return intersections.Skip(1).Min(point => int.Abs(point.x) + int.Abs(point.y));
     }
 
     public async ValueTask<long> GetPart2()

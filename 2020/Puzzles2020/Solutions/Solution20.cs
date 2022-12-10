@@ -103,7 +103,7 @@ public record Solution20(List<Solution20.Tile> tiles) : ISolution<Solution20>
 
     private bool[][] BuildSea()
     {
-        var tileGridSize = (int)Math.Sqrt(tiles.Count);
+        var tileGridSize = (int)double.Sqrt(tiles.Count);
         var tileGrid = Enumerable.Range(0, tileGridSize).Select(x => new int[tileGridSize]).ToArray();
 
         var corners = adjacent.Where(x => x.Value.Count == 2).ToList();

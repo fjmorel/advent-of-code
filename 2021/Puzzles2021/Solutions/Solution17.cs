@@ -17,7 +17,7 @@ public partial record Solution17(List<int> _heights) : ISolution<Solution17>
 
     private static IEnumerable<int> FindMaximumHeights(Point min, Point max)
     {
-        for (var startX = (int)Math.Sqrt(min.x); startX <= max.x; startX++)
+        for (var startX = (int)double.Sqrt(min.x); startX <= max.x; startX++)
         for (var startY = min.y; startY <= -min.y; startY++)
         {
             var velocity = new Point(startX, startY);
@@ -27,7 +27,7 @@ public partial record Solution17(List<int> _heights) : ISolution<Solution17>
             {
                 position += velocity;
                 velocity += new Point(velocity.x > 0 ? -1 : 0, -1);
-                highest = Math.Max(highest, position.y);
+                highest = int.Max(highest, position.y);
                 if (position.IsWithinInclusive(min, max))
                 {
                     yield return highest;
