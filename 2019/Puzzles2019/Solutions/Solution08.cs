@@ -57,8 +57,8 @@ public record Solution08(List<int[]> layers) : ISolution<Solution08>
             {
                 var symbol = pixel switch
                 {
-                    0 => ' ',
-                    1 => '\u2588',
+                    0 => '⬛',
+                    1 => '⬜',
                     _ => throw new ArgumentException($"Unexpected pixel value: [{pixel}]"),
                 };
                 sb.Append(symbol);

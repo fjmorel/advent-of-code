@@ -13,7 +13,7 @@ public record Solution11(long[] _opCodes) : ISolution<Solution11>
     public async ValueTask<string> GetPart2String()
     {
         var grid = await RunPaintJob(1);
-        return grid.Keys.ToString(pt => grid.GetValueOrDefault(pt) == 1 ? '█' : ' ');
+        return grid.Keys.ToString(pt => grid.GetValueOrDefault(pt) == 1 ? '⬜' : '⬛');
     }
 
     private async Task<Dictionary<Point, long>> RunPaintJob(long startColor)

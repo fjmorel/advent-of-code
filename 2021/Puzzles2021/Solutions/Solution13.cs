@@ -29,7 +29,7 @@ public record Solution13(HashSet<Point> _points, List<Solution13.Fold> _folds) :
     public async ValueTask<string> GetPart2String()
     {
         var dots = _folds.Aggregate(_points, FoldPaper);
-        return dots.ToString(pt => dots.Contains(pt) ? '█' : ' ');
+        return dots.ToString(pt => dots.Contains(pt) ? '⬜' : '⬛');
     }
 
     private HashSet<Point> FoldPaper(HashSet<Point> dots, Fold fold)

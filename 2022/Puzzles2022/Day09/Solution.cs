@@ -61,5 +61,6 @@ public record Solution(List<(char direction, int magnitude)> _lines) : ISolution
         'L' => point with { x = point.x - 1 },
         'U' => point with { y = point.y + 1 },
         'D' => point with { y = point.y - 1 },
+        _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null),
     };
 }
