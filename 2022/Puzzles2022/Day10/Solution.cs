@@ -31,6 +31,6 @@ public record Solution(Computer cpu) : ISolution<Solution>
         var cpuTask = cpu.Run(null, channel.Writer);
         var screens = await cpu.PrintScreen(channel.Reader).ToListAsync();
         await cpuTask;
-        return screens[0];
+        return screens[0].ParseAsciiLetters();
     }
 }

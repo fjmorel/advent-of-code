@@ -67,6 +67,6 @@ public record Solution08(List<int[]> layers) : ISolution<Solution08>
             sb.AppendLine();
         }
 
-        return sb.ToString();
+        return sb.ToString().ParseAsciiLetters();
     }
 }
