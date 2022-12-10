@@ -44,11 +44,11 @@ public static class AsciiLetters
         var nums = new List<long>();
         for (var i = 0; i < lines[0].Length; i++)
         {
-            nums.Add(lines.Select((line, index) => line[i] == '⬜' ? 1 * (long)double.Pow(2, index) : 0).Sum());
+            nums.Add(lines.Select((line, index) => line[i] == '⬜' ? 1 *  int.RotateLeft(1, index) : 0).Sum());
         }
 
         return nums.Where(x => x != 0).Chunk(4)
-            .Select(chunk => chunk.Select((value, index) => value * (long)double.Pow(2, 4 * (index + 1))).Sum())
+            .Select(chunk => chunk.Select((value, index) => value * int.RotateLeft(1, 4 * (index + 1))).Sum())
             .ToList();
     }
 }
