@@ -4,7 +4,7 @@ public record Solution02(long[] _opCodes) : ISolution<Solution02>
 {
     private readonly Channel<long> _channel = Channel.CreateUnbounded<long>();
 
-    public static Solution02 Init(string[] lines) => new(lines[0].ParseCsvLongs());
+    public static Solution02 Init(string[] lines) => new(lines[0].ParseCsv<long>());
 
     public async ValueTask<long> GetPart1()
     {

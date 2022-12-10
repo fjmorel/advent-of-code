@@ -21,13 +21,13 @@ public record Solution24(long _lowest, long _highest) : ISolution<Solution24>
         (long lowest, long highest) = (long.MaxValue, long.MinValue);
         for (long model = 11_111_111_111_111; model <= 99_999_999_999_999; model++)
         {
-            var digits = model.GetDigits(true);
+            var digits = model.GetBase10Digits();
             int step = 0;
             long output = 0;
 
             foreach ((int line5, int line6, int line16) in groups)
             {
-                var input = digits[step];
+                var input = digits[^(step + 1)];
                 var test = (output % 26) + line6 == input;
                 if (input != 0 && line5 == 26 && test)
                 {

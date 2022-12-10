@@ -21,7 +21,7 @@ public record Solution04(int MIN, int MAX) : ISolution<Solution04>
         if (num < MIN || num > MAX)
             return false;
 
-        var digits = num.GetDigits(false);
+        var digits = num.GetBase10Digits();
 
         // Digits are ascending
         if (!digits.OrderByDescending(x => x).SequenceEqual(digits))

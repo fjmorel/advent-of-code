@@ -1,10 +1,10 @@
 namespace Puzzles2020.Solutions;
 
-public record Solution23(int[] startingCups) : ISolution<Solution23>
+public record Solution23(ImmutableArray<int> startingCups) : ISolution<Solution23>
 {
     public static Solution23 Init(string[] lines)
     {
-        var startingCups = lines[0].Select(ch => int.Parse(ch.ToString())).ToArray();
+        var startingCups = lines[0].Select(ch => ch - '0').ToImmutableArray();
         return new(startingCups);
     }
 
@@ -21,25 +21,25 @@ public record Solution23(int[] startingCups) : ISolution<Solution23>
     public async ValueTask<long> GetPart2()
     {
         var pointers = RunSimulation(startingCups, 10_000_000, 1_000_000);
-        return (long)pointers[1] * (long)pointers[pointers[1]];
+        return pointers[1] * pointers[pointers[1]];
     }
 
-    private static int[] RunSimulation(IReadOnlyList<int> startingCups, int iterations, int max)
+    private static long[] RunSimulation(ImmutableArray<int> startingCups, int iterations, int max)
     {
-        var removed = new int[3];
-        var pointers = new int[max + 1];
+        var removed = new long[3];
+        var pointers = new long[max + 1];
 
         // initialize 10-max in numerical order
         for (var i = 10; i <= max; i++)
             pointers[i] = i + 1;
         // initialize 1-9 in input order
-        for (var i = 0; i < startingCups.Count - 1; i++)
+        for (var i = 0; i < startingCups.Length - 1; i++)
             pointers[startingCups[i]] = startingCups[i + 1];
 
-        var current = startingCups[0];
+        long current = startingCups[0];
 
         // If only 9 cups, make last input point to first input
-        if (max == startingCups.Count)
+        if (max == startingCups.Length)
             pointers[startingCups[^1]] = current;
         // Otherwise last input => 10 && max >= first input
         else

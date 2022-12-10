@@ -6,7 +6,7 @@ public record Solution25(string[] _lines) : ISolution<Solution25>
 
     public async ValueTask<long> GetPart1()
     {
-        var publicKeys = _lines.ParseLongs();
+        var publicKeys = _lines.ParsePerLine<long>();
         var cardPublic = publicKeys[0];
         var doorPublic = publicKeys[1];
 

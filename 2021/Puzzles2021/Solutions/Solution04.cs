@@ -4,7 +4,7 @@ public record Solution04(int[] numbers, Dictionary<int, int> lookup, List<int[]>
 {
     public static Solution04 Init(string[] lines)
     {
-        var numbers = lines[0].ParseCsvInts();
+        var numbers = lines[0].ParseCsv<int>();
         var lookup = numbers.Select((num, i) => (num, i)).ToDictionary(x => x.num, x => x.i);
         var cards = lines
             .Skip(1).Chunk(6)

@@ -4,7 +4,7 @@ public record Solution10(List<long> nums, long device) : ISolution<Solution10>
 {
     public static Solution10 Init(string[] lines)
     {
-        var nums = lines.ParseLongs();
+        var nums = lines.ParsePerLine<long>();
         nums.Sort();
         return new(nums, nums.Last() + 3);
     }

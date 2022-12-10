@@ -2,7 +2,7 @@ namespace Puzzles2019.Solutions;
 
 public record Solution09(long[] _opCodes) : ISolution<Solution09>
 {
-    public static Solution09 Init(string[] lines) => new(lines[0].ParseCsvLongs());
+    public static Solution09 Init(string[] lines) => new(lines[0].ParseCsv<long>());
 
 	public async ValueTask<long> GetPart1()
 	{

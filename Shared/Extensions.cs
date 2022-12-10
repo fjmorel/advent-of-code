@@ -7,67 +7,30 @@ public static class Extensions
     /// <summary>
     /// Parse a single number from each line
     /// </summary>
-    public static List<long> ParseLongs(this string[] lines) => lines.Select(x => long.Parse(x)).ToList();
-
-    /// <summary>
-    /// Parse a single number from each line
-    /// </summary>
-    public static List<int> ParseInts(this string[] lines) => lines.Select(x => int.Parse(x)).ToList();
+    public static List<T> ParsePerLine<T>(this IEnumerable<string> lines) where T : IParsable<T> => lines.Select(x => T.Parse(x, null)).ToList();
 
     /// <summary>
     /// Parse an array of numbers separate by comma
     /// </summary>
-    public static int[] ParseCsvInts(this string line) => line.Split(',').Select(int.Parse).ToArray();
-
-    /// <summary>
-    /// Parse an array of numbers separate by comma
-    /// </summary>
-    public static long[] ParseCsvLongs(this string line) => line.Split(',').Select(long.Parse).ToArray();
+    public static T[] ParseCsv<T>(this string line) where T : IParsable<T> => line.Split(',').Select(x => T.Parse(x, null)).ToArray();
 
     /// <summary>
     /// Parse an array of digits with no separator
     /// </summary>
-    public static int[] ParseDigits(this string line) => line.Select(c => c - 48).ToArray();
+    public static int[] ParseDigits(this IEnumerable<char> line) => line.Select(c => c - '0').ToArray();
 
-    public static List<int> GetDigits(this int num, bool bigEndian)
+    /// <summary>
+    /// Get the digits from a number, in Base 10
+    /// </summary>
+    public static List<T> GetBase10Digits<T>(this T num) where T : INumber<T>, IBinaryInteger<T>
     {
-        var digits = GetDigits(num);
-        if (bigEndian)
-            digits.Reverse();
-
-        return digits;
-    }
-
-    private static List<int> GetDigits(int num)
-    {
-        var digits = new List<int>();
-        while (num > 0)
+        var digits = new List<T>();
+        var ten = T.One + T.One + T.One + T.One + T.One + T.One + T.One + T.One + T.One + T.One;
+        while (num > T.Zero)
         {
-            var digit = num % 10;
-            digits.Add(digit);
-            num = (num - digit) / 10;
-        }
-
-        return digits;
-    }
-
-    public static List<long> GetDigits(this long num, bool bigEndian)
-    {
-        var digits = GetDigits(num);
-        if (bigEndian)
-            digits.Reverse();
-
-        return digits;
-    }
-
-    private static List<long> GetDigits(long num)
-    {
-        var digits = new List<long>();
-        while (num > 0)
-        {
-            var digit = num % 10;
-            digits.Add(digit);
-            num = (num - digit) / 10;
+            (T quotient, T remainder) = T.DivRem(num, ten);
+            digits.Add(remainder);
+            num = quotient;
         }
 
         return digits;
@@ -130,22 +93,7 @@ public static class Extensions
     /// <summary>
     /// Convert input text into a lookup by coordinates
     /// </summary>
-    public static Dictionary<Point, int> ToDigitGrid(this IEnumerable<string> lines)
-    {
-        var y = 0;
-        var dict = new Dictionary<Point, int>();
-        foreach (var line in lines)
-        {
-            for (var x = 0; x < line.Length; x++)
-            {
-                dict[new(x, y)] = line[x] - '0';
-            }
-
-            y++;
-        }
-
-        return dict;
-    }
+    public static Dictionary<Point, int> ToDigitGrid(this IEnumerable<string> lines) => lines.ToGrid(x => x - '0');
 
     /// <summary>
     /// Convert input text into a lookup by coordinates

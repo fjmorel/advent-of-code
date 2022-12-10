@@ -4,7 +4,7 @@ public record Solution07(int[] nums, int min, int max) : ISolution<Solution07>
 {
     public static Solution07 Init(string[] lines)
     {
-        var nums = lines[0].ParseCsvInts();
+        var nums = lines[0].ParseCsv<int>();
         return new(nums, nums.Min(), nums.Max());
     }
 

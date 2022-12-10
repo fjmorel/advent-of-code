@@ -4,7 +4,7 @@ public record Solution09(List<long> _nums) : ISolution<Solution09>
 {
     private long invalid;
 
-    public static Solution09 Init(string[] lines) => new(lines.ParseLongs());
+    public static Solution09 Init(string[] lines) => new(lines.ParsePerLine<long>());
 
     public async ValueTask<long> GetPart1()
     {

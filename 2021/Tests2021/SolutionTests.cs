@@ -64,7 +64,7 @@ public class SolutionTests
     [InlineData("inputs", "19", 398, 10965)]
     [InlineData("examples", "21", 739785, 444_356_092_776_315)]
     [InlineData("inputs", "21", 518418, 116741133558209)]
-    //[InlineData("examples", "24", 0000, 0000)]
+    // [InlineData("examples", "24", 0000, 0000)] (no example data)
     [InlineData("inputs", "24", 39494195799979, 13161151139617)]
     public async Task RunSlowDays(string folder, string day, long part1, long part2)
     {
