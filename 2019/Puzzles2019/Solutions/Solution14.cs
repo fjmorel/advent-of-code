@@ -5,34 +5,33 @@ public partial record Solution14(Dictionary<string, Solution14.Formula> reaction
     private const string ORE = "ORE";
     private const string FUEL = "FUEL";
     private const long TRILLION = 1_000_000_000_000;
+    private long _orePerFuel = 0;
 
     public static Solution14 Init(string[] lines) => new(ParseReactions(lines));
 
     public async ValueTask<long> GetPart1()
     {
         var state = GetInitialState();
-        ProduceReagent(FUEL, 1, state);
-        return state.OreNeeded;
+        _orePerFuel = ProduceReagent(FUEL, 1, state);
+        return _orePerFuel;
     }
 
     public async ValueTask<long> GetPart2()
     {
-        var state = GetInitialState();
-        state.Supply[ORE] = TRILLION;
+        if (_orePerFuel == 0)
+            await GetPart1();
 
-        // Run once to find out ore per run
+        var supply = GetInitialState();
+        supply[ORE] = TRILLION;
+
         // Then run what's left divided by max ore per run to eliminate most of it
-        long step = 1;
-        ProduceReagent(FUEL, step, state);
-        long produced = step;
-        var maxOrePerFuel = TRILLION - state.Supply[ORE];
-
-        while (state.Supply[ORE] > 0)
+        long produced = 0;
+        while (supply[ORE] > 0)
         {
             // As long as it produced the fuel, keep running
-            step = long.Max(state.Supply[ORE] / maxOrePerFuel, 1);
-            ProduceReagent(FUEL, step, state);
-            if (state.OreNeeded == 0)
+            long step = long.Max(supply[ORE] / _orePerFuel, 1);
+            var oreNeeded = ProduceReagent(FUEL, step, supply);
+            if (oreNeeded == 0)
                 produced += step;
             else
                 break;
@@ -41,53 +40,46 @@ public partial record Solution14(Dictionary<string, Solution14.Formula> reaction
         return produced;
     }
 
-    private State GetInitialState()
+    private Dictionary<string, long> GetInitialState()
     {
-        var lookup = new Dictionary<string, long>();
-        lookup[ORE] = 0;
+        var lookup = new Dictionary<string, long> { [ORE] = 0 };
         foreach (var reagent in reactions.Keys)
             lookup[reagent] = 0;
 
-        return new State(lookup);
+        return lookup;
     }
 
-    private void ProduceReagent(string chemical, long quantityNeeded, State state)
+    private long ProduceReagent(string chemical, long quantityNeeded, Dictionary<string, long> supply)
     {
-        // If need more than we have,
-        // Then use up supply and add need
-        var currentHave = state.Supply[chemical];
-        if (quantityNeeded > currentHave)
+        var currentHave = supply[chemical];
+
+        // Partially use up supply and don't run reaction if we have enough
+        if (quantityNeeded <= currentHave)
         {
-            quantityNeeded -= currentHave;
-            state.Supply[chemical] = 0;
+            supply[chemical] = currentHave - quantityNeeded;
+            return 0;
         }
-        // Otherwise, partially use up supply and don't run reaction
-        else
-        {
-            state.Supply[chemical] = currentHave - quantityNeeded;
-            return;
-        }
+
+        // Otherwise use up all of it, then create the leftover need
+        quantityNeeded -= currentHave;
+        supply[chemical] = 0;
+
+        if (chemical == ORE)
+            return quantityNeeded;
 
         // Figure out many reactions will be needed to produce it
-        if (chemical != ORE)
-        {
-            var reaction = reactions[chemical];
-            // Feels weird to go overboard with *2 and then do a second loop, but it greatly speeds up Part 2
-            var output = reaction.output;
-            while (output < quantityNeeded)
-                output *= 2;
-            while (output >= quantityNeeded + reaction.output)
-                output -= reaction.output;
-            var multiplier = output / reaction.output;
+        var reaction = reactions[chemical];
+        var multiplier = quantityNeeded / reaction.output + 1;
+        if (reaction.output * multiplier >= quantityNeeded + reaction.output)
+            multiplier--;
+        var output = reaction.output * multiplier;
 
-            foreach (var reagent in reaction.reagents)
-                ProduceReagent(reagent.chemical, reagent.quantity * multiplier, state);
-            state.Supply[chemical] += output - quantityNeeded;
-        }
-        else
-        {
-            state.OreNeeded += quantityNeeded;
-        }
+        var oreNeeded = 0L;
+        foreach (var reagent in reaction.reagents)
+            oreNeeded += ProduceReagent(reagent.name, reagent.quantity * multiplier, supply);
+
+        supply[chemical] += output - quantityNeeded;
+        return oreNeeded;
     }
 
     private static Dictionary<string, Formula> ParseReactions(string[] lines)
@@ -107,14 +99,9 @@ public partial record Solution14(Dictionary<string, Solution14.Formula> reaction
         return output;
     }
 
-    public record State(Dictionary<string, long> Supply)
-    {
-        public long OreNeeded { get; set; }
-    }
-
     public readonly record struct Formula(long output, Reagent[] reagents);
 
-    public readonly record struct Reagent(long quantity, string chemical);
+    public readonly record struct Reagent(long quantity, string name);
 
     [GeneratedRegex("(((?<reagent_count>[0-9]+) (?<reagent_name>[A-Za-z]+),? )+)=> (?<product>(?<product_count>[0-9]+) (?<product_name>[A-Za-z]+))")]
     private static partial Regex GetParseRegex();
