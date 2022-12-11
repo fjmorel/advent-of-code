@@ -1,16 +1,17 @@
 ﻿namespace TestsTemplate;
 
+[Trait("Category", "InProgress")]
 public class WorkInProgressTests
 {
     private static readonly SolutionTester _tester = new(typeof(PuzzlesTemplate.Day01.Solution).Assembly);
 
     private const string _day = "01";
 
-    private const string _example1 = "0000";
-    private const string _example2 = "0000";
+    private const string _example1 = "";
+    private const string _example2 = "";
 
-    private const string _input1 = "0000";
-    private const string _input2 = "0000";
+    private const string _input1 = "";
+    private const string _input2 = "";
 
     [Fact]
     public Task DailyExample1() => _tester.Part1(_day, "examples", _example1);
