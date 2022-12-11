@@ -6,6 +6,7 @@ public record Solution15(long[] _opCodes) : ISolution<Solution15>
 
     public async ValueTask<long> GetPart1()
     {
+        return 0;
         var reportChannel = Channel.CreateBounded<long>(new BoundedChannelOptions(1)
         {
             FullMode = BoundedChannelFullMode.Wait,
@@ -21,7 +22,6 @@ public record Solution15(long[] _opCodes) : ISolution<Solution15>
         var compute = new IntCodeComputer(_opCodes).Run(movementChannel.Reader, reportChannel.Writer);
         var findSystem = FindSystem(reportChannel.Reader, movementChannel.Writer);
         await Task.WhenAll(compute, findSystem);
-        return 0;
     }
 
     public async ValueTask<long> GetPart2()

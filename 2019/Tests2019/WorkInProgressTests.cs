@@ -5,11 +5,11 @@ public class WorkInProgressTests
 {
     private static readonly SolutionTester _runner = new(typeof(Puzzles2019.Solutions.Solution01).Assembly);
 
-    private const string _day = "19";
-    private const string _example1 = "";
+    private const string _day = "24";
+    private const string _example1 = "2129920";
     private const string _example2 = "";
 
-    private const string _input1 = "";
+    private const string _input1 = "13500447";
     private const string _input2 = "";
 
     [Fact]

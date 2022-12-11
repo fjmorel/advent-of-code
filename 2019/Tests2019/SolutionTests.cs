@@ -4,31 +4,23 @@ public class SolutionTests
 {
     private static readonly SolutionTester _runner = new(typeof(Puzzles2019.Solutions.Solution01).Assembly);
 
+    // No example data for Intcode puzzles: 2, 5, 7, 9, 11, 13, 15, 17, 19
     [Theory]
     [InlineData("01", "33583", "50346")]
-    //[InlineData("02", "0", "0")]// Intcode puzzle
     [InlineData("03", "135", "410")]
-    //[InlineData("04", "0", "0")]// No example
-    //[InlineData("05", "0", "0")]// Intcode puzzle
+    [InlineData("04", "2918", "2046")]
     [InlineData("06", "54", "4")]// Not 42 due to added lines from part 2 example
-    //[InlineData("07", "0", "0")]// Intcode puzzle
-    //[InlineData("08", "0", "0")]// No example (returns console output)
-    //[InlineData("09", "0", "0")]// Intcode puzzle
+    // [InlineData("08", "0", "0")] No example data
     [InlineData("10", "210", "802")]
-    //[InlineData("11", "0", "0")]// Intcode puzzle (returns console output)
     [InlineData("12", "14645", "4686774924")]
-    //[InlineData("13", "0", "0")]// Intcode puzzle
     [InlineData("14", "2210736", "460664")]
-    //[InlineData("15", "0", "0")]// Intcode puzzle
     [InlineData("16", "24465799", "84462026")]// Example data from part 2
-    // [InlineData("17", "0", "0")]// Intcode puzzle
     [InlineData("18", "0", "0")]
-    // [InlineData("19", "0", "0")]// Intcode puzzle
     [InlineData("20", "0", "0")]
     [InlineData("21", "0", "0")]
     [InlineData("22", "0", "0")]
     [InlineData("23", "0", "0")]
-    [InlineData("24", "0", "0")]
+    [InlineData("24", "2129920", "0")]
     [InlineData("25", "0", "0")]
     public async Task RunExample(string day, string part1, string part2)
     {
@@ -50,7 +42,7 @@ public class SolutionTests
     [InlineData("11", "2021", "LBJHEKLH")]
     [InlineData("13", "369", "19210")]
     [InlineData("14", "532506", "2595245")]
-    //[InlineData("15", "0", "0")]// not done
+    [InlineData("15", "0", "0")]
     [InlineData("16", "40921727", "89950138")]
     [InlineData("17", "2660", "0")]
     [InlineData("18", "0", "0")]
@@ -59,7 +51,7 @@ public class SolutionTests
     [InlineData("21", "0", "0")]
     [InlineData("22", "0", "0")]
     [InlineData("23", "0", "0")]
-    [InlineData("24", "0", "0")]
+    [InlineData("24", "13500447", "0")]
     [InlineData("25", "0", "0")]
     public async Task RunInput(string day, string part1, string part2)
     {
