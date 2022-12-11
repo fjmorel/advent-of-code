@@ -10,20 +10,13 @@ public partial record Solution(string[] _lines) : ISolution<Solution>
 
     public long Run(int numberOfIterations, long worryReduction)
     {
-        var monkeys = _lines.Chunk(7).Select(ParseMonkey).ToList();
+        var monkeys = _lines.Chunk(7).Select(Monkey.Parse).ToList();
         var leastCommonMultiple = monkeys.Aggregate(1L, (lcm, monkey) => lcm * monkey.divisor);
         for (var i = 0; i < numberOfIterations; i++)
         {
             foreach (var monkey in monkeys)
             {
-                monkey.Inspected += monkey.Items.Count;
-                while (monkey.Items.TryDequeue(out var item))
-                {
-                    var newValue = Operate(item, monkey.operation) / worryReduction % leastCommonMultiple;
-                    var test = newValue % monkey.divisor == 0;
-                    var index = test ? monkey.ifTrue : monkey.ifFalse;
-                    monkeys[index].Items.Enqueue(newValue);
-                }
+                monkey.TakeTurn(monkeys, worryReduction, leastCommonMultiple);
             }
         }
 
@@ -31,56 +24,68 @@ public partial record Solution(string[] _lines) : ISolution<Solution>
         return highest[0] * highest[1];
     }
 
-    public static long Operate(long item, Operation op) => op.op switch
+    public record Monkey(Queue<long> items, Operation operation, long divisor, int ifTrue, int ifFalse)
     {
-        Op.Square => item * item,
-        Op.Add => item + op.number,
-        Op.Multiply => item * op.number,
-        _ => throw new UnreachableException(),
-    };
+        public long Inspected { get; private set; }
 
-    private static Monkey ParseMonkey(string[] lines)
-    {
-        var items = new Queue<long>(lines[1][18..].ParseCsv<long>());
-
-        var op = GetOperationRegex().Match(lines[2]).Groups;
-        Operation operation;
-        if (op[2].ValueSpan is "old")
-            operation = new(Op.Square, 0);
-        else
+        public void TakeTurn(List<Monkey> allMonkeys, long worryReduction, long leastCommonMultiple)
         {
-            var enumValue = op[1].ValueSpan switch
+            Inspected += items.Count;
+            while (items.TryDequeue(out var item))
+            {
+                var newValue = operation.Run(item) / worryReduction % leastCommonMultiple;
+                var test = newValue % divisor == 0;
+                var index = test ? ifTrue : ifFalse;
+                allMonkeys[index].items.Enqueue(newValue);
+            }
+        }
+
+        public static Monkey Parse(string[] lines)
+        {
+            var items = new Queue<long>(lines[1][18..].ParseCsv<long>());
+            var op = Operation.Parse(lines[2]);
+            var divisor = int.Parse(lines[3].AsSpan()[21..]);
+            var ifTrue = lines[4][^1] - '0';
+            var ifFalse = lines[5][^1] - '0';
+
+            return new(items, op, divisor, ifTrue, ifFalse);
+        }
+    }
+
+    public readonly partial record struct Operation(Operation.Op op, long number)
+    {
+        public long Run(long item) => op switch
+        {
+            Op.Square => item * item,
+            Op.Add => item + number,
+            Op.Multiply => item * number,
+            _ => throw new UnreachableException(),
+        };
+
+        public static Operation Parse(string s)
+        {
+            var groups = GetOperationRegex().Match(s).Groups;
+            if (groups[2].ValueSpan is "old")
+                return new(Op.Square, 0);
+
+            var enumValue = groups[1].ValueSpan switch
             {
                 "*" => Op.Multiply,
                 "+" => Op.Add,
                 _ => throw new UnreachableException(),
             };
-            var num = long.Parse(op[2].ValueSpan);
-            operation = new(enumValue, num);
+            var num = long.Parse(groups[2].ValueSpan);
+            return new(enumValue, num);
         }
 
-        var testDivisor = int.Parse(lines[3].AsSpan()[21..]);
-        var trueMonkey = lines[4][^1] - '0';
-        var falseMonkey = lines[5][^1] - '0';
+        [GeneratedRegex("= old ([+*]) ([a-z0-9]+)")]
+        private static partial Regex GetOperationRegex();
 
-        return new(items, operation, testDivisor, trueMonkey, falseMonkey);
+        public enum Op
+        {
+            Add,
+            Multiply,
+            Square,
+        }
     }
-
-
-    public record Monkey(Queue<long> Items, Operation operation, long divisor, int ifTrue, int ifFalse)
-    {
-        public long Inspected { get; set; }
-    }
-
-    public record struct Operation(Op op, long number);
-
-    public enum Op
-    {
-        Add,
-        Multiply,
-        Square,
-    }
-
-    [GeneratedRegex("= old ([+*]) ([a-z0-9]+)")]
-    private static partial Regex GetOperationRegex();
 }
