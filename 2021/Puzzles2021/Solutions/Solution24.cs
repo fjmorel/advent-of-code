@@ -1,62 +1,48 @@
 namespace Puzzles2021.Solutions;
 
-public record Solution24(long _lowest, long _highest) : ISolution<Solution24>
+public record Solution24(List<Solution24.InstructionGroup> _groups) : ISolution<Solution24>
 {
-    public static Solution24 Init(string[] lines)
+    private static readonly ImmutableArray<int> ALL_DIGITS = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.ToImmutableArray();
+    private static readonly ImmutableArray<int> REVERSE_DIGITS = ALL_DIGITS.Reverse().ToImmutableArray();
+
+    public static Solution24 Init(string[] lines) => new(lines.Chunk(18).Select(InstructionGroup.Parse).ToList());
+
+    public async ValueTask<string> GetPart1String() => FindLimit(REVERSE_DIGITS, ImmutableList<int>.Empty, 0) ?? "";
+
+    public async ValueTask<string> GetPart2String() => FindLimit(ALL_DIGITS, ImmutableList<int>.Empty, 0) ?? "";
+
+    public string? FindLimit(ImmutableArray<int> validDigits, ImmutableList<int> modelNumberDigits, long output)
     {
-        var groups = lines.Chunk(18).Select(ParseGroup).ToList();
-        var (lowest, highest) = FindLimits(groups);
-        return new(lowest, highest);
-    }
-
-    private static Group ParseGroup(string[] lines) => new(GetValue(lines[4]), GetValue(lines[5]), GetValue(lines[15]));
-    private static int GetValue(string line) => int.Parse(line.Split(' ')[2]);
-
-    public async ValueTask<long> GetPart1() => _highest;
-
-    public async ValueTask<long> GetPart2() => _lowest;
-
-    public static (long lowest, long highest) FindLimits(List<Group> groups)
-    {
-        (long lowest, long highest) = (long.MaxValue, long.MinValue);
-        for (long model = 11_111_111_111_111; model <= 99_999_999_999_999; model++)
+        int step = modelNumberDigits.Count - 1;
+        if (step >= 0)
         {
-            var digits = model.GetBase10Digits();
-            int step = 0;
-            long output = 0;
+            var input = modelNumberDigits[step];
+            (int line5, int line6, int line16) = _groups[step];
 
-            foreach ((int line5, int line6, int line16) in groups)
-            {
-                var input = digits[^(step + 1)];
-                var test = (output % 26) + line6 == input;
-                if (input != 0 && line5 == 26 && test)
-                {
-                    output = output / line5;
-                }
-                else if (input != 0 && line5 == 1 && !test)
-                {
-                    output = 26 * (output / line5) + input + line16;
-                }
-                else
-                {
-                    // Skip this range of numbers because this digit will not lead to a solution
-                    model += (long)double.Pow(10, 13 - step) - 1;
-                    break;
-                }
+            var test = (output % 26) + line6 == input;
+            if (input != 0 && line5 == 26 && test)
+                output /= line5;
+            else if (input != 0 && line5 == 1 && !test)
+                output = 26 * output + input + line16;
+            else// the rest of the digits will never make a valid number
+                return null;
 
-                step++;
-            }
-
-            if (output == 0)
-            {
-                (lowest, highest) = (long.Min(model, lowest), long.Max(model, highest));
-            }
+            if (output == 0 && modelNumberDigits.Count == 14)
+                return string.Join("", modelNumberDigits.Select(x => x.ToString()));
         }
 
-        return (lowest, highest);
+        foreach (var digit in validDigits)
+        {
+            var digits = modelNumberDigits.Add(digit);
+            var result = FindLimit(validDigits, digits, output);
+            if (result is not null)
+                return result;
+        }
+
+        return null;
     }
 
-    public static long ProcessGroup(long w, long z, Group group)
+    public static long ProcessGroup(long w, long z, InstructionGroup group)
     {
         long x = 0, y = 0;
         x += z;
@@ -77,5 +63,9 @@ public record Solution24(long _lowest, long _highest) : ISolution<Solution24>
         return z;
     }
 
-    public readonly record struct Group(int line5, int line6, int line16);
+    public readonly record struct InstructionGroup(int line5, int line6, int line16)
+    {
+        public static InstructionGroup Parse(string[] lines) =>
+            new(int.Parse(lines[4].AsSpan()[6..]), int.Parse(lines[5].AsSpan()[6..]), int.Parse(lines[15].AsSpan()[6..]));
+    }
 }

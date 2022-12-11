@@ -25,6 +25,7 @@ public class SolutionTests
     [InlineData("20", 35, 3351)]
     [InlineData("22", 474140, 2758514936282235)]
     [InlineData("23", 0000, 0000)]
+    // [InlineData("24", 0000, 0000)] (no example data)
     [InlineData("25", 58, -1)]
     public async Task RunExample(string day, long part1, long part2)
     {
@@ -52,6 +53,7 @@ public class SolutionTests
     [InlineData("20", 5044, 18074)]
     [InlineData("22", 647076, 1233304599156793)]
     [InlineData("23", 0000, 0000)]
+    [InlineData("24", 39494195799979, 13161151139617)]
     [InlineData("25", 523, -1)]
     public async Task RunInput(string day, long part1, long part2)
     {
@@ -64,8 +66,6 @@ public class SolutionTests
     [InlineData("inputs", "19", 398, 10965)]
     [InlineData("examples", "21", 739785, 444_356_092_776_315)]
     [InlineData("inputs", "21", 518418, 116741133558209)]
-    // [InlineData("examples", "24", 0000, 0000)] (no example data)
-    [InlineData("inputs", "24", 39494195799979, 13161151139617)]
     public async Task RunSlowDays(string folder, string day, long part1, long part2)
     {
         await _runner.Day(day, folder, part1, part2);
