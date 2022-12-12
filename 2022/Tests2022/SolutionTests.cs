@@ -25,7 +25,7 @@ public class SolutionTests
         """
     )]
     [InlineData("11", "10605", "2713310158")]
-    [InlineData("12", "0", "0")]
+    [InlineData("12", "31", "29")]
     [InlineData("13", "0", "0")]
     [InlineData("14", "0", "0")]
     [InlineData("15", "0", "0")]
@@ -53,7 +53,7 @@ public class SolutionTests
     [InlineData("09", "6026", "2273")]
     [InlineData("10", "15260", "PGHFGLUG")]
     [InlineData("11", "78678", "15333249714")]
-    [InlineData("12", "0", "0")]
+    [InlineData("12", "490", "488")]
     [InlineData("13", "0", "0")]
     [InlineData("14", "0", "0")]
     [InlineData("15", "0", "0")]
