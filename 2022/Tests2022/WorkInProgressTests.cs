@@ -5,7 +5,7 @@ public class WorkInProgressTests
 {
     private static readonly SolutionTester _tester = new(typeof(Puzzles2022.Day01.Solution).Assembly);
 
-    private const string _day = "12";
+    private const string _day = "14";
 
     private const string _example1 = "";
     private const string _example2 = "";
