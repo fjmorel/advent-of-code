@@ -5,9 +5,14 @@ namespace Shared;
 public static class Extensions
 {
     /// <summary>
+    /// Combine Select and ToList on puzzle input
+    /// </summary>
+    public static List<T2> ToList<T1, T2>(this IEnumerable<T1> lines, Func<T1, T2> select) => lines.Select(select).ToList();
+
+    /// <summary>
     /// Parse a single number from each line
     /// </summary>
-    public static List<T> ParsePerLine<T>(this IEnumerable<string> lines) where T : IParsable<T> => lines.Select(x => T.Parse(x, null)).ToList();
+    public static List<T> ParsePerLine<T>(this IEnumerable<string> lines) where T : IParsable<T> => lines.ToList(x => T.Parse(x, null));
 
     /// <summary>
     /// Parse an array of numbers separate by comma

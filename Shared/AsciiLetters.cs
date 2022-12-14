@@ -48,8 +48,7 @@ public static class AsciiLetters
         }
 
         return nums.Where(x => x != 0).Chunk(4)
-            .Select(chunk => chunk.Select((value, index) => value * int.RotateLeft(1, 4 * (index + 1))).Sum())
-            .ToList();
+            .ToList(chunk => chunk.Select((value, index) => value * int.RotateLeft(1, 4 * (index + 1))).Sum());
     }
 }
 
