@@ -28,7 +28,7 @@ public class SolutionTests
     [InlineData("12", "31", "29")]
     [InlineData("13", "13", "140")]
     [InlineData("14", "24", "93")]
-    [InlineData("15", "0", "0")]
+    // [InlineData("15", "26", "56000011")] (have to change code to make example work instead of input)
     [InlineData("16", "0", "0")]
     [InlineData("17", "0", "0")]
     [InlineData("18", "0", "0")]
@@ -56,7 +56,7 @@ public class SolutionTests
     [InlineData("12", "490", "488")]
     [InlineData("13", "5825", "24477")]
     [InlineData("14", "843", "27625")]
-    [InlineData("15", "0", "0")]
+    [InlineData("15", "4560025", "12480406634249")]
     [InlineData("16", "0", "0")]
     [InlineData("17", "0", "0")]
     [InlineData("18", "0", "0")]

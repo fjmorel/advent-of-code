@@ -70,4 +70,14 @@ public readonly record struct Point(int x, int y)
 
         throw new UnreachableException("You did something wrong. This is not a horizontal or vertical line.");
     }
+
+    /// <summary>
+    /// Get Manhattan magnitude (add up blocks in each direction)
+    /// </summary>
+    public int GetManhattanMagnitude() => int.Abs(x) + int.Abs(y);
+
+    /// <summary>
+    /// Get Manhattan distance (add up blocks in each direction)
+    /// </summary>
+    public int GetManhattanDistance(Point other) => (this - other).GetManhattanMagnitude();
 }

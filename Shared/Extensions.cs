@@ -81,6 +81,7 @@ public static class Extensions
         var maxX = points.Max(pt => pt.x);
         var maxY = points.Max(pt => pt.y);
 
+        output.AppendLine($"Coordinates: ({minX}, {minY}) to ({maxX}, {maxY})");
 
         for (var y = minY; y <= maxY; y++)
         {
