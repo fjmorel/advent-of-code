@@ -5,6 +5,12 @@ namespace Shared;
 public static class Extensions
 {
     /// <summary>
+    /// If the index is equal to the list length, loop back to 0.
+    /// Otherwise, keep going.
+    /// </summary>
+    public static int LoopIndex<T>(this int listIndex, IReadOnlyList<T> list) => listIndex == list.Count ? 0 : listIndex;
+
+    /// <summary>
     /// Combine Select and ToList on puzzle input
     /// </summary>
     public static List<T2> ToList<T1, T2>(this IEnumerable<T1> lines, Func<T1, T2> select) => lines.Select(select).ToList();
