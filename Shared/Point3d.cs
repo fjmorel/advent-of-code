@@ -6,6 +6,8 @@
 public readonly record struct Point3d(int x, int y, int z)
 {
     public Point3d(ReadOnlySpan<char> x, ReadOnlySpan<char> y, ReadOnlySpan<char> z) : this(int.Parse(x), int.Parse(y), int.Parse(z)) { }
+    public Point3d(Capture x, Capture y, Capture z) : this(x.ValueSpan, y.ValueSpan, z.ValueSpan) { }
+    public Point3d(int[] values) : this(values[0], values[1], values[2]) { }
 
     // /// <summary>
     // /// Get all adjacent Point3ds (diagonal and orthogonal)

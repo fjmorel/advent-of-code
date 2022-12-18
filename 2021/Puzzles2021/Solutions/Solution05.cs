@@ -19,8 +19,8 @@ public partial record Solution05(List<Solution05.Vent> _vents) : ISolution<Solut
         public Vent(string line) : this(default, default)
         {
             var groups = GetLineRegex().Match(line).Groups;
-            start = new Point(int.Parse(groups[1].ValueSpan), int.Parse(groups[2].ValueSpan));
-            end = new Point(int.Parse(groups[3].ValueSpan), int.Parse(groups[4].ValueSpan));
+            start = new Point(groups[1], groups[2]);
+            end = new Point(groups[3], groups[4]);
         }
 
         public bool IsStraight => start.x == end.x || start.y == end.y;

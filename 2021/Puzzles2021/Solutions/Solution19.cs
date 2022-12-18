@@ -17,8 +17,7 @@ public record Solution19(Solution19.Scanner[] _scanners) : ISolution<Solution19>
                 scanners.Add(new Scanner(beacons));
             else
             {
-                var split = line.Split(',');
-                beacons.Add(new Point3d(split[0].AsSpan(), split[1].AsSpan(), split[2].AsSpan()));
+                beacons.Add(new Point3d(line.ParseCsv<int>()));
             }
         }
 

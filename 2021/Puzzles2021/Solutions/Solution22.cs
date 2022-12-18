@@ -10,8 +10,8 @@ public partial record Solution22(List<Solution22.Command> _commands) : ISolution
             var groups = GetParser().Match(line).Groups;
 
             var on = groups[1].ValueSpan.SequenceEqual("on");
-            var min = new Point3d(int.Parse(groups[2].ValueSpan), int.Parse(groups[4].ValueSpan), int.Parse(groups[6].ValueSpan));
-            var max = new Point3d(int.Parse(groups[3].ValueSpan), int.Parse(groups[5].ValueSpan), int.Parse(groups[7].ValueSpan));
+            var min = new Point3d(groups[2], groups[4], groups[6]);
+            var max = new Point3d(groups[3], groups[5], groups[7]);
 
             commands.Add(new(on, new(min, max)));
         }
