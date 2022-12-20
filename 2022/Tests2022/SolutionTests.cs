@@ -60,7 +60,7 @@ public class SolutionTests
     [InlineData("17", "3177", "1565517241382")]
     [InlineData("18", "3530", "2000")]
     [InlineData("19", "0", "0")]
-    [InlineData("20", "0", "0")]
+    [InlineData("20", "10831", "6420481789383")]
     [InlineData("21", "0", "0")]
     [InlineData("22", "0", "0")]
     [InlineData("23", "0", "0")]
