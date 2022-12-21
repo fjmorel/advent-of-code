@@ -4,7 +4,7 @@
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <NoWarn>CS1998</NoWarn>
+        <NoWarn>CS1998,CS8509</NoWarn>
         <Configurations>Release;DebugExample;DebugInput</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
