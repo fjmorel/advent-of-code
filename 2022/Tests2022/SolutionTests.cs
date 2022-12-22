@@ -35,7 +35,7 @@ public class SolutionTests
     [InlineData("19", "33", "0")]
     [InlineData("20", "3", "1623178306")]
     [InlineData("21", "152", "301")]
-    [InlineData("22", "0", "0")]
+    [InlineData("22", "6032", "5031")]
     [InlineData("23", "0", "0")]
     [InlineData("24", "0", "0")]
     [InlineData("25", "0", "0")]
