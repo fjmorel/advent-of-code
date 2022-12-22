@@ -2,13 +2,11 @@ using System.Collections;
 
 namespace Puzzles2022.Day16;
 
-public partial record Solution(int[] _sortedRates, Dictionary<int, int>[] _sortedDistances) : ISolution<Solution>
+public partial record Solution(Solution.Valve[] _valves) : ISolution<Solution>
 {
     public static Solution Init(string[] lines)
     {
-        var totalCount = lines.Length;
-
-        var valves = lines.ToList(line =>
+        var parsed = lines.ToList(line =>
         {
             var match = GetLineRegex().Match(line);
             var groups = match.Groups;
@@ -18,76 +16,66 @@ public partial record Solution(int[] _sortedRates, Dictionary<int, int>[] _sorte
 
             return (name, flowRate, leadsTo);
         });
-        var relevant = valves.Where(x => x.flowRate != 0 || x.name == "AA").OrderBy(x => x.name).ToList();
-
-        var rates = relevant.Select(x => x.flowRate).ToArray();
+        var leads = parsed.ToDictionary(x => x.name, x => x.leadsTo);
+        var relevant = parsed.Where(x => x.flowRate != 0 || x.name == "AA").OrderBy(x => x.name).ToList();
 
         var distances = relevant.Select((valve, index) =>
         {
+            var leadsTo = leads[valve.name].ToDictionary(name => name, _ => 1);
             var step = 1;
-            var leadsTo = valve.leadsTo.ToDictionary(name => name, _ => step);
-            while (leadsTo.Count < totalCount)
+            while (leadsTo.Count < lines.Length)
             {
                 step++;
-                var nextLeads = valves.Where(v => leadsTo.ContainsKey(v.name)).SelectMany(v => v.leadsTo).Except(leadsTo.Keys).ToList();
+                var nextLeads = leads.Where(x => leadsTo.ContainsKey(x.Key)).SelectMany(v => v.Value).Except(leadsTo.Keys).ToList();
                 foreach (var lead in nextLeads)
                     leadsTo.TryAdd(lead, step);
             }
 
-            return leadsTo.Where(x => relevant.Any(y => y.name == x.Key)).ToDictionary(x => relevant.FindIndex(y => y.name == x.Key), x => x.Value);
+            return leadsTo.Where(x => relevant.Any(y => y.name == x.Key)).OrderBy(x => relevant.FindIndex(y => y.name == x.Key)).Select(x => x.Value).ToArray();
         }).ToArray();
-
-        return new(rates, distances);
+        var valves = relevant.Zip(distances).Select(x => new Valve(x.First.flowRate, x.Second)).ToArray();
+        return new(valves);
     }
 
     public async ValueTask<long> GetPart1()
     {
-        var beings = ImmutableArray.Create(new Being(0, 30));
-        var open = new BitArray(_sortedRates.Length, false);
-        return GetMax(open, 0, beings);
+        var open = new BitArray(_valves.Length, false);
+        return GetPossibilities(new(0, 0, 30, open)).Max(x => x.totalFlow);
     }
 
     public async ValueTask<long> GetPart2()
     {
-        var beings = ImmutableArray.Create(new Being(0, 26), new Being(0, 26));
-        var open = new BitArray(_sortedRates.Length, false);
-        return GetMax(open, 0, beings);
+        var open = new BitArray(_valves.Length, false);
+        var p1 = GetPossibilities(new(0, 0, 26, open));
+        var p2 = p1.SelectMany(x => GetPossibilities(x with { location = 0, minutesLeft = 26 }));
+
+        return p2.Max(x => x.totalFlow);
     }
 
-    private int GetMax(BitArray open, int pastFlow, ImmutableArray<Being> beings)
+    private IEnumerable<State> GetPossibilities(State state)
     {
-        var max = pastFlow;
-        for (var beingIndex = 0; beingIndex < beings.Length; beingIndex++)
+        yield return state;
+
+        for (var valveIndex = 1; valveIndex < state.valves.Length; valveIndex++)
         {
-            var being = beings[beingIndex];
-            if (being.done)
+            if (state.valves[valveIndex])
                 continue;
-
-            for (var valveIndex = 1; valveIndex < open.Length; valveIndex++)
-            {
-                if (open[valveIndex])
-                    continue;
-                var newStep = being.timeLeft - _sortedDistances[being.valveIndex][valveIndex] - 1;
-                // if this one is out of time, left the other(s) keep opening valves
-                if (newStep < 0)
-                {
-                    var newBeings = beings.SetItem(beingIndex, being with { done = true });
-                    max = int.Max(max, GetMax(open, pastFlow, newBeings));
-                }
-                else
-                {
-                    var newOpen = new BitArray(open) { [valveIndex] = true };
-                    var newFlow = pastFlow + newStep * _sortedRates[valveIndex];
-                    var newBeings = beings.SetItem(beingIndex, new(valveIndex, newStep));
-                    max = int.Max(max, GetMax(newOpen, newFlow, newBeings));
-                }
-            }
+            var newTimeLeft = state.minutesLeft - _valves[state.location].distances[valveIndex] - 1;
+            if (newTimeLeft < 0)
+                continue;
+            var newOpen = new BitArray(state.valves) { [valveIndex] = true };
+            var totalFlow = state.totalFlow + newTimeLeft * _valves[valveIndex].flowRate;
+            var newState = new State(totalFlow, valveIndex, newTimeLeft, newOpen);
+            if (newTimeLeft == 0)
+                yield return newState;
+            foreach (var possibility in GetPossibilities(newState))
+                yield return possibility;
         }
-
-        return max;
     }
 
-    public readonly record struct Being(int valveIndex, int timeLeft, bool done = false);
+    public readonly record struct Valve(int flowRate, int[] distances);
+
+    public readonly record struct State(long totalFlow, int location, int minutesLeft, BitArray valves);
 
     [GeneratedRegex("""Valve ([A-Z][A-Z]) has flow rate=([0-9]+); tunnels? leads? to valves? ([A-Z, ]+)""")]
     private static partial Regex GetLineRegex();

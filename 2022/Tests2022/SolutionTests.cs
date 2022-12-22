@@ -70,7 +70,7 @@ public class SolutionTests
 
     [Trait("Category", "Slow")]
     [Theory]
-    [InlineData("inputs", "16", "1720", "2582")]
+    [InlineData("inputs", "16", "1720", "2582")]// 23 hours for part 2...
     public Task RunSlowDays(string folder, string day, string part1, string part2) => _tester.Day(day, folder, part1, part2);
 
 }
