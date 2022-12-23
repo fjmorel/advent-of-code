@@ -3,7 +3,7 @@
 [Trait("Category", "InProgress")]
 public class WorkInProgressTests
 {
-    private static readonly SolutionTester _runner = new(typeof(Puzzles2021.Solutions.Solution01).Assembly);
+    private static readonly SolutionTester _runner = new(typeof(Puzzles2021.Day01.Solution).Assembly);
 
     private const string _day = "23";
     private const string _example1 = "";
