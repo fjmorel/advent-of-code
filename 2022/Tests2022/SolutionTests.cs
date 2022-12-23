@@ -36,7 +36,7 @@ public class SolutionTests
     [InlineData("20", "3", "1623178306")]
     [InlineData("21", "152", "301")]
     [InlineData("22", "6032", "5031")]
-    [InlineData("23", "0", "0")]
+    [InlineData("23", "110", "20")]
     [InlineData("24", "0", "0")]
     [InlineData("25", "0", "0")]
     public Task RunExample(string day, string part1, string part2) => _tester.Day(day, "examples", part1, part2);
@@ -63,7 +63,7 @@ public class SolutionTests
     [InlineData("20", "10831", "6420481789383")]
     [InlineData("21", "84244467642604", "3759569926192")]
     [InlineData("22", "117054", "0")]
-    [InlineData("23", "0", "0")]
+    [InlineData("23", "4052", "978")]
     [InlineData("24", "0", "0")]
     [InlineData("25", "0", "0")]
     public Task RunInput(string day, string part1, string part2) => _tester.Day(day, "inputs", part1, part2);

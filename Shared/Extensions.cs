@@ -74,6 +74,13 @@ public static class Extensions
     }
 
     /// <summary>
+    /// Output a set of coordinates to a string that looks like a grid based on whether coordinates are in the set
+    /// </summary>
+    /// <param name="points">Set of points</param>
+    public static string ToGridString(this IReadOnlySet<Point> points) =>
+        points.ToString(pt => points.Contains(pt) ? '⬜' : '⬛');
+
+    /// <summary>
     /// Output a set of coordinates to a string
     /// </summary>
     /// <param name="points">List/Set of points</param>
@@ -125,5 +132,26 @@ public static class Extensions
         }
 
         return dict;
+    }
+
+    /// <summary>
+    /// Convert input text into a set of coordinates (keeping only active ones)
+    /// </summary>
+    public static HashSet<Point> ToPointSet(this IEnumerable<string> lines, Func<char, bool> converter)
+    {
+        var y = 0;
+        var points = new HashSet<Point>();
+        foreach (var line in lines)
+        {
+            for (var x = 0; x < line.Length; x++)
+            {
+                if (converter(line[x]))
+                    points.Add(new(x, y));
+            }
+
+            y++;
+        }
+
+        return points;
     }
 }
