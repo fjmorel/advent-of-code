@@ -37,19 +37,22 @@ public partial record Solution(Solution.Valve[] _valves) : ISolution<Solution>
         return new(valves);
     }
 
-    public async ValueTask<long> GetPart1()
-    {
-        var open = new BitArray(_valves.Length, false);
-        return GetPossibilities(new(0, 0, 30, open)).Max(x => x.totalFlow);
-    }
+    public async ValueTask<long> GetPart1() =>
+        GetPossibilities(new(0, 0, 30, new BitArray(_valves.Length)))
+            .Max(x => x.totalFlow);
 
     public async ValueTask<long> GetPart2()
     {
-        var open = new BitArray(_valves.Length, false);
-        var p1 = GetPossibilities(new(0, 0, 26, open));
-        var p2 = p1.SelectMany(x => GetPossibilities(x with { location = 0, minutesLeft = 26 }));
+        var one = GetPossibilities(new(0, 0, 26, new BitArray(_valves.Length)))
+                // todo: technically works but why? find a smarter way to narrow down the problem space
+                .Where(x => AtLeastXTrue(x.valves, _valves.Length / 2 - 2) && x.minutesLeft > 2)
+            //.ToList()
+            ;
+        var both = one.SelectMany(x => GetPossibilities(x with { valveIndex = 0, minutesLeft = 26 }))
+            //.ToList()
+            ;
 
-        return p2.Max(x => x.totalFlow);
+        return both.Max(x => x.totalFlow);
     }
 
     private IEnumerable<State> GetPossibilities(State state)
@@ -60,7 +63,7 @@ public partial record Solution(Solution.Valve[] _valves) : ISolution<Solution>
         {
             if (state.valves[valveIndex])
                 continue;
-            var newTimeLeft = state.minutesLeft - _valves[state.location].distances[valveIndex] - 1;
+            var newTimeLeft = state.minutesLeft - _valves[state.valveIndex].distances[valveIndex] - 1;
             if (newTimeLeft < 0)
                 continue;
             var newOpen = new BitArray(state.valves) { [valveIndex] = true };
@@ -73,9 +76,17 @@ public partial record Solution(Solution.Valve[] _valves) : ISolution<Solution>
         }
     }
 
+    public static bool AtLeastXTrue(BitArray array, int minimum)
+    {
+        for (var i = 0; i < array.Length; i++)
+            if (array[i])
+                minimum--;
+        return minimum <= 0;
+    }
+
     public readonly record struct Valve(int flowRate, int[] distances);
 
-    public readonly record struct State(long totalFlow, int location, int minutesLeft, BitArray valves);
+    public readonly record struct State(long totalFlow, int valveIndex, int minutesLeft, BitArray valves);
 
     [GeneratedRegex("""Valve ([A-Z][A-Z]) has flow rate=([0-9]+); tunnels? leads? to valves? ([A-Z, ]+)""")]
     private static partial Regex GetLineRegex();

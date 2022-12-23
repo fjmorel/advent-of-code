@@ -57,6 +57,7 @@ public class SolutionTests
     [InlineData("13", "5825", "24477")]
     [InlineData("14", "843", "27625")]
     [InlineData("15", "4560025", "12480406634249")]
+    [InlineData("16", "1720", "2582")]
     [InlineData("17", "3177", "1565517241382")]
     [InlineData("18", "3530", "2000")]
     [InlineData("19", "0", "0")]
@@ -68,9 +69,7 @@ public class SolutionTests
     [InlineData("25", "0", "0")]
     public Task RunInput(string day, string part1, string part2) => _tester.Day(day, "inputs", part1, part2);
 
-    [Trait("Category", "Slow")]
-    [Theory]
-    [InlineData("inputs", "16", "1720", "2582")]// 23 hours for part 2...
-    public Task RunSlowDays(string folder, string day, string part1, string part2) => _tester.Day(day, folder, part1, part2);
-
+    // [Trait("Category", "Slow")]
+    // [Theory]
+    // public Task RunSlowDays(string folder, string day, string part1, string part2) => _tester.Day(day, folder, part1, part2);
 }

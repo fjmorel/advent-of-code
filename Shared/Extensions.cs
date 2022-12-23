@@ -77,15 +77,17 @@ public static class Extensions
     /// Output a set of coordinates to a string that looks like a grid based on whether coordinates are in the set
     /// </summary>
     /// <param name="points">Set of points</param>
-    public static string ToGridString(this IReadOnlySet<Point> points) =>
-        points.ToString(pt => points.Contains(pt) ? '⬜' : '⬛');
+    /// <param name="includeHeader">Whether to include a line describing the min/max range of coordinates</param>
+    public static string ToGridString(this IReadOnlySet<Point> points, bool includeHeader = true) =>
+        points.ToString(pt => points.Contains(pt) ? '⬜' : '⬛', includeHeader);
 
     /// <summary>
     /// Output a set of coordinates to a string
     /// </summary>
     /// <param name="points">List/Set of points</param>
     /// <param name="characterSelector">Determine what to print for a given Point</param>
-    public static string ToString(this IReadOnlyCollection<Point> points, Func<Point, char> characterSelector)
+    /// <param name="includeHeader">Whether to include a line describing the min/max range of coordinates</param>
+    public static string ToString(this IReadOnlyCollection<Point> points, Func<Point, char> characterSelector, bool includeHeader = true)
     {
         var output = new StringBuilder(points.Count + 10);
         output.AppendLine();
@@ -94,7 +96,8 @@ public static class Extensions
         var maxX = points.Max(pt => pt.x);
         var maxY = points.Max(pt => pt.y);
 
-        output.AppendLine($"Coordinates: ({minX}, {minY}) to ({maxX}, {maxY})");
+        if (includeHeader)
+            output.AppendLine($"Coordinates: ({minX}, {minY}) to ({maxX}, {maxY})");
 
         for (var y = minY; y <= maxY; y++)
         {
