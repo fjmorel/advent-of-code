@@ -9,12 +9,12 @@ public partial record Solution(Dictionary<string, Monkey> _original) : ISolution
     private static Dictionary<string, Monkey> ParseLine(Dictionary<string, Monkey> monkeys, string line)
     {
         var name = line[0..4];
-        var numMatch = GetConstantMonkeyRegex().Match(line);
+        var numMatch = ConstantMonkeyRegex.Match(line);
         if (numMatch.Success)
             monkeys[name] = int.Parse(numMatch.Groups[1].ValueSpan);
         else
         {
-            var opMatch = GetEquationMonkeyRegex().Match(line);
+            var opMatch = EquationMonkeyRegex.Match(line);
             monkeys[name] = new Equation(opMatch.Groups[2].ValueSpan[0], opMatch.Groups[1].Value, opMatch.Groups[3].Value);
         }
 
@@ -22,10 +22,10 @@ public partial record Solution(Dictionary<string, Monkey> _original) : ISolution
     }
 
     [GeneratedRegex(": ([0-9]+)")]
-    private static partial Regex GetConstantMonkeyRegex();
+    private static partial Regex ConstantMonkeyRegex { get; }
 
     [GeneratedRegex(": ([a-z]+) ([/*\\-+]) ([a-z]+)")]
-    private static partial Regex GetEquationMonkeyRegex();
+    private static partial Regex EquationMonkeyRegex { get; }
 
     public async ValueTask<long> GetPart1() => Simplify(_original["root"], new(_original)).AsT1;
 

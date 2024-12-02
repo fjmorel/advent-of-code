@@ -7,9 +7,9 @@ public partial record Solution(List<Solution.Command> _commands) : ISolution<Sol
         var commands = new List<Command>();
         foreach (var line in lines)
         {
-            var groups = GetParser().Match(line).Groups;
+            var groups = Parser.Match(line).Groups;
 
-            var on = groups[1].ValueSpan.SequenceEqual("on");
+            var on = groups[1].ValueSpan is "on";
             var min = new Point3d(groups[2], groups[4], groups[6]);
             var max = new Point3d(groups[3], groups[5], groups[7]);
 
@@ -86,5 +86,5 @@ public partial record Solution(List<Solution.Command> _commands) : ISolution<Sol
     public record Command(bool on, Cube cube);
 
     [GeneratedRegex("([a-z]+) x=([0-9\\-]+)..([0-9\\-]+),y=([0-9\\-]+)..([0-9\\-]+),z=([0-9\\-]+)..([0-9\\-]+)")]
-    private static partial Regex GetParser();
+    private static partial Regex Parser { get; }
 }

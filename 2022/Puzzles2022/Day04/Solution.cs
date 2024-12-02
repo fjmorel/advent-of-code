@@ -8,7 +8,7 @@ public partial record Solution(List<(Range, Range)> _lines) : ISolution<Solution
     {
         var groups = lines.Select(line =>
         {
-            var groups = GetLineRegex().Match(line).Groups;
+            var groups = LineRegex.Match(line).Groups;
             return (new Range(groups[1], groups[2]), new Range(groups[3], groups[4]));
         }).ToList();
         return new Solution(groups);
@@ -21,5 +21,5 @@ public partial record Solution(List<(Range, Range)> _lines) : ISolution<Solution
     private static bool Overlaps(Range a, Range b) => (a.x >= b.x && a.x <= b.y) || (a.y <= b.y && a.y >= b.x);
 
     [GeneratedRegex("([0-9]+)-([0-9]+),([0-9]+)-([0-9]+)")]
-    private static partial Regex GetLineRegex();
+    private static partial Regex LineRegex { get; }
 }

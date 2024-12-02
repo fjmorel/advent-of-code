@@ -4,10 +4,9 @@ public partial record Solution12(List<Solution12.Coordinates> initialPositions) 
 {
     public static Solution12 Init(string[] lines)
     {
-        var regex = GetLineRegex();
         var initialPositions = lines.Select(line =>
         {
-            var nums = regex.Matches(line).Select(x => long.Parse(x.ValueSpan)).ToList();
+            var nums = LineRegex.Matches(line).Select(x => long.Parse(x.ValueSpan)).ToList();
             return new Coordinates(nums[0], nums[1], nums[2]);
         }).ToList();
         return new(initialPositions);
@@ -136,5 +135,5 @@ public partial record Solution12(List<Solution12.Coordinates> initialPositions) 
     private record MoonWithInfluencingBodies(Moon moon, Moon[] bodies);
 
     [GeneratedRegex("(-?[0-9]+)+")]
-    private static partial Regex GetLineRegex();
+    private static partial Regex LineRegex { get; }
 }

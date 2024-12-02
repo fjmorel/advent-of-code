@@ -4,7 +4,7 @@ public partial record Solution(List<int> _heights) : ISolution<Solution>
 {
     public static Solution Init(string[] lines)
     {
-        var groups = GetParser().Match(lines[0]).Groups;
+        var groups = Parser.Match(lines[0]).Groups;
         var min = new Point(groups[1], groups[3]);
         var max = new Point(groups[2], groups[4]);
         var heights = FindMaximumHeights(min, max).ToList();
@@ -38,5 +38,5 @@ public partial record Solution(List<int> _heights) : ISolution<Solution>
     }
 
     [GeneratedRegex("target area: x=(-?[0-9]+)..(-?[0-9]+), y=(-?[0-9]+)..(-?[0-9]+)")]
-    private static partial Regex GetParser();
+    private static partial Regex Parser { get; }
 }

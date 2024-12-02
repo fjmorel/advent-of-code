@@ -8,7 +8,7 @@ public partial record Solution(Solution.Valve[] _valves) : ISolution<Solution>
     {
         var parsed = lines.ToList(line =>
         {
-            var match = GetLineRegex().Match(line);
+            var match = LineRegex.Match(line);
             var groups = match.Groups;
             var name = groups[1].Value;
             var flowRate = int.Parse(groups[2].ValueSpan);
@@ -89,5 +89,5 @@ public partial record Solution(Solution.Valve[] _valves) : ISolution<Solution>
     public readonly record struct State(long totalFlow, int valveIndex, int minutesLeft, BitArray valves);
 
     [GeneratedRegex("""Valve ([A-Z][A-Z]) has flow rate=([0-9]+); tunnels? leads? to valves? ([A-Z, ]+)""")]
-    private static partial Regex GetLineRegex();
+    private static partial Regex LineRegex { get; }
 }

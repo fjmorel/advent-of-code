@@ -18,7 +18,7 @@ public partial record Solution(List<Solution.Vent> _vents) : ISolution<Solution>
     {
         public Vent(string line) : this(default, default)
         {
-            var groups = GetLineRegex().Match(line).Groups;
+            var groups = LineRegex.Match(line).Groups;
             start = new Point(groups[1], groups[2]);
             end = new Point(groups[3], groups[4]);
         }
@@ -38,5 +38,5 @@ public partial record Solution(List<Solution.Vent> _vents) : ISolution<Solution>
     }
 
     [GeneratedRegex("([0-9]+),([0-9]+) -> ([0-9]+),([0-9]+)")]
-    private static partial Regex GetLineRegex();
+    private static partial Regex LineRegex { get; }
 }

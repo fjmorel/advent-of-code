@@ -45,7 +45,7 @@ public record Solution(int[][] _nums, int _width, int _height) : ISolution<Solut
     public record Node(Point Point, long Risk)
     {
         public long Total { get; set; } = long.MaxValue;
-        public bool Visited { get; set; } = false;
+        public bool Visited { get; set; }
     }
 
     // https://en.wikipedia.org/wiki/Dijkstra's_algorithm
@@ -71,7 +71,7 @@ public record Solution(int[][] _nums, int _width, int _height) : ISolution<Solut
 
             foreach (var adj in current.Point.GetOrthogonal())
             {
-                if (!graph.TryGetValue(adj, out var neighbor) || neighbor!.Visited)
+                if (!graph.TryGetValue(adj, out var neighbor) || neighbor.Visited)
                     continue;
 
                 neighbor.Total = long.Min(current.Total + neighbor.Risk, neighbor.Total);

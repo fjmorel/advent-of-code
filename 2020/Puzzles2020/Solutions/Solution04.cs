@@ -55,9 +55,9 @@ public partial record Solution04(long validLoose, long validStrict) : ISolution<
                      && iyr is >= 2010 and <= 2020
                      && eyr is >= 2020 and <= 2030
                      && ValidHeight(info["hgt"])
-                     && GetHairRegex().IsMatch(info["hcl"])
+                     && HairRegex.IsMatch(info["hcl"])
                      && validEyes.Contains(info["ecl"])
-                     && GetPassportIdRegex().IsMatch(info["pid"]);
+                     && PassportIdRegex.IsMatch(info["pid"]);
         if (strict)
             validStrict++;
     }
@@ -75,8 +75,8 @@ public partial record Solution04(long validLoose, long validStrict) : ISolution<
     }
 
     [GeneratedRegex("^#([0-9a-f]{6,6})$")]
-    private static partial Regex GetHairRegex();
+    private static partial Regex HairRegex { get; }
 
     [GeneratedRegex("^[0-9]{9,9}$")]
-    private static partial Regex GetPassportIdRegex();
+    private static partial Regex PassportIdRegex { get; }
 }

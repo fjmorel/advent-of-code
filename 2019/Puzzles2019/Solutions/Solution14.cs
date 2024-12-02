@@ -5,7 +5,7 @@ public partial record Solution14(Dictionary<string, Solution14.Formula> reaction
     private const string ORE = "ORE";
     private const string FUEL = "FUEL";
     private const long TRILLION = 1_000_000_000_000;
-    private long _orePerFuel = 0;
+    private long _orePerFuel;
 
     public static Solution14 Init(string[] lines) => new(ParseReactions(lines));
 
@@ -85,10 +85,9 @@ public partial record Solution14(Dictionary<string, Solution14.Formula> reaction
     private static Dictionary<string, Formula> ParseReactions(string[] lines)
     {
         var output = new Dictionary<string, Formula>();
-        var regex = GetParseRegex();
         foreach (var line in lines)
         {
-            var match = regex.Match(line);
+            var match = ParseRegex.Match(line);
             var groups = match.Groups;
             var counts = groups["reagent_count"].Captures.Select(x => long.Parse(x.ValueSpan));
             var names = groups["reagent_name"].Captures.Select(x => x.Value);
@@ -104,5 +103,5 @@ public partial record Solution14(Dictionary<string, Solution14.Formula> reaction
     public readonly record struct Reagent(long quantity, string name);
 
     [GeneratedRegex("(((?<reagent_count>[0-9]+) (?<reagent_name>[A-Za-z]+),? )+)=> (?<product>(?<product_count>[0-9]+) (?<product_name>[A-Za-z]+))")]
-    private static partial Regex GetParseRegex();
+    private static partial Regex ParseRegex { get; }
 }

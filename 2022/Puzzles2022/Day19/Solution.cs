@@ -10,13 +10,13 @@ public partial record Solution(List<Blueprint> _blueprints) : ISolution<Solution
 
     private static Blueprint ParseLine(string line)
     {
-        var matches = GetBlueprintRegex().Matches(line);
+        var matches = BlueprintRegex.Matches(line);
         var blueprint = new Dictionary<Mineral, Dictionary<Mineral, int>>();
         foreach (Match match in matches)
         {
             var mineral = Enum.Parse<Mineral>(match.Groups[1].ValueSpan);
             var robot = blueprint[mineral] = new();
-            var costs = GetRobotRegex().Matches(match.Groups[2].Value);
+            var costs = RobotRegex.Matches(match.Groups[2].Value);
             foreach (Match cost in costs)
             {
                 robot.Add(Enum.Parse<Mineral>(cost.Groups[2].ValueSpan), int.Parse(cost.Groups[1].ValueSpan));
@@ -102,10 +102,10 @@ public partial record Solution(List<Blueprint> _blueprints) : ISolution<Solution
     }
 
     [GeneratedRegex("Each ([a-z]+) robot costs ([a-z0-9 ]+).")]
-    private static partial Regex GetBlueprintRegex();
+    private static partial Regex BlueprintRegex { get; }
 
     [GeneratedRegex("([0-9]+) ([a-z]+)")]
-    private static partial Regex GetRobotRegex();
+    private static partial Regex RobotRegex { get; }
 
     public enum Mineral
     {

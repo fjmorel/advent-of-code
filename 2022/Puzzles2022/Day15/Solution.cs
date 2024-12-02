@@ -6,7 +6,7 @@ public partial record Solution(List<Solution.Sensor> _lines) : ISolution<Solutio
 
     private static Sensor ParseLine(string line)
     {
-        var captures = GetLineRegex().Match(line).Groups;
+        var captures = LineRegex.Match(line).Groups;
         return new(new(captures[1], captures[2]), new(captures[3], captures[4]));
     }
 
@@ -108,5 +108,5 @@ public partial record Solution(List<Solution.Sensor> _lines) : ISolution<Solutio
     }
 
     [GeneratedRegex("""Sensor at x=([\-0-9]+), y=([\-0-9]+): closest beacon is at x=([\-0-9]+), y=([\-0-9]+)""")]
-    private static partial Regex GetLineRegex();
+    private static partial Regex LineRegex { get; }
 }

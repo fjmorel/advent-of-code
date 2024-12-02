@@ -46,7 +46,7 @@ public record Solution(Dictionary<Point, int> _grid, Point _start, Point _end) :
     public record Node(int Height)
     {
         public long Total { get; set; } = long.MaxValue;
-        public bool Visited { get; set; } = false;
+        public bool Visited { get; set; }
     }
 
     // https://en.wikipedia.org/wiki/Dijkstra's_algorithm

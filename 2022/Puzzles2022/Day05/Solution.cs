@@ -6,10 +6,9 @@ public partial record Solution(List<List<char>> _stacks, List<Solution.Command> 
     {
         var layers = new Stack<string>();
         var commands = new List<Command>();
-        var regex = GetCommandRegex();
         foreach (var line in lines)
         {
-            var match = regex.Match(line);
+            var match = CommandRegex.Match(line);
             if (match.Success)
             {
                 commands.Add(new(int.Parse(match.Groups[1].ValueSpan), int.Parse(match.Groups[2].ValueSpan), int.Parse(match.Groups[3].ValueSpan)));
@@ -69,5 +68,5 @@ public partial record Solution(List<List<char>> _stacks, List<Solution.Command> 
     public record struct Command(int count, int from, int to);
 
     [GeneratedRegex("move ([0-9]+) from ([0-9]+) to ([0-9]+)")]
-    public static partial Regex GetCommandRegex();
+    public static partial Regex CommandRegex { get; }
 }

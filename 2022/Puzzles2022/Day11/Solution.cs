@@ -64,7 +64,7 @@ public partial record Solution(string[] _lines) : ISolution<Solution>
 
         public static Operation Parse(string s)
         {
-            var groups = GetOperationRegex().Match(s).Groups;
+            var groups = OperationRegex.Match(s).Groups;
             if (groups[2].ValueSpan is "old")
                 return new(Op.Square, 0);
 
@@ -79,7 +79,7 @@ public partial record Solution(string[] _lines) : ISolution<Solution>
         }
 
         [GeneratedRegex("= old ([+*]) ([a-z0-9]+)")]
-        private static partial Regex GetOperationRegex();
+        private static partial Regex OperationRegex { get; }
 
         public enum Op
         {
