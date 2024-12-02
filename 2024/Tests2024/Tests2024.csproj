@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\Puzzles2024\Puzzles2024.csproj" />
+    </ItemGroup>
+
+</Project>

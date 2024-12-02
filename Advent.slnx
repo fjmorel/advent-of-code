@@ -1,0 +1,40 @@
+﻿<Solution>
+  <Configurations>
+    <BuildType Name="DebugExample" />
+    <BuildType Name="DebugInput" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Folder Name="/2019/">
+    <Project Path="2019\Puzzles2019\Puzzles2019.csproj" Type="Classic C#" />
+    <Project Path="2019\Tests2019\Tests2019.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/2020/">
+    <Project Path="2020\Puzzles2020\Puzzles2020.csproj" Type="Classic C#" />
+    <Project Path="2020\Tests2020\Tests2020.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/2021/">
+    <Project Path="2021\Puzzles2021\Puzzles2021.csproj" />
+    <Project Path="2021\Tests2021\Tests2021.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/2022/">
+    <Project Path="2022\Puzzles2022\Puzzles2022.csproj" Type="Classic C#" />
+    <Project Path="2022\Tests2022\Tests2022.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/2024/">
+    <Project Path="2024\Puzzles2024\Puzzles2024.csproj" Type="Classic C#" />
+    <Project Path="2024\Tests2024\Tests2024.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Items/">
+    <File Path="Directory.Build.props" />
+    <File Path=".gitignore" />
+    <File Path="README.md" />
+    <File Path=".editorconfig" />
+    <File Path="global.json" />
+  </Folder>
+  <Folder Name="/Template/">
+    <Project Path="Template\PuzzlesTemplate\PuzzlesTemplate.csproj" Type="Classic C#" />
+    <Project Path="Template\TestsTemplate\TestsTemplate.csproj" Type="Classic C#" />
+  </Folder>
+  <Project Path="Shared\Shared.csproj" Type="Classic C#" />
+  <Project Path="TestsShared\TestsShared.csproj" Type="Classic C#" />
+</Solution>
