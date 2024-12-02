@@ -30,7 +30,7 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup Condition="$(MSBuildProjectName.StartsWith('Tests2')) or $(MSBuildProjectName.Equals('TestsTemplate'))">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
         <ProjectReference Include="..\..\TestsShared\TestsShared.csproj"/>
         <Using Include="TestsShared"/>
         <Using Include="Xunit"/>
