@@ -7,7 +7,7 @@ public record Solution(List<int> _numbers) : ISolution<Solution>
     public async ValueTask<string> GetPart1String()
     {
         var original = _numbers.Select((value, index) => new Number(value, index)).ToImmutableArray();
-        var data = Decrypt(original, new List<Number>(original));
+        var data = Decrypt(original, [..original]);
         return GetOutput(data).ToString();
     }
 

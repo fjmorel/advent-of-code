@@ -26,8 +26,7 @@ public partial record Solution(List<Solution.Command> _commands) : ISolution<Sol
 
         // Go ahead and turn off stuff out of bounds at the end
         var commands = _commands
-            .Concat(new Command[]
-            {
+            .Concat([
                 new(false, new(min with { x = 51 }, max)),
                 new(false, new(min, max with { x = -51 })),
 
@@ -36,7 +35,7 @@ public partial record Solution(List<Solution.Command> _commands) : ISolution<Sol
 
                 new(false, new(min with { z = 51 }, max)),
                 new(false, new(min, max with { z = -51 })),
-            });
+            ]);
 
         return GetCount(commands);
     }

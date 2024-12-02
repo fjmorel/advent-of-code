@@ -23,7 +23,7 @@ public record Solution(List<List<Point>> _lines) : ISolution<Solution>
 
     public static long Iterate(HashSet<Point> occupied, Predicate<Point> breakCondition, Predicate<Point> returnCondition)
     {
-        Point[] _moves = { new(0, 1), new(-1, 1), new(1, 1) };
+        Point[] _moves = [new(0, 1), new(-1, 1), new(1, 1)];
         Point _sandStart = new(500, 0);
         var sandGrains = 0;
 

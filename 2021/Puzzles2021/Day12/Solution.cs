@@ -8,8 +8,8 @@ public record Solution(Dictionary<string, List<string>> _connections) : ISolutio
         foreach (var line in lines)
         {
             var pair = line.Split('-');
-            connections.TryAdd(pair[0], new());
-            connections.TryAdd(pair[1], new());
+            connections.TryAdd(pair[0], []);
+            connections.TryAdd(pair[1], []);
             // don't let  anyone go back to the start
             if (pair[1] != "start")
                 connections[pair[0]].Add(pair[1]);
@@ -31,7 +31,7 @@ public record Solution(Dictionary<string, List<string>> _connections) : ISolutio
             state.Visited.Add(state.Current);
             var newRoutes = _connections[state.Current]
                 .Where(cave => !state.Visited.Contains(cave) || cave.ToUpper() == cave)
-                .Select(cave => state with { Current = cave, Visited = new(state.Visited) });
+                .Select(cave => state with { Current = cave, Visited = [..state.Visited] });
             foreach (var route in newRoutes)
             {
                 if (route.Current == "end")
@@ -69,7 +69,7 @@ public record Solution(Dictionary<string, List<string>> _connections) : ISolutio
     {
         foreach (var next in _connections[state.Current])
         {
-            var route = state with { Current = next, Visited = new(state.Visited) };
+            var route = state with { Current = next, Visited = [..state.Visited] };
             var canVisit = !state.Visited.Contains(next) || next.ToUpper() == next;
             if (!canVisit && !state.Revisited)
             {
@@ -85,7 +85,7 @@ public record Solution(Dictionary<string, List<string>> _connections) : ISolutio
     public record Route
     {
         public string Current { get; init; } = "start";
-        public HashSet<string> Visited { get; init; } = new();
+        public HashSet<string> Visited { get; init; } = [];
         public bool Revisited { get; set; }
     }
 }

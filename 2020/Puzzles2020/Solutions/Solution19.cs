@@ -34,8 +34,8 @@ public record Solution19(string[] _lines, Dictionary<int, Solution19.Rule> rules
     {
         // 8: 42 | 42 8
         // 11: 42 31 | 42 11 31
-        rules[8] = new Rule(null, new() { new() { 42 }, new() { 42, 8 } });
-        rules[11] = new Rule(null, new() { new() { 42, 31 }, new() { 42, 11, 31 } });
+        rules[8] = new Rule(null, [new() { 42 }, new() { 42, 8 }]);
+        rules[11] = new Rule(null, [new() { 42, 31 }, new() { 42, 11, 31 }]);
 
         var potential42s = GeneratePossibilities(rules, rules[42]);
         var potential31s = GeneratePossibilities(rules, rules[31]);
@@ -93,7 +93,7 @@ public record Solution19(string[] _lines, Dictionary<int, Solution19.Rule> rules
         if (rule.letter.HasValue)
             return (rule.letter == substring[0], 1);
 
-        foreach (var alternative in rule.options ?? Enumerable.Empty<List<int>>())
+        foreach (var alternative in rule.options ?? [])
         {
             var isValid = true;
             var counted = 0;
@@ -121,10 +121,10 @@ public record Solution19(string[] _lines, Dictionary<int, Solution19.Rule> rules
     private static HashSet<string> GeneratePossibilities(IReadOnlyDictionary<int, Rule> rules, Rule rule)
     {
         if (rule.letter.HasValue)
-            return new() { rule.letter.Value.ToString() };
+            return [rule.letter.Value.ToString()];
 
         var lines = new HashSet<string>();
-        foreach (var alternate in rule.options ?? Enumerable.Empty<List<int>>())
+        foreach (var alternate in rule.options ?? [])
         {
             var sublist = new HashSet<string>() { "" };
             foreach (var subRule in alternate.Select(x => rules[x]))

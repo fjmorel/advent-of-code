@@ -2,9 +2,9 @@ namespace Puzzles2021.Day23;
 
 public record Solution(ImmutableStack<int>[] _start) : ISolution<Solution>
 {
-    private static readonly int[] _factor = { 1, 10, 100, 1000 };
-    private static readonly int[] _roomY = { 3, 5, 7, 9 };
-    private static readonly int[] _hallwayY = { 1, 2, 4, 6, 8, 10, 11 };
+    private static readonly int[] _factor = [1, 10, 100, 1000];
+    private static readonly int[] _roomY = [3, 5, 7, 9];
+    private static readonly int[] _hallwayY = [1, 2, 4, 6, 8, 10, 11];
 
     public static Solution Init(string[] lines) =>
         new(_roomY.Select(y => ImmutableStack.Create(lines[2][y] - 'A', lines[3][y] - 'A')).ToArray());

@@ -2,7 +2,7 @@ namespace Puzzles2021.Day21;
 
 public record Solution(Solution.Player _p1, Solution.Player _p2) : ISolution<Solution>
 {
-    private static readonly int[] _probabilities = { 0, 0, 0, 1, 3, 6, 7, 6, 3, 1 };//3-9
+    private static readonly int[] _probabilities = [0, 0, 0, 1, 3, 6, 7, 6, 3, 1];//3-9
 
     public static Solution Init(string[] lines)
     {

@@ -4,7 +4,7 @@ using Blueprint = Dictionary<Solution.Mineral, Dictionary<Solution.Mineral, int>
 
 public partial record Solution(List<Blueprint> _blueprints) : ISolution<Solution>
 {
-    private static readonly Mineral[] MINERALS = { Mineral.geode, Mineral.obsidian, Mineral.clay, Mineral.ore };
+    private static readonly Mineral[] MINERALS = [Mineral.geode, Mineral.obsidian, Mineral.clay, Mineral.ore];
 
     public static Solution Init(string[] lines) => new(lines.ToList(ParseLine));
 

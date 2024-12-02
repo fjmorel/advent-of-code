@@ -9,27 +9,27 @@ public record Solution(char[] _gasJets) : ISolution<Solution>
     private static readonly Point DOWN = new(0, -1);
 
     private static readonly Point[][] SHAPES =
-    {
+    [
         // ####
-        new Point[] { new(0, 0), new(1, 0), new(2, 0), new(3, 0) },
+        [new(0, 0), new(1, 0), new(2, 0), new(3, 0)],
         // .#.
         // ###
         // .#.
-        new Point[] { new(1, 0), new(0, 1), new(1, 1), new(1, 2), new(2, 1) },
+        [new(1, 0), new(0, 1), new(1, 1), new(1, 2), new(2, 1)],
 
         // ..#
         // ..#
         // ###
-        new Point[] { new(0, 0), new(1, 0), new(2, 0), new(2, 1), new(2, 2) },
+        [new(0, 0), new(1, 0), new(2, 0), new(2, 1), new(2, 2)],
         // #
         // #
         // #
         // #
-        new Point[] { new(0, 0), new(0, 1), new(0, 2), new(0, 3) },
+        [new(0, 0), new(0, 1), new(0, 2), new(0, 3)],
         // ##
         // ##
-        new Point[] { new(0, 0), new(1, 0), new(1, 1), new(0, 1) },
-    };
+        [new(0, 0), new(1, 0), new(1, 1), new(0, 1)],
+    ];
 
     public static Solution Init(string[] lines) => new(lines[0].ToCharArray());
 

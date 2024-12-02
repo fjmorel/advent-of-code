@@ -75,14 +75,14 @@ public record Solution20(List<Solution20.Tile> tiles) : ISolution<Solution20>
 
         var uniqueTransformSets = new Transformation[][]
         {
-            new[] { Transformation.None, },
-            new[] { Transformation.FlipVertical },
-            new[] { Transformation.FlipHorizontal },
-            new[] { Transformation.FlipVertical, Transformation.FlipHorizontal },// = 2 RotateLeft or 2 RotateRight
-            new[] { Transformation.RotateLeft },// = RotateRight + FlipHorizontal + FlipVertical
-            new[] { Transformation.RotateLeft, Transformation.FlipVertical },// = RotateRight + FlipHorizontal
-            new[] { Transformation.RotateLeft, Transformation.FlipHorizontal },// = RotateRight + FlipVertical
-            new[] { Transformation.RotateLeft, Transformation.FlipHorizontal, Transformation.FlipVertical },// = RotateRight
+            [Transformation.None],
+            [Transformation.FlipVertical],
+            [Transformation.FlipHorizontal],
+            [Transformation.FlipVertical, Transformation.FlipHorizontal],// = 2 RotateLeft or 2 RotateRight
+            [Transformation.RotateLeft],// = RotateRight + FlipHorizontal + FlipVertical
+            [Transformation.RotateLeft, Transformation.FlipVertical],// = RotateRight + FlipHorizontal
+            [Transformation.RotateLeft, Transformation.FlipHorizontal],// = RotateRight + FlipVertical
+            [Transformation.RotateLeft, Transformation.FlipHorizontal, Transformation.FlipVertical],// = RotateRight
         };
 
         foreach (var transforms in uniqueTransformSets)

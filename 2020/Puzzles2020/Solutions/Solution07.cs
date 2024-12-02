@@ -8,7 +8,7 @@ public record Solution07(Dictionary<string, Dictionary<string, int>> _rules) : I
         return new(rules);
     }
 
-    public async ValueTask<long> GetPart1() => FindColorsContainingColor("shiny gold", new()).Count;
+    public async ValueTask<long> GetPart1() => FindColorsContainingColor("shiny gold", []).Count;
 
     public async ValueTask<long> GetPart2() => CountContents("shiny gold") - 1;
 

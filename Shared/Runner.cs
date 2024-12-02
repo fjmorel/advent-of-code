@@ -32,7 +32,7 @@ public record Runner(Assembly assembly)
     private static IEnumerable<string> GetDays(string[] args)
     {
         if (!args.Any())
-            args = new string[] { AnsiConsole.Prompt(new TextPrompt<string>("Days to run:")) };
+            args = [AnsiConsole.Prompt(new TextPrompt<string>("Days to run:"))];
 
         var inputs = args.SelectMany(x => x.Split(',')).ToList();
         foreach (var input in inputs)
@@ -51,13 +51,13 @@ public record Runner(Assembly assembly)
         if (!TryGetData(folder, day, out var lines))
         {
             AnsiConsole.WriteLine($"Could not get data for day {day}");
-            return Array.Empty<TimeSpan>();
+            return [];
         }
 
         if (!TryGetSolution(day, lines, out var job))
         {
             AnsiConsole.WriteLine($"Could not get solution class for day {day}");
-            return Array.Empty<TimeSpan>();
+            return [];
         }
 
         var setupTime = timer.Elapsed;
@@ -77,7 +77,7 @@ public record Runner(Assembly assembly)
         ctx.Refresh();
         timer.Stop();
 
-        return new[] { setupTime, part1Time, part2Time };
+        return [setupTime, part1Time, part2Time];
     }
 
     public bool TryGetData(string folder, string day, [NotNullWhen(true)] out string[]? lines)
@@ -109,7 +109,7 @@ public record Runner(Assembly assembly)
         }
 
         var initializer = type.GetMethod(nameof(ISolution<FakeSolution>.Init), BindingFlags.Static | BindingFlags.Public);
-        var obj = initializer!.Invoke(null, new object?[] { input });
+        var obj = initializer!.Invoke(null, [input]);
         if (obj is ISolution job)
         {
             solution = job;

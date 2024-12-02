@@ -16,7 +16,7 @@ public record Solution(IEnumerable<Solution.Fish> initial) : ISolution<Solution>
         .SelectMany(fish =>
         {
             if (fish.days < 1)
-                return new Fish[] { fish with { days = 6 }, fish with { days = 8 } };
+                return [fish with { days = 6 }, fish with { days = 8 }];
             return new Fish[] { fish with { days = fish.days - 1 } };
         })
         .GroupBy(x => x.days)

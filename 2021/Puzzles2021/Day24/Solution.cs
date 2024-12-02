@@ -2,14 +2,14 @@ namespace Puzzles2021.Day24;
 
 public record Solution(List<Solution.InstructionGroup> _groups) : ISolution<Solution>
 {
-    private static readonly ImmutableArray<int> ALL_DIGITS = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }.ToImmutableArray();
-    private static readonly ImmutableArray<int> REVERSE_DIGITS = ALL_DIGITS.Reverse().ToImmutableArray();
+    private static readonly ImmutableArray<int> ALL_DIGITS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    private static readonly ImmutableArray<int> REVERSE_DIGITS = [..ALL_DIGITS.Reverse()];
 
     public static Solution Init(string[] lines) => new(lines.Chunk(18).Select(InstructionGroup.Parse).ToList());
 
-    public async ValueTask<string> GetPart1String() => FindLimit(REVERSE_DIGITS, ImmutableList<int>.Empty, 0) ?? "";
+    public async ValueTask<string> GetPart1String() => FindLimit(REVERSE_DIGITS, [], 0) ?? "";
 
-    public async ValueTask<string> GetPart2String() => FindLimit(ALL_DIGITS, ImmutableList<int>.Empty, 0) ?? "";
+    public async ValueTask<string> GetPart2String() => FindLimit(ALL_DIGITS, [], 0) ?? "";
 
     public string? FindLimit(ImmutableArray<int> validDigits, ImmutableList<int> modelNumberDigits, long output)
     {

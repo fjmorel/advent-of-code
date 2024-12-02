@@ -6,10 +6,10 @@ public record Solution(ImmutableHashSet<Point> _start) : ISolution<Solution>
 
     public static readonly Dictionary<Point, Point[]> _neighbors = new()
     {
-        [new(0, -1)] = new Point[] { new(-1, -1), new(0, -1), new(1, -1) },
-        [new(0, 1)] = new Point[] { new(-1, 1), new(0, 1), new(1, 1) },
-        [new(-1, 0)] = new Point[] { new(-1, -1), new(-1, 0), new(-1, 1) },
-        [new(1, 0)] = new Point[] { new(1, -1), new(1, 0), new(1, 1) },
+        [new(0, -1)] = [new(-1, -1), new(0, -1), new(1, -1)],
+        [new(0, 1)] = [new(-1, 1), new(0, 1), new(1, 1)],
+        [new(-1, 0)] = [new(-1, -1), new(-1, 0), new(-1, 1)],
+        [new(1, 0)] = [new(1, -1), new(1, 0), new(1, 1)],
     };
 
     public static Solution Init(string[] lines) => new(lines.ToPointSet(x => x == '#').ToImmutableHashSet());

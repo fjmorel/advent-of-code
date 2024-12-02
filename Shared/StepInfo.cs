@@ -25,11 +25,11 @@ internal readonly record struct StepInfo(string step, string value, TimeSpan ela
             < 1_000 => Color.DarkOrange,
             _ => Color.OrangeRed1,
         };
-        return new IRenderable[]
-        {
+        return
+        [
             new Text(step, new Style(decoration: Decoration.Bold)),
             new Text(value),
             new Text($"{text} ms", new Style(color)),
-        };
+        ];
     }
 }

@@ -2,7 +2,7 @@ namespace Puzzles2019.Solutions;
 
 public record Solution16(string[] _lines) : ISolution<Solution16>
 {
-    private readonly int[] pattern = { 0, 1, 0, -1 };
+    private readonly int[] pattern = [0, 1, 0, -1];
 
     public static Solution16 Init(string[] lines) => new(lines);
 

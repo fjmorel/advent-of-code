@@ -49,7 +49,7 @@ public record Solution07(long[] _opCodes) : ISolution<Solution07>
                         {
                             if (i == m || j == m || k == m || l == m)
                                 continue;
-                            yield return new[] { i, j, k, l, m };
+                            yield return [i, j, k, l, m];
                         }
                     }
                 }

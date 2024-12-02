@@ -9,7 +9,7 @@ public record Solution(
     private const string ALL = "abcdefg";
 
     private static readonly string[] _real =
-    {
+    [
         "abcefg",// 0, 6 segments
         "cf",// 1, 2 segments
         "acdeg",// 2, 5 segments
@@ -20,7 +20,7 @@ public record Solution(
         "acf",// 7, 3 segments
         "abcdefg",// 8, 7 segments
         "abcdfg",// 9, 6 segments
-    };
+    ];
 
 
     public static Solution Init(string[] lines)

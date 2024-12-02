@@ -85,7 +85,7 @@ public record Solution10(List<long> nums, long device) : ISolution<Solution10>
             if (list[i] - list[i - 1] == 3)
             {
                 yield return cur;
-                cur = new List<long>();
+                cur = [];
             }
 
             cur.Add(list[i]);

@@ -49,7 +49,7 @@ public record Solution(string[] _lines) : ISolution<Solution>
                 if (symbol == OpenToClose(open))
                     stack.Pop();
                 else
-                    return (symbol, Array.Empty<char>());
+                    return (symbol, []);
             }
         }
 

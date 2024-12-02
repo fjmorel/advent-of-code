@@ -2,7 +2,7 @@ namespace Puzzles2020.Solutions;
 
 public partial record Solution04(long validLoose, long validStrict) : ISolution<Solution04>
 {
-    private static readonly HashSet<string> validEyes = new() { "amb", "blu", "brn", "gry", "grn", "hzl", "oth", "amb" };
+    private static readonly HashSet<string> validEyes = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth", "amb"];
 
     public static Solution04 Init(string[] lines)
     {

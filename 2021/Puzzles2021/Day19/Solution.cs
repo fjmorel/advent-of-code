@@ -3,7 +3,7 @@ namespace Puzzles2021.Day19;
 public record Solution(Solution.Scanner[] _scanners) : ISolution<Solution>
 {
     private static readonly Func<Point3d, Point3d>[] _rotationFunctions = GetRotations().ToArray();
-    private readonly ConcurrentBag<AdjustedScanner> Located = new();
+    private readonly ConcurrentBag<AdjustedScanner> Located = [];
 
     public static Solution Init(string[] lines)
     {
@@ -12,7 +12,7 @@ public record Solution(Solution.Scanner[] _scanners) : ISolution<Solution>
         foreach (var line in lines)
         {
             if (line.StartsWith("---"))
-                beacons = new();
+                beacons = [];
             else if (string.IsNullOrWhiteSpace(line))
                 scanners.Add(new Scanner(beacons));
             else
@@ -85,7 +85,7 @@ public record Solution(Solution.Scanner[] _scanners) : ISolution<Solution>
         // For every origin beacon and other beacon,
         foreach (var func in _rotationFunctions)
         {
-            HashSet<(Point3d origin, Point3d other)> matches = new();
+            HashSet<(Point3d origin, Point3d other)> matches = [];
             foreach (var (originA, originB) in origin.pairs)
             {
                 var offset = originB - originA;
@@ -187,7 +187,7 @@ public record Solution(Solution.Scanner[] _scanners) : ISolution<Solution>
         private HashSet<Point3d> Beacons { get; }
         public List<(Point3d, Point3d)> Pairs { get; }
         public HashSet<long> Distances { get; }
-        public HashSet<Point3d> Tried { get; } = new();
+        public HashSet<Point3d> Tried { get; } = [];
 
         public AdjustedScanner Adjust(Point3d position, Func<Point3d, Point3d> rotationFunction)
         {
